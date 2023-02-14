@@ -11,6 +11,10 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.example.demo.airport.ListVO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
-import dto.ListVO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,6 +55,7 @@ public class ApiController {
      *
      * @param model 전송 할 데이터
      * @return 페이지
+	 * @throws ParseException 
      */
 	
 	
@@ -65,8 +71,7 @@ public class ApiController {
 //	
 //	
 //	
-	
-	
+
 	
 	@GetMapping("/find")
 	@ApiOperation(value="공항", notes="공항을 조회한다")
@@ -74,7 +79,7 @@ public class ApiController {
 	public ResponseEntity<ListVO> callapihttp(
 			@RequestParam (value="airlineId", required=false)String airlineId, 
 			@RequestParam (value="airlineNm", required=false)String airlineNm
-			) throws IOException {
+			) throws IOException, ParseException {
 		StringBuilder result = new StringBuilder();
 		
 		Gson gson = new Gson();
@@ -95,6 +100,9 @@ public class ApiController {
 //		result.put("airlineNm", airlineNm);
 		
 		String response = "";
+		
+		
+		
 		
 		System.out.println("airlineId = " + airlineId);
 		System.out.println("airlineNm = " + airlineNm);
@@ -130,6 +138,7 @@ public class ApiController {
 	        }
 	        
 	        System.out.println("Response code: " + conn.getResponseCode());
+	        System.out.println("------------------------------------------------------------");
 	        
 	        String returnLine;
 	        StringBuilder resultBuild = new StringBuilder();
@@ -139,6 +148,15 @@ public class ApiController {
 	//        conn.disconnect();
 	        response = resultBuild.toString();
 	        vo = gson.fromJson(response, ListVO.class);
+	        System.out.println(vo);//@객체아이디
+	        System.out.println(gson);//vo의 toString vo에 대한 정보
+	        
+	        
+	        System.out.println("------------------------------------------------------------");
+	        ObjectMapper mapper = new ObjectMapper();
+	        String jsonString = mapper.writeValueAsString(vo);
+	        System.out.println(jsonString);
+	        System.out.println("------------------------------------------------------------");
 	    }catch(Exception e) {
 	    	System.out.println(e);
 	    } finally {
@@ -147,7 +165,60 @@ public class ApiController {
 	    	}
 	    }
 	    System.out.println("연결됨");
+	    System.out.println(response);
 	    
+	    System.out.println("------------------------ JSONParser_item ------------------------------------");
+	    
+		JSONParser paser = new JSONParser(); //JSON Parser객채를 만듭니다. parser를 통해서 파싱을 합니다.
+		JSONObject obj = (JSONObject)paser.parse(response); //Parser로 문자열 데이터를 JSON데이터로 변환합니다.
+		
+		
+		
+		// 한번에 제일 아랫단에 갈 수는 없다 차례대로 찾아가자
+
+		// response 가져오기
+		JSONObject parse_response = (JSONObject) obj.get("response"); //response key값에 맞는  Value인 JSON객체를 가져옵니다. 
+
+		// response 로 부터 body 찾아오기
+		JSONObject parse_body = (JSONObject) parse_response.get("body");
+
+		// body 로 부터 items 받아오기
+		JSONObject parse_items = (JSONObject) parse_body.get("items");
+
+		// items로 부터 item 를 받아옵니다. item : 뒤에 [ 로 시작하므로 jsonarray입니다.
+		JSONArray parse_item = (JSONArray) parse_items.get("item");
+
+		System.out.println(parse_items);
+		System.out.println("------------------------ data ------------------------------------");
+//		JSONObject data_Nm = (JSONObject) parse_item.get(1);
+//		JSONObject data_Id = (JSONObject) parse_item.get(2);
+////		
+//		System.out.println(data_Id);
+//		System.out.println(data_Nm);
+		
+		System.out.println(parse_item.size());
+		
+//		JSONObject data_list = new JSONObject();
+//		data_list.get(data_Id);
+//		data_list.get(data_Nm);
+		
+
+		
+				// 각각 요소 출력
+				for (int i = 0; i < parse_item.size(); i++) { // 해당 JSONArray객체에 값을 차례대로 가져와서 읽습니다.
+					JSONObject data_list = (JSONObject) parse_item.get(i);
+//					String airlineId = (String) imsi.get("airlineId");
+//					String airlineNm = (String) imsi.get("airlineNm");
+
+					System.out.println("배열의 " + i + "번째 요소");
+					System.out.println(data_list);
+//					System.out.println("airlineId : " + airlineId);
+//					System.out.println("airlineNm : " + airlineNm);
+				}	
+		
+//		int objSize = obj.size();
+//		System.out.println("object size =" + objSize);
+		
 	    return ResponseEntity.ok(vo);
 	}
 	//Jackson 라이브러리, Gson
