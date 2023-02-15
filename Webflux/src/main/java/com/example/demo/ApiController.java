@@ -72,13 +72,11 @@ public class ApiController {
 //	
 //	
 
-	
 	@GetMapping("/find")
-	@ApiOperation(value="공항", notes="공항을 조회한다")
-//>	@Operation(summary = "화면", description = "화면을 출력합니다.")
+	@Operation(summary = "공항", description = "공항을 조회한다.")
 	public ResponseEntity<ListVO> callapihttp(
-			@RequestParam (value="airlineId", required=false)String airlineId, 
-			@RequestParam (value="airlineNm", required=false)String airlineNm
+			@RequestParam (value="항공아이디", required=false)String airlineId, 
+			@RequestParam (value="항공번호", required=false)String airlineNm
 			) throws IOException, ParseException {
 		StringBuilder result = new StringBuilder();
 		
