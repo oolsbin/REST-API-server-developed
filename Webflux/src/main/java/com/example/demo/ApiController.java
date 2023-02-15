@@ -15,17 +15,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.example.demo.airport.AirportService;
 import com.example.demo.airport.ListVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -41,37 +44,10 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class ApiController {
-
-	// 필드 주입이 아닌 생성자 주입형태로 사용합니다. '생성자 주입 형태'로 사용합니다.
-	//final은 못바꾸게 함. 초기화를 안한상태로 쓰면 쓸수가 없음
 	
+	@Autowired
+	AirportService airportService;
 	
-//	public ApiController(ApiService ts) {
-//		this.apiservice = ts;
-//	}
-	
-	/**
-     * [VIEW] Thymeleaf 화면 만을 출력하는 함수
-     *
-     * @param model 전송 할 데이터
-     * @return 페이지
-	 * @throws ParseException 
-     */
-	
-	
-//	@ApiDocumentResponse // 위에서 설정한 공통 Response
-//	@Operation(summary = "airList", description = "리스트 출력")
-//	@PostMapping
-//	public Response<ListVO> airList(
-//		@RequestBody @Valid AirList request){
-//		return new Response<>(
-//			ApiService.api(ModelMapper)
-//		);
-//	}
-//	
-//	
-//	
-
 	@GetMapping("/find")
 	@Operation(summary = "공항", description = "공항을 조회한다.")
 	public ResponseEntity<ListVO> callapihttp(
@@ -81,21 +57,6 @@ public class ApiController {
 		StringBuilder result = new StringBuilder();
 		
 		Gson gson = new Gson();
-		
-		
-//		System.out.println(airlineId);
-//		System.out.println(airlineNm);
-//		List<ListVO> vo = 
-		
-//		ResponseEntity<ListVO> resultVO = null;//빌드해서 내용을 리턴
-		
-//		Map<String, Object> map = new HashMap<>();
-		
-//		map.put("airlineID", airlineId);
-//		map.put("airlineNm", airlineNm);
-		
-//		result.put("airlineId", result.get);
-//		result.put("airlineNm", airlineNm);
 		
 		String response = "";
 		
@@ -188,38 +149,17 @@ public class ApiController {
 
 		System.out.println(parse_items);
 		System.out.println("------------------------ data ------------------------------------");
-//		JSONObject data_Nm = (JSONObject) parse_item.get(1);
-//		JSONObject data_Id = (JSONObject) parse_item.get(2);
-////		
-//		System.out.println(data_Id);
-//		System.out.println(data_Nm);
-		
 		System.out.println(parse_item.size());
-		
-//		JSONObject data_list = new JSONObject();
-//		data_list.get(data_Id);
-//		data_list.get(data_Nm);
-		
 
-		
 				// 각각 요소 출력
 				for (int i = 0; i < parse_item.size(); i++) { // 해당 JSONArray객체에 값을 차례대로 가져와서 읽습니다.
 					JSONObject data_list = (JSONObject) parse_item.get(i);
-//					String airlineId = (String) imsi.get("airlineId");
-//					String airlineNm = (String) imsi.get("airlineNm");
 
 					System.out.println("배열의 " + i + "번째 요소");
 					System.out.println(data_list);
-//					System.out.println("airlineId : " + airlineId);
-//					System.out.println("airlineNm : " + airlineNm);
 				}	
-		
-//		int objSize = obj.size();
-//		System.out.println("object size =" + objSize);
-		
 	    return ResponseEntity.ok(vo);
 	}
-	//Jackson 라이브러리, Gson
 	
 	
 	

@@ -3,14 +3,39 @@ package com.example.demo.airport;
 import java.util.List;
 import javax.annotation.Generated;
 
+import org.apache.ibatis.type.Alias;
+
 import io.swagger.models.Response;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@Alias("List")
+@ToString
 @Getter
 @Setter
 public class ListVO {
+	
+	private String airlineId;
+	private String airlineNm;
+	
+
+	public String getAirlineId() {
+		return airlineId;
+	}
+
+	public void setAirlineId(String airlineId) {
+		this.airlineId = airlineId;
+	}
+
+	public String getAirlineNm() {
+		return airlineNm;
+	}
+
+	public void setAirlineNm(String airlineNm) {
+		this.airlineNm = airlineNm;
+	}
 
 	private Response response;
 
@@ -36,6 +61,7 @@ public class ListVO {
 			this.body = body;
 		}
 
+		
 		@Getter
 		@Setter
 		public class Header {
@@ -93,6 +119,8 @@ public class ListVO {
 
 		}
 
+		
+		
 		@Getter
 		@Setter
 		public class Item {

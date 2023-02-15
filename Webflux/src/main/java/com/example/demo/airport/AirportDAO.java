@@ -1,14 +1,9 @@
 package com.example.demo.airport;
-//package airport;
-//
-//import org.apache.ibatis.session.SqlSession;
-//import org.mapstruct.Qualifier;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Repository;
-//
-//@Repository
-//public class AirportDAO {
-//	@Autowired @Qualifier("api") private SqlSession sql;
-//	
-//
-//}
+
+import java.util.List;
+
+import org.mybatis.spring.SqlSessionTemplate;
+
+public interface AirportDAO {
+	public abstract List<ListVO> airport_list(SqlSessionTemplate session);
+}
