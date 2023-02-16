@@ -19,7 +19,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	//https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
-		implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 	//json 파싱
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'

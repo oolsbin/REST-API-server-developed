@@ -4,9 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.ListVO;
 
+//인터페이스
 public interface AirportService {
-	//CRUD(Create, Read,  Update, Delete)
-	public String selectTest();//공항조회
-	
+	public String selectTest();// DB테스트 조회
+	public void insertList_insert(ListVO vo);
 }

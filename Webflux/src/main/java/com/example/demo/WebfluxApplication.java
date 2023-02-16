@@ -9,21 +9,13 @@ import io.swagger.annotations.License;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 
-
 @SpringBootApplication
-@OpenAPIDefinition (info =
-@Info(
-          title = "the title",
-          version = "0.0",
-          description = "My API"
-  )
-)
-//@ComponentScan(basePackages = {"com.example.demo.airport.AirportService"})
+//swagger-ui title, version, description 설정
+@OpenAPIDefinition(info = @Info(title = "the title", version = "0.0", description = "My API"))
 public class WebfluxApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(WebfluxApplication.class, args);
-		
+
 	}
 
 }
