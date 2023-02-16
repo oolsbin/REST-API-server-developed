@@ -22,9 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -32,6 +34,8 @@ import com.example.demo.airport.AirportService;
 import com.example.demo.airport.ListVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Response;
@@ -40,13 +44,20 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "air Controller", description = "항공관련 컨트롤러")//스프링 독
+//@Tag(name = "air Controller", description = "항공관련 컨트롤러")//스프링 독
 @RestController
 @RequiredArgsConstructor
 public class ApiController {
 	
 	@Autowired
-	AirportService airportService;
+	private AirportService airportService;
+	
+	@RequestMapping(value="/index", method = {RequestMethod.POST, RequestMethod.GET})
+	public String index() {
+		String test = airportService.selectTest();
+		System.out.println("조회테스트" + test);
+		return "index";
+	}
 	
 	@GetMapping("/find")
 	@Operation(summary = "공항", description = "공항을 조회한다.")
@@ -56,12 +67,11 @@ public class ApiController {
 			) throws IOException, ParseException {
 		StringBuilder result = new StringBuilder();
 		
+		
+		
 		Gson gson = new Gson();
 		
 		String response = "";
-		
-		
-		
 		
 		System.out.println("airlineId = " + airlineId);
 		System.out.println("airlineNm = " + airlineNm);
@@ -129,9 +139,8 @@ public class ApiController {
 	    System.out.println("------------------------ JSONParser_item ------------------------------------");
 	    
 		JSONParser paser = new JSONParser(); //JSON Parser객채를 만듭니다. parser를 통해서 파싱을 합니다.
+		
 		JSONObject obj = (JSONObject)paser.parse(response); //Parser로 문자열 데이터를 JSON데이터로 변환합니다.
-		
-		
 		
 		// 한번에 제일 아랫단에 갈 수는 없다 차례대로 찾아가자
 
@@ -147,20 +156,35 @@ public class ApiController {
 		// items로 부터 item 를 받아옵니다. item : 뒤에 [ 로 시작하므로 jsonarray입니다.
 		JSONArray parse_item = (JSONArray) parse_items.get("item");
 
+		
+		
+
 		System.out.println(parse_items);
 		System.out.println("------------------------ data ------------------------------------");
 		System.out.println(parse_item.size());
-
+		
+//		List<ListVO> list = airportService.airport_list();
+//		System.out.println(list);
 				// 각각 요소 출력
 				for (int i = 0; i < parse_item.size(); i++) { // 해당 JSONArray객체에 값을 차례대로 가져와서 읽습니다.
 					JSONObject data_list = (JSONObject) parse_item.get(i);
-
+					String airportId = (String)data_list.get("공항아이디");
+					String airportNm = (String)data_list.get("공항번호");
+					
+					
+					
+//					airportService.save(list_vo);
+					
+					
 					System.out.println("배열의 " + i + "번째 요소");
 					System.out.println(data_list);
-				}	
+				}
+				
+
 	    return ResponseEntity.ok(vo);
 	}
 	
+
 	
 	
 	

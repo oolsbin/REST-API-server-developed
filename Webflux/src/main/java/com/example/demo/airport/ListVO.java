@@ -11,15 +11,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Alias("List")
+
 @ToString
 @Getter
 @Setter
 public class ListVO {
-	
-	private String airlineId;
-	private String airlineNm;
-	
+
+	private String airlineId, airlineNm;
+
+	public ListVO(String airlineId, String airlineNm) {
+		super();
+		this.airlineId = airlineId;
+		this.airlineNm = airlineNm;
+	}
 
 	public String getAirlineId() {
 		return airlineId;
@@ -61,7 +65,6 @@ public class ListVO {
 			this.body = body;
 		}
 
-		
 		@Getter
 		@Setter
 		public class Header {
@@ -102,7 +105,7 @@ public class ListVO {
 			}
 
 		}
-		
+
 		@Getter
 		@Setter
 		public class Items {
@@ -119,8 +122,6 @@ public class ListVO {
 
 		}
 
-		
-		
 		@Getter
 		@Setter
 		public class Item {
@@ -145,8 +146,6 @@ public class ListVO {
 			}
 
 		}
-
-		
 
 	}
 

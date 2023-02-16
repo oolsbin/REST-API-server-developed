@@ -2,6 +2,7 @@ package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 import io.swagger.annotations.Contact;
 import io.swagger.annotations.License;
@@ -17,10 +18,12 @@ import io.swagger.v3.oas.annotations.info.Info;
           description = "My API"
   )
 )
+//@ComponentScan(basePackages = {"com.example.demo.airport.AirportService"})
 public class WebfluxApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WebfluxApplication.class, args);
+		
 	}
 
 }
