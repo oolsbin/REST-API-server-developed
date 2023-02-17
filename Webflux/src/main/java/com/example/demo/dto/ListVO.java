@@ -6,47 +6,31 @@ import javax.annotation.Generated;
 import org.apache.ibatis.type.Alias;
 
 import io.swagger.models.Response;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+//응답객체
+//@AllArgsConstructor
+//@NoArgsConstructor
 @ToString
 @Getter
 @Setter
 public class ListVO {
 
-	private String airlineId, airlineNm;
-
-	public ListVO(String airlineId, String airlineNm) {
-		super();
-		this.airlineId = airlineId;
-		this.airlineNm = airlineNm;
-	}
-
-	public String getAirlineId() {
-		return airlineId;
-	}
-
-	public void setAirlineId(String airlineId) {
-		this.airlineId = airlineId;
-	}
-
-	public String getAirlineNm() {
-		return airlineNm;
-	}
-
-	public void setAirlineNm(String airlineNm) {
-		this.airlineNm = airlineNm;
-	}
-
-	private Response response;
-
-	public Response getResponse() {
-		return response;
-	}
-
-	public void setResponse(Response response) {
-		this.response = response;
-	}
+	private String airlineId;
+	private String airlineNm;
+	
+	private ResponseVO response;
+	
+//	@Override
+//	public String toString() {
+//		StringBuffer result = new StringBuffer();
+//		for(String i : this.airlineId) {
+//			result.append(", ").append(i);
+//		}
+//		return result.toString();
+//	}
 }

@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '2.7.8'
+	id 'org.springframework.boot' version '3.0.0'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	
 }
@@ -18,14 +18,20 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframewrok.boot:spring-boot-starter-data-jpa'
+	
 	//https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	
 	//json 파싱
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 	
-	    compileOnly 'org.projectlombok:lombok'
+	//lombok
+	compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    
+    runtimeOnly 'com.h2database:h2'
     	
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
@@ -43,15 +49,26 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
+	
 	// MyBatis
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
 	implementation group: 'org.mybatis', name: 'mybatis', version: '3.5.6'
 	implementation group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
 	implementation group: 'org.springframework', name: 'spring-jdbc', version: '5.3.23'
 	
+	
 	//jsp를 사용하기 위한 종속성
 	implementation 'javax.servlet:jstl'
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+	
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.security:spring-security-test'
+    
+    // https://mvnrepository.com/artifact/javax.persistence/javax.persistence-api
+	implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+    
 	
 }
 
