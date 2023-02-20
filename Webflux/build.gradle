@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.0.0'
+	id 'org.springframework.boot' version '2.7.8'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	
 }
@@ -18,7 +18,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'org.springframewrok.boot:spring-boot-starter-data-jpa'
 	
 	//https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
@@ -42,10 +41,10 @@ dependencies {
 	
 	implementation group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.13'
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.11.2'
-	implementation "com.fasterxml.jackson.core:jackson-annotations:2.12.0"
-	implementation "com.fasterxml.jackson.core:jackson-databind:2.9.9"
-	implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.9"
-	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.0"
+	implementation "com.fasterxml.jackson.core:jackson-annotations:2.11.2"
+	implementation "com.fasterxml.jackson.core:jackson-databind:2.11.2"
+	implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.11.2"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2"
 	
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	//implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
