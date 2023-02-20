@@ -16,5 +16,5 @@ import springfox.documentation.service.Header;
 @Getter
 @Setter
 public class ItemsVO {
-	private List<ItemVO> itemVO;
+	private List<ItemVO> item;
 }

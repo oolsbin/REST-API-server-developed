@@ -14,5 +14,5 @@ import springfox.documentation.service.Header;
 @Getter
 @Setter
 public class BodyVO {
-	private ItemsVO itemsVO;
+	private ItemsVO items;
 }

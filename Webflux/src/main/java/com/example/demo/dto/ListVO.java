@@ -20,9 +20,6 @@ import lombok.ToString;
 @Getter
 @Setter
 public class ListVO {
-
-	private String airlineId;
-	private String airlineNm;
 	
 	private ResponseVO response;
 	

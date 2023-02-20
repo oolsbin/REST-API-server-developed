@@ -236,36 +236,5 @@ public class ApiController {
 //        }
 //        return JwtTokenProvider.createToken(member.getUsername(), member.getRoles());
 //    }
-    
-
-//	@GetMapping("/apitest2")
-//	public String callapihttp2() {
-//
-//		StringBuffer result = new StringBuffer();
-//
-//		try {
-//			String urlBuilder = "http://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getFlightOpratInfoList?"
-//					+ "serviceKey=s%2FJMx%2B0d4t%2Ffp3JEpST7EJe7bhAJ7Tvuh%2FXkexlOqbuUEzEZxeUBH2UZ%2BXHjwDN8%2Fywz%2F9a%2BFGIUE6k%2FqcmZTg%3D%3D"
-//					+ "&depAirportId=NAARKJJ" + "&arrAirportId=NAARKPC" + "&depPlandTime=20211201"
-//					+ "&airlineId=AAR&numOfRows=10" + "&pageNo=1" + "&_type=json";
-//			URL url = new URL(urlBuilder);
-//			// 4. 요청하고자 하는 URL과 통신하기 위한 Connection 객체 생성
-//			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//			// 5. 통신을 위한 메소드 SET
-//			conn.setRequestMethod("GET");
-//
-//			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-//
-//			String returnLine;
-//			
-//			while ((returnLine = br.readLine()) != null) {
-//				result.append(returnLine + "/n");
-//			}
-//			conn.disconnect();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//		return result + "";
-//	}
+   
 }
