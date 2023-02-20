@@ -1,23 +1,20 @@
-package com.example.demo.dto;
+package com.example.demo.airportDto;
 
 import java.util.List;
-import javax.annotation.Generated;
 
-import org.apache.ibatis.type.Alias;
+import org.springframework.http.StreamingHttpOutputMessage.Body;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
-import io.swagger.models.Response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import springfox.documentation.service.Header;
 
 @Getter
 @Setter
-public class ListVO {
-	
-	private ResponseVO response;
-	
+public class ItemsVO {
+	private List<ItemVO> item;
 }

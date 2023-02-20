@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.filghtDto;
 
 import java.util.List;
 import javax.annotation.Generated;
@@ -16,8 +16,9 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ListVO {
-	
+
 	private ResponseVO response;
-	
+
 }
