@@ -5,6 +5,8 @@ import javax.annotation.Generated;
 
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
 import io.swagger.models.Response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +17,6 @@ import lombok.ToString;
 //응답객체
 //@AllArgsConstructor
 //@NoArgsConstructor
-@ToString
 @Getter
 @Setter
 public class ListVO {
