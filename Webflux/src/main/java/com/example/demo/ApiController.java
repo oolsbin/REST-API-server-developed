@@ -51,9 +51,9 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.xml.sax.SAXException;
 
+import com.example.demo.airlineDto.ItemVO;
+import com.example.demo.airlineDto.ListVO;
 import com.example.demo.airport.AirportService;
-import com.example.demo.dto.ItemVO;
-import com.example.demo.dto.ListVO;
 import com.example.demo.filghtDto.BodyVO;
 import com.example.demo.filghtDto.HeaderVO;
 import com.example.demo.filghtDto.ResponseVO;
@@ -204,9 +204,9 @@ public class ApiController {
 				@RequestParam(value = "일반석운임", required = false) String economyCharge,
 				@RequestParam(value = "비즈니스석운임", required = false) String prestigeCharge,
 				@RequestParam(value = "항공편명", required = false) String vihicleId,
-				@RequestParam(value = "한 페이지 결과 수", required = false) String numOfRows,
-				@RequestParam(value = "페이지 수", required = false) String pageNo,
-				@RequestParam(value = "데이터 총 개수", required = false) String totalCount				
+				@RequestParam(value = "한 페이지 결과 수", required = false) Integer numOfRows,
+				@RequestParam(value = "페이지 수", required = false) Integer pageNo,
+				@RequestParam(value = "데이터 총 개수", required = false) Integer totalCount				
 				)throws IOException, ParseException {
 
 			try {
