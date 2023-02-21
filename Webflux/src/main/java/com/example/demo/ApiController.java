@@ -1,77 +1,22 @@
 package com.example.demo;
 
-import java.io.BufferedReader;
-import java.io.CharConversionException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
-import java.nio.charset.CharacterCodingException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity.HeadersBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.function.ServerRequest.Headers;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.xml.sax.SAXException;
 
-import com.example.demo.airlineDto.ItemVO;
 import com.example.demo.airlineDto.ListVO;
-import com.example.demo.airport.AirportService;
-import com.example.demo.filghtDto.BodyVO;
-import com.example.demo.filghtDto.HeaderVO;
-import com.example.demo.filghtDto.ResponseVO;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
-import ch.qos.logback.classic.Logger;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.models.Model;
-import io.swagger.models.Response;
-import io.swagger.models.Xml;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.models.media.XML;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -196,17 +141,12 @@ public class ApiController {
 		@GetMapping(value = "/filght")
 		@Operation(summary = "항공운항정보 목록 조회", description = "출/도착지를 기준으로 국내선 항공운항정보 목록을 조회하는 기능")
 		public ResponseEntity<?> FilghtSelect
-			   (@RequestParam(value = "항공사명", required = false) String airlineNm,
-			    @RequestParam(value = "도착공항", required = false) String arrAirportNm,
-			    @RequestParam(value = "도착시간", required = false) String arrPlandTime,
-				@RequestParam(value = "출발공항", required = false) String depAirportNm,
-				@RequestParam(value = "출발시간", required = false) String depPlandTime,
-				@RequestParam(value = "일반석운임", required = false) String economyCharge,
-				@RequestParam(value = "비즈니스석운임", required = false) String prestigeCharge,
-				@RequestParam(value = "항공편명", required = false) String vihicleId,
+			   (@RequestParam(value = "출발공항ID", required = false) String depAirportId,
+			    @RequestParam(value = "도착공항ID", required = false) String arrAirportId,
+			    @RequestParam(value = "출발일", required = false) Integer depPlandTime,
+				@RequestParam(value = "항공사ID", required = false) String airlineId,
 				@RequestParam(value = "한 페이지 결과 수", required = false) Integer numOfRows,
-				@RequestParam(value = "페이지 수", required = false) Integer pageNo,
-				@RequestParam(value = "데이터 총 개수", required = false) Integer totalCount				
+				@RequestParam(value = "페이지 수", required = false) Integer pageNo			
 				)throws IOException, ParseException {
 
 			try {
@@ -215,13 +155,13 @@ public class ApiController {
 				headers.add("Content-Type", "application/json");
 				HttpEntity<?> entity = new HttpEntity<>(headers);
 
-				String urlBuilder = "http://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getFlightOpratInfoList?"
+				String urlBuilder = "https://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getFlightOpratInfoList"
 						+ "serviceKey=s%2FJMx%2B0d4t%2Ffp3JEpST7EJe7bhAJ7Tvuh%2FXkexlOqbuUEzEZxeUBH2UZ%2BXHjwDN8%2Fywz%2F9a%2BFGIUE6k%2FqcmZTg%3D%3D"
-						+ "&airlineNm=" + airlineNm + "&arrAirportNm=" + arrAirportNm + "&arrPlandTime=" + arrPlandTime + "&depAirportNm=" + depAirportNm 
-						+ "&depPlandTime=" + depPlandTime + "&economyCharge=" + economyCharge + "&prestigeCharge=" + prestigeCharge	+ "&vihicleId=" + vihicleId 
-						+ "&numOfRows=" + numOfRows + "&pageNo=" + pageNo + "&totalCount=" + totalCount +"&_type=json";
+						+ "&depAirportId=" + depAirportId + "&arrAirportId=" + arrAirportId + "&depPlandTime=" + depPlandTime + "&airlineId=" + airlineId 
+						+ "&numOfRows=" + numOfRows + "&pageNo=" + pageNo +"&_type=json";
 
 				URI uri = new URI(urlBuilder);
+
 
 				final ResponseEntity<?> response = restTemplate
 						.exchange(uri
@@ -229,8 +169,8 @@ public class ApiController {
 								, entity
 								, com.example.demo.filghtDto.ListVO.class);
 
-
-				if (response.getStatusCodeValue() == 200) {
+				
+				if (response.getStatusCodeValue() == 200) {	
 					return response;
 				} else {
 					throw new Exception();

@@ -10,5 +10,4 @@ public class BodyVO {
 	
 	private Integer numOfRows;
 	private Integer pageNo;
-	private Integer totalCount;
 }
