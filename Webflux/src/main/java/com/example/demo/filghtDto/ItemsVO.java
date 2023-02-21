@@ -1,4 +1,4 @@
-package com.example.demo.filghtDto;
+package com.example.demo.filghtdto;
 
 import java.util.List;
 

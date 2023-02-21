@@ -1,4 +1,4 @@
-package com.example.demo.airportDto;
+package com.example.demo.airportdto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.StreamingHttpOutputMessage.Body;

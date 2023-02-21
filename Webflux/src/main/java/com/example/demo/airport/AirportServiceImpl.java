@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.example.demo.airlineDto.ListVO;
+import com.example.demo.airlinedto.ListVO;
 
 //AirportService에서 생성한 기능을 구현하는 공간 : 구현체
 @Service

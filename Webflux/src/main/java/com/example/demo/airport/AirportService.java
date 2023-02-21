@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.example.demo.airlineDto.ItemVO;
-import com.example.demo.airlineDto.ItemsVO;
-import com.example.demo.airlineDto.ListVO;
+import com.example.demo.airlinedto.ItemVO;
+import com.example.demo.airlinedto.ItemsVO;
+import com.example.demo.airlinedto.ListVO;
 
 //인터페이스
 public interface AirportService {

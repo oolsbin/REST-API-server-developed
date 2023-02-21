@@ -1,4 +1,4 @@
-package com.example.demo.airlineDto;
+package com.example.demo.airlinedto;
 
 import org.springframework.http.StreamingHttpOutputMessage.Body;
 import org.springframework.stereotype.Controller;

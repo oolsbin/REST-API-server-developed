@@ -1,4 +1,4 @@
-package com.example.demo.airportDto;
+package com.example.demo.airportdto;
 
 import java.util.List;
 import javax.annotation.Generated;

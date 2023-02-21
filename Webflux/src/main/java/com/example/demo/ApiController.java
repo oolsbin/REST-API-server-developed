@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.demo.airlineDto.ListVO;
+import com.example.demo.airlinedto.ListVO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,9 +33,9 @@ public class ApiController {
 	//HttpEntity = HttpHeader와 HttpBody를 포함하는 클래스
 	//HttpEntity를 상속받아 구현한 클래스가 RequestEntity, ResponseEntity이다.
 	//ResponseEntity는 HttpRequest에 대한 응답 데이터를 포함하는 클래스로 HttpStatus, HttpHeaders, HttpBody를 포함한다.
-	public ResponseEntity<?> callapihttp
-		   (@RequestParam(value = "항공사ID", required = false) String airlineId,
-			@RequestParam(value = "항공사명", required = false) String airlineNm)
+	public ResponseEntity<?> airline
+		   (@RequestParam(value = "airlineId", required = false) String airlineId,
+			@RequestParam(value = "airlineNm", required = false) String airlineNm)
 			throws IOException, ParseException {
 
 		//RestTemplate 사용하여 파싱
@@ -99,9 +99,9 @@ public class ApiController {
 	
 		@GetMapping(value = "/airport")
 		@Operation(summary = "공항 목록 조회", description = "국내 공항 목록을 조회하는 기능")
-		public ResponseEntity<?> AirportSelect
-			   (@RequestParam(value = "공항ID", required = false) String airportId,
-				@RequestParam(value = "공항명", required = false) String airportNm)
+		public ResponseEntity<?> airportSelect
+			   (@RequestParam(value = "airportId", required = false) String airportId,
+				@RequestParam(value = "airportNm", required = false) String airportNm)
 				throws IOException, ParseException {
 
 			try {
@@ -121,7 +121,7 @@ public class ApiController {
 						.exchange(uri
 								, HttpMethod.GET
 								, entity
-								, com.example.demo.airportDto.ListVO.class);
+								, com.example.demo.airportdto.ListVO.class);
 
 				if (response.getStatusCodeValue() == 200) {
 					return response;
@@ -138,15 +138,15 @@ public class ApiController {
 	
 		
 		//body..page가져와야한다..
-		@GetMapping(value = "/filght")
+		@GetMapping(value = "/flight")
 		@Operation(summary = "항공운항정보 목록 조회", description = "출/도착지를 기준으로 국내선 항공운항정보 목록을 조회하는 기능")
-		public ResponseEntity<?> FilghtSelect
-			   (@RequestParam(value = "출발공항ID", required = false) String depAirportId,
-			    @RequestParam(value = "도착공항ID", required = false) String arrAirportId,
-			    @RequestParam(value = "출발일", required = false) Integer depPlandTime,
-				@RequestParam(value = "항공사ID", required = false) String airlineId,
-				@RequestParam(value = "한 페이지 결과 수", required = false) Integer numOfRows,
-				@RequestParam(value = "페이지 수", required = false) Integer pageNo			
+		public ResponseEntity<?> flightSelect
+			   (@RequestParam(value = "depAirportId", required = false) String depAirportId,
+			    @RequestParam(value = "arrAirportId", required = false) String arrAirportId,
+			    @RequestParam(value = "depPlandTime", required = false) Integer depPlandTime,
+				@RequestParam(value = "airlineId", required = false) String airlineId,
+				@RequestParam(value = "numOfRows", required = false) Integer numOfRows,
+				@RequestParam(value = "pageNo", required = false) Integer pageNo			
 				)throws IOException, ParseException {
 
 			try {
@@ -167,7 +167,7 @@ public class ApiController {
 						.exchange(uri
 								, HttpMethod.GET
 								, entity
-								, com.example.demo.filghtDto.ListVO.class);
+								, com.example.demo.filghtdto.ListVO.class);
 
 				
 				if (response.getStatusCodeValue() == 200) {	
