@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+
+  mariadb:
+    container_name: tago-server
+    image: tago-server:0.0.1
+    restart: always
+    ports:
+      - 29101:3306
+    networks:
+      - tago-network
+networks:
+  tago-network:
+    external: true
+
+
