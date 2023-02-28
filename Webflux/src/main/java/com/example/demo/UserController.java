@@ -1,20 +1,25 @@
 package com.example.demo;
 
+import java.util.HashMap;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.token.JwtRequestDto;
-import com.example.demo.token.JwtService;
+import com.example.demo.token.JwtAccessService;
+import com.example.demo.token.JwtRefreshService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 	
-	private final JwtService userService;
+	private final JwtAccessService accessService;
+	private final JwtRefreshService refreshService;
+	
 	
 //	@RequestMapping(value="/login", method = RequestMethod.GET)
 //	public void Login() {
@@ -24,13 +29,19 @@ public class UserController {
 	//post로 호출시 토큰발생
 	@PostMapping("/login_token")
 	//ResponseEntity는 사용자의 HttpRequest에 대한 응답 데이터를 포함하는 클래스이다. 따라서 HttpStatus, HttpHeaders, HttpBody를 포함한다. 
-	public ResponseEntity<String> Login
-		(@RequestBody JwtRequestDto vo)throws Exception {
+	public ResponseEntity<HashMap<String, String>> login
+		(@RequestBody  JwtRequestDto vo)throws Exception {
 		
-		System.out.println(userService.login("id", "pw"));
-		System.out.println(vo.getId());
-		System.out.println(vo.getPw());
-		return ResponseEntity.ok().body(userService.login("", ""));	
+		HashMap<String, String> map = new HashMap<String, String>(){{
+			put("access", accessService.login("", ""));
+			put("refresh", refreshService.login("", ""));
+		}};
+		
+		
+//		System.out.println(userService.login("id", "pw"));
+//		System.out.println(vo.getId());
+//		System.out.println(vo.getPw());
+		return ResponseEntity.ok().body(map);	
 	}
 
 }
