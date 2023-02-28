@@ -33,8 +33,8 @@ public class UserController {
 		(@RequestBody  JwtRequestDto vo)throws Exception {
 		
 		HashMap<String, String> map = new HashMap<String, String>(){{
-			put("access", accessService.login("", ""));
-			put("refresh", refreshService.login("", ""));
+			put("access", accessService.login(vo.getId(), vo.getPw()));
+			put("refresh", refreshService.login(vo.getId(), vo.getPw()));
 		}};
 		
 		
