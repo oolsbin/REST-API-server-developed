@@ -13,19 +13,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.demo.airlinedto.ListVO;
+import com.example.demo.dto.airlinedto.ListVO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+
+
+
 
 //swagger-ui 타이틀 이름과 설명
 @Tag(name = "air Controller", description = "항공관련 컨트롤러") // 스프링 독
 @RestController
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Slf4j
 public class ApiController {
+
+//	@Autowired
+//	private AirportService airportService;
+//	
+//	// DB연결 Test클래스
+//	@RequestMapping(value="/index")
+//	public String index() throws Exception{
+//		String test = airportService.selectTest();
+//		System.out.println("조회테스트" + test);
+//		return "index";
+//	}
 	
 	// 공항목록조회(airportId:공항ID, airportNm:공항명)
 	@GetMapping(value = "/airline")//, produces = "application/json"
@@ -121,7 +135,7 @@ public class ApiController {
 						.exchange(uri
 								, HttpMethod.GET
 								, entity
-								, com.example.demo.airportdto.ListVO.class);
+								, ListVO.class);
 
 				if (response.getStatusCodeValue() == 200) {
 					return response;
@@ -167,7 +181,7 @@ public class ApiController {
 						.exchange(uri
 								, HttpMethod.GET
 								, entity
-								, com.example.demo.filghtdto.ListVO.class);
+								, ListVO.class);
 
 				
 				if (response.getStatusCodeValue() == 200) {	
