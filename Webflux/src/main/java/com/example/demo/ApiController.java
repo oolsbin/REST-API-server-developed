@@ -30,16 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ApiController {
 
-//	@Autowired
-//	private AirportService airportService;
-//	
-//	// DB연결 Test클래스
-//	@RequestMapping(value="/index")
-//	public String index() throws Exception{
-//		String test = airportService.selectTest();
-//		System.out.println("조회테스트" + test);
-//		return "index";
-//	}
+
 	
 	// 공항목록조회(airportId:공항ID, airportNm:공항명)
 	@GetMapping(value = "/airline")//, produces = "application/json"
