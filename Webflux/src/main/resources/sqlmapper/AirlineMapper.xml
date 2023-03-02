@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.AirlineMapper">
+
+	<!-- 공항정보 조회 -->
+	<select id="selectAirline" resultType="string">
+		select * from airline_db;
+	</select>
+	
+<!-- 	공항정보 수정 -->
+<!-- 	<update id="updateAirline"> -->
+<!-- 		update airport_db -->
+<!-- 		set airlineId = #{airlineId}, airlineNm = #{airlineNm} -->
+<!-- 	</update> -->
+<!-- 			where code_value = #{code_value} -->
+
+<!-- 	<insert id="insertAirline" -->
+<!-- 		parameterType="com.example.demo.aiport.ListVO"> -->
+<!-- 		insert into airline_db(airportId, airportNm) -->
+<!-- 		values(#{airportId}, #{airportNm}) -->
+<!-- 	</insert> -->
+
+
+</mapper>

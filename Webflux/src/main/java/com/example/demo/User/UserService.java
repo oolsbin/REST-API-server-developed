@@ -1,6 +1,6 @@
-//package com.example.demo.user;
-//
-//
-//public interface UserService {
-//	public void Login(String id);
-//}
+package com.example.demo.user;
+
+
+public interface UserService {
+	int join(UserVO vo);
+}
