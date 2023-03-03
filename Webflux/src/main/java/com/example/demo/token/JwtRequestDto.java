@@ -9,4 +9,5 @@ public class JwtRequestDto {
 
     private String id;
     private String pw;
+//	private String refreshtoken;
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.token.JwtRequestDto;
+import com.example.demo.token.JwtTokenDto;
 import com.example.demo.user.UserService;
 import com.example.demo.user.UserVO;
 import com.example.demo.token.JwtAccessService;
@@ -41,24 +42,27 @@ public class UserController {
 			put("access", accessService.login(vo.getId(), vo.getPw()));
 			put("refresh", refreshService.login(vo.getId(), vo.getPw()));
 		}};
+		
 		return ResponseEntity.ok().body(map);	
 	}
 	
 	
 	//회원가입
-	@ResponseBody
-	@RequestMapping("/join")
+	@PostMapping("/join")
 	public ResponseEntity<?> join(@RequestBody UserVO vo) throws Exception {
 		
 		StringBuffer msg = new StringBuffer();
 		if (userService.join(vo) == 1) {
+			//vo에 refresh token만들어서 저장하면 안되나..
+//			vo.setRefreshToken(accessService.login(vo.getId(), vo.getPw()));
 			msg.append("회원가입을 환영합니다.^^");
 		} else {
 			msg.append("가입에 실패했습니다ㅠㅠ");
 		}
-
 		return ResponseEntity.ok().body(msg.toString());
 	};
+	
+	
 	
 
 }

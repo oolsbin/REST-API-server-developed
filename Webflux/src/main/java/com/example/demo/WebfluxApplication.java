@@ -10,7 +10,7 @@ import io.swagger.annotations.License;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 
-@SpringBootApplication(exclude= {SecurityAutoConfiguration.class})
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 //swagger-ui title, version, description 설정
 @OpenAPIDefinition(info = @Info(title = "the title", version = "0.0", description = "My API"))
 public class WebfluxApplication {
