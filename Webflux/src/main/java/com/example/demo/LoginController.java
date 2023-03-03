@@ -40,7 +40,7 @@
 //	}
 //
 //	//로그인
-//	//http post body -> data를 집어넣어서 받겠다.
+	//http post body -> data를 집어넣어서 받겠다.
 //    @PostMapping("/login")
 //    public ResponseEntity login(@RequestBody JwtRequestDto dto) {
 //    	 try {
@@ -50,10 +50,10 @@
 //             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
 //         }
 //    }
-//
-////    회원가입: /auth/signup
-////    @PostMapping(value = "signup", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-////    public String signup(@RequestBody MemberSignupRequestDto request) {
-////        return "signup";
-////    }
-//}
+////
+//////    회원가입: /auth/signup
+//////    @PostMapping(value = "signup", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+//////    public String signup(@RequestBody MemberSignupRequestDto request) {
+//////        return "signup";
+//////    }
+////}

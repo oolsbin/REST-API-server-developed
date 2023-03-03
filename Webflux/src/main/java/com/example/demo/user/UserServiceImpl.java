@@ -1,6 +1,7 @@
 package com.example.demo.user;
 
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,14 @@ public class UserServiceImpl implements UserService{
 	private UserMapper usermapper;
 	
 	@Autowired
-	private PasswordEncoder passwordEncoder; 
+	private PasswordEncoder passwordEncoder;
+	
+	@Override
+	public UserVO login(UserVO vo) throws Exception{
+		
+		return usermapper.login(vo);
+	}
+
 	
 	@Override
 	public int join(UserVO vo) {

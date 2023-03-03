@@ -7,5 +7,11 @@
 		insert into member(id, pw)
 		values (#{id}, #{pw})
 	</insert>
+	
+	<!-- 로그인처리 -->
+	<select id='login' resultType='com.example.demo.user.UserVO'>
+		select * from member
+		where id = #{id} and pw = #{pw}
+	</select>
 
 </mapper>
