@@ -6,6 +6,6 @@ import com.example.demo.user.UserVO;
 
 @Mapper
 public interface UserMapper {
-	UserVO login(UserVO vo);//로그인
+	int login(UserVO vo);//로그인
 	int join(UserVO vo);//회원가입
 }

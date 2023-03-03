@@ -2,8 +2,11 @@ package com.example.demo;
 
 import java.util.HashMap;
 
+import javax.validation.constraints.Null;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,35 +28,55 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserController {
 
+
 	private final JwtAccessService accessService;
 	private final JwtRefreshService refreshService;
 
 	private final UserService userService;
+	
 
-//	@RequestMapping(value="/login", method = RequestMethod.GET)
-//	public void Login() {
-//		System.out.println("/request /join : GET");
-//	}
-
+	@GetMapping("/login")
+	public String Login() {
+		System.out.println("/request /join : GET");
+		return "login";
+	}
+	
+//		if (userService.login(vo) == null) {
+//			StringBuffer msg = new StringBuffer();
+//			msg.append("로그인실패");
+//			return ResponseEntity.ok().body(msg.toString());
+//
+//		} else if(userService.login(vo)!=null){
+//			return ResponseEntity.ok().body(map);
+//		}	
+	
 	// post로 호출시 토큰발생
 	@PostMapping("/login_token")
 	// ResponseEntity는 사용자의 HttpRequest에 대한 응답 데이터를 포함하는 클래스이다. 따라서 HttpStatus,
 	// HttpHeaders, HttpBody를 포함한다.
-	public ResponseEntity<?> login(@RequestBody UserVO vo) throws Exception {
+	public ResponseEntity<?> loginId(@RequestBody UserVO vo) throws Exception {
 
-		if (userService.login(vo) == null) {
-			StringBuffer msg = new StringBuffer();
-			msg.append("로그인실패");
-			return ResponseEntity.ok().body(msg.toString());
+        String path = "";
 
-		} else if(userService.login(vo)!=null){
-			HashMap<String, String> map = new HashMap<String, String>() {{
+        UserVO user = new UserVO();
+
+        user.setId(vo.getId());
+        user.setPw(vo.getPw());
+
+        int result = userService.login(vo);
+
+        if(result == 1) {
+        	HashMap<String, String> map = new HashMap<String, String>() {{
 					put("access", accessService.login(vo.getId(), vo.getPw()));
 					put("refresh", refreshService.login(vo.getId(), vo.getPw()));
 				}};
-			return ResponseEntity.ok().body(map);
-		}
-		return ResponseEntity.ok().body(vo);
+
+		return ResponseEntity.ok().body(map);
+        } else {
+			StringBuffer msg = new StringBuffer();
+			msg.append("로그인실패");
+			return ResponseEntity.ok().body(msg.toString());
+        }	
 	}
 
 	

@@ -24,8 +24,7 @@ public class UserServiceImpl implements UserService{
 	private PasswordEncoder passwordEncoder;
 	
 	@Override
-	public UserVO login(UserVO vo) throws Exception{
-		
+	public int login(UserVO vo) throws Exception{
 		return usermapper.login(vo);
 	}
 
