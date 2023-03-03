@@ -50,13 +50,12 @@ public class UserController {
 	@RequestMapping("/join")
 	public ResponseEntity<?> join(@RequestBody UserVO vo) throws Exception {
 		
-		StringBuffer msg = new StringBuffer("<script>");
+		StringBuffer msg = new StringBuffer();
 		if (userService.join(vo) == 1) {
-			msg.append("alert('회원가입을 환영합니다.^^'); location='").append("'");
+			msg.append("회원가입을 환영합니다.^^");
 		} else {
-			msg.append("alert('가입에 실패했습니다ㅠㅠ'); history.go(-1);");
+			msg.append("가입에 실패했습니다ㅠㅠ");
 		}
-		msg.append("</script>");
 
 		return ResponseEntity.ok().body(msg.toString());
 	};

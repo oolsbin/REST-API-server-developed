@@ -1,3 +1,4 @@
+package com.example.demo.user;
 //package com.example.demo.user;
 //
 //import org.apache.ibatis.annotations.Mapper;
