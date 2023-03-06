@@ -1,11 +1,15 @@
 package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.airline.AirlineService;
 import com.example.demo.airline.AirlineServiceImpl;
+import com.example.demo.airline.AirlineVO;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 public class AirlineController {
@@ -19,10 +23,15 @@ public class AirlineController {
 	
 	// DB연결 Test클래스
 	@RequestMapping(value="/index")
-	public String selectAirline(){
-		String test = airlineService.selectAirline();
+	public ResponseEntity<?> selectAirline(){
+		AirlineVO test = airlineService.selectAirline();
 		System.out.println("조회테스트" + test);
-		return "selectAirline";
+		return ResponseEntity.ok().body(test);
+	}
+	
+	@RequestMapping("/insert")
+	public ResponseEntity<?> insertAirline(@RequestBody AirlineVO vo) throws Exception {
+		return ResponseEntity.ok().body(vo);
 	}
 	
 //	@RequestMapping("/detail")

@@ -2,23 +2,21 @@ package com.example.demo;
 
 import java.util.HashMap;
 
-import javax.validation.constraints.Null;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.token.JwtRequestDto;
-import com.example.demo.token.JwtTokenDto;
-import com.example.demo.user.UserService;
-import com.example.demo.user.UserVO;
 import com.example.demo.token.JwtAccessService;
 import com.example.demo.token.JwtRefreshService;
+import com.example.demo.user.UserService;
+import com.example.demo.user.UserVO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,51 +32,46 @@ public class UserController {
 
 	private final UserService userService;
 	
-
-	@GetMapping("/login")
-	public String Login() {
-		System.out.println("/request /join : GET");
-		return "login";
-	}
-	
-//		if (userService.login(vo) == null) {
-//			StringBuffer msg = new StringBuffer();
-//			msg.append("로그인실패");
-//			return ResponseEntity.ok().body(msg.toString());
-//
-//		} else if(userService.login(vo)!=null){
-//			return ResponseEntity.ok().body(map);
-//		}	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	// post로 호출시 토큰발생
-	@PostMapping("/login_token")
+	@PostMapping("/login")
 	// ResponseEntity는 사용자의 HttpRequest에 대한 응답 데이터를 포함하는 클래스이다. 따라서 HttpStatus,
 	// HttpHeaders, HttpBody를 포함한다.
-	public ResponseEntity<?> loginId(@RequestBody UserVO vo) throws Exception {
+	public ResponseEntity<?> loginId(@RequestBody UserVO vo)
+			throws Exception {
 
-        String path = "";
+//		String path = "";
 
-        UserVO user = new UserVO();
+		UserVO user = new UserVO();
 
-        user.setId(vo.getId());
-        user.setPw(vo.getPw());
+		user.setId(vo.getId());
+		user.setPw(vo.getPw());
 
-        int result = userService.login(vo);
-
-        if(result == 1) {
-        	HashMap<String, String> map = new HashMap<String, String>() {{
-					put("access", accessService.login(vo.getId(), vo.getPw()));
-					put("refresh", refreshService.login(vo.getId(), vo.getPw()));
-				}};
-
-		return ResponseEntity.ok().body(map);
-        } else {
+		//result왜 널값 들어오니.... ㅜㅜㅜ
+		UserVO result = userService.login(vo);
+		
+		if (result == null) {
 			StringBuffer msg = new StringBuffer();
 			msg.append("로그인실패");
 			return ResponseEntity.ok().body(msg.toString());
-        }	
+		}
+		
+		if (!passwordEncoder.matches(vo.getPw(), result.getPw())) {
+			StringBuffer msg = new StringBuffer();
+			msg.append("패스워드 불일치");
+			return ResponseEntity.ok().body(msg.toString());
+		}
+		
+		HashMap<String, String> map = new HashMap<String, String>() {{
+				put("access", accessService.login(vo.getId(), vo.getPw()));
+				put("refresh", refreshService.login(vo.getId(), vo.getPw()));
+			}};
+		return ResponseEntity.ok().body(map);
 	}
-
+	
+	
 	
 	// 회원가입
 	@PostMapping("/join")
@@ -93,6 +86,38 @@ public class UserController {
 			msg.append("가입에 실패했습니다ㅠㅠ");
 		}
 		return ResponseEntity.ok().body(msg.toString());
+
+//		UserVO result = userService.login(vo);
+//		
+//		if(vo.getId().equals(result)){
+//			
+//		}
+		
 	};
+	
+	
+	//test
+	@GetMapping("/jwtTest")
+    public String jwtTest(@RequestHeader("User-Agent") String userAgent){
+        log.info("UserAgent = {}", userAgent);
+
+        return userAgent;
+    }
+	
+	@GetMapping("/example")
+	public ResponseEntity<String> getUserFromToken(@RequestHeader HttpHeaders headers) {
+	    String authToken = headers.getFirst("Authorization");
+	    if(authToken != null & authToken.startsWith("Bearer ")) {
+	    	String token = null;
+	    	token = authToken.substring(7);
+	    	
+	    	
+	    	
+	    	return new ResponseEntity<>("Bearer 토큰이 유효합니다.", HttpStatus.OK);
+	    }else {
+	    	return new ResponseEntity<>("Bearer 토큰이 필요합니다.", HttpStatus.UNAUTHORIZED);
+	    			
+	    }
+	}
 
 }

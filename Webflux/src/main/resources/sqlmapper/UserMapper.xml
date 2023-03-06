@@ -4,14 +4,20 @@
 
 	<!-- 회원가입처리 -->
 	<insert id='join'>
-		insert into member(id, pw)
+		insert ignore into member(id, pw)
 		values (#{id}, #{pw})
 	</insert>
 	
 	<!-- 로그인처리 -->
-	<select id='login' resultType='integer'>
-		select count(*) from member
-		where id = #{id} and pw = #{pw}
+	<select id='login' resultType='com.example.demo.user.UserVO'>
+		select * from member
+		where id = #{id}
 	</select>
+	
+	<!-- id에 맞는 encoding된 pw 가져오기 -->
+<!-- 	<select id='login_pw' resultType='String'> -->
+<!-- 		select pw from member -->
+<!-- 		where id = #{id} -->
+<!-- 	</select> -->
 
 </mapper>

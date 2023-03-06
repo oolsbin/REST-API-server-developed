@@ -3,9 +3,16 @@
 <mapper namespace="com.example.demo.mapper.AirlineMapper">
 
 	<!-- 공항정보 조회 -->
-	<select id="selectAirline" resultType="string">
-		select * from airline_db;
+	<select id="selectAirline" resultType="com.example.demo.airline.AirlineVO">
+		select * from airline
+		where airlineId = #{airlineId} or airlineNm = #{airlineNm}
 	</select>
+	
+	<!-- 공항정보 저장 -->
+	<insert id='insertAirline'>
+		insert into airline(airlineId, airlineNm)
+		values (#{airlineId}, #{airlineNm})
+	</insert>
 	
 <!-- 	공항정보 수정 -->
 <!-- 	<update id="updateAirline"> -->

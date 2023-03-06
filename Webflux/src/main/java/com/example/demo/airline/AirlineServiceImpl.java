@@ -22,8 +22,13 @@ public class AirlineServiceImpl implements AirlineService {
 	private AirlineMapper airlineMapper;
 	
 	@Override
-	public String selectAirline() {
+	public AirlineVO selectAirline() {
 		return airlineMapper.selectAirline();
+	}
+	
+	@Override
+	public int insertAirline(AirlineVO vo) {
+		return airlineMapper.insertAirline(vo);
 	}
 //	  public String getName(){
 //	        URI uri = UriComponentsBuilder
