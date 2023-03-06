@@ -8,11 +8,24 @@
 		values (#{id}, #{pw})
 	</insert>
 	
+	<!-- 아이디중복체크 -->
+	<select id='userId' resultType="int">
+		select count(*) from member
+		where id = #{id}
+	</select>
+	
+	
 	<!-- 로그인처리 -->
 	<select id='login' resultType='com.example.demo.user.UserVO'>
 		select * from member
 		where id = #{id}
 	</select>
+	
+	<!-- refreshToken 저장 -->
+<!-- 	<insert id='refreshToken'> -->
+<!-- 		insert ignore into refresh_token(id, refresh_token) -->
+<!-- 		values (#{id}, #{refresh_token}) -->
+<!-- 	</insert> -->
 	
 	<!-- id에 맞는 encoding된 pw 가져오기 -->
 <!-- 	<select id='login_pw' resultType='String'> -->

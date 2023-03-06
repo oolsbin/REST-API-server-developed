@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.refresh.TokenVO;
 import com.example.demo.token.JwtAccessService;
 import com.example.demo.token.JwtRefreshService;
 import com.example.demo.user.UserService;
@@ -50,15 +51,15 @@ public class UserController {
 		user.setPw(vo.getPw());
 
 		//result왜 널값 들어오니.... ㅜㅜㅜ
-		UserVO result = userService.login(vo);
+//		UserVO result = userService.login(vo);
 		
-		if (result == null) {
+		if (userService.login(vo) == null) {
 			StringBuffer msg = new StringBuffer();
 			msg.append("로그인실패");
 			return ResponseEntity.ok().body(msg.toString());
 		}
 		
-		if (!passwordEncoder.matches(vo.getPw(), result.getPw())) {
+		if (!passwordEncoder.matches(vo.getPw(), userService.login(vo).getPw())) {
 			StringBuffer msg = new StringBuffer();
 			msg.append("패스워드 불일치");
 			return ResponseEntity.ok().body(msg.toString());
@@ -68,31 +69,29 @@ public class UserController {
 				put("access", accessService.login(vo.getId(), vo.getPw()));
 				put("refresh", refreshService.login(vo.getId(), vo.getPw()));
 			}};
+			
+		//refreshToken 저장
+//		String refreshToken = refreshService.login(vo.getId(), vo.getPw());
+//		TokenVO result = userService.refreshToken(null);
+		
 		return ResponseEntity.ok().body(map);
 	}
-	
-	
 	
 	// 회원가입
 	@PostMapping("/join")
 	public ResponseEntity<?> join(@RequestBody UserVO vo) throws Exception {
 
-		StringBuffer msg = new StringBuffer();
-		if (userService.join(vo) == 1) {
-			// vo에 refresh token만들어서 저장하면 안되나..
-//			vo.setRefreshToken(accessService.login(vo.getId(), vo.getPw()));
-			msg.append("회원가입을 환영합니다.^^");
-		} else {
-			msg.append("가입에 실패했습니다ㅠㅠ");
+		if (userService.userId(vo) == 1) {
+			
+			StringBuffer msg = new StringBuffer();
+			msg.append("가입에 실패했습니다 ㅜ");
+			return ResponseEntity.ok().body(msg.toString());
 		}
-		return ResponseEntity.ok().body(msg.toString());
 
-//		UserVO result = userService.login(vo);
-//		
-//		if(vo.getId().equals(result)){
-//			
-//		}
-		
+		userService.join(vo);
+		StringBuffer msg = new StringBuffer();
+		msg.append("회원가입을 환영합니다.^^");
+		return ResponseEntity.ok().body(msg.toString());
 	};
 	
 	
@@ -110,9 +109,6 @@ public class UserController {
 	    if(authToken != null & authToken.startsWith("Bearer ")) {
 	    	String token = null;
 	    	token = authToken.substring(7);
-	    	
-	    	
-	    	
 	    	return new ResponseEntity<>("Bearer 토큰이 유효합니다.", HttpStatus.OK);
 	    }else {
 	    	return new ResponseEntity<>("Bearer 토큰이 필요합니다.", HttpStatus.UNAUTHORIZED);

@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService{
 		return usermapper.login(vo);
 	}
 	
+	
 //	@Override
 //	public String login_pw(UserVO vo){
 //		return usermapper.login_pw(vo);
@@ -42,10 +43,12 @@ public class UserServiceImpl implements UserService{
 		
 		return usermapper.join(vo);
 	}
-	
-//	@Override
-//	public String refreshToken(TokenVO vo) throws Exception{
-//		return usermapper.refreshToken(vo);
-//	}
+
+
+	@Override
+	public int userId(UserVO vo) throws Exception {
+		return usermapper.userId(vo);
+	}
+
 
 }
