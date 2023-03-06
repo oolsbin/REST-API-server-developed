@@ -4,20 +4,20 @@
 
 	<!-- 회원가입처리 -->
 	<insert id='join'>
-		insert ignore into member(id, pw)
+		insert ignore into user(id, pw)
 		values (#{id}, #{pw})
 	</insert>
 	
 	<!-- 아이디중복체크 -->
 	<select id='userId' resultType="int">
-		select count(*) from member
+		select count(*) from user
 		where id = #{id}
 	</select>
 	
 	
 	<!-- 로그인처리 -->
 	<select id='login' resultType='com.example.demo.user.UserVO'>
-		select * from member
+		select * from user
 		where id = #{id}
 	</select>
 	

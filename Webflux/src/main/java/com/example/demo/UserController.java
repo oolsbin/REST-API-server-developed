@@ -72,7 +72,9 @@ public class UserController {
 			
 		//refreshToken 저장
 //		String refreshToken = refreshService.login(vo.getId(), vo.getPw());
-//		TokenVO result = userService.refreshToken(null);
+//		String id = vo.getId();
+		
+//		userService.refreshToken(vo);
 		
 		return ResponseEntity.ok().body(map);
 	}
