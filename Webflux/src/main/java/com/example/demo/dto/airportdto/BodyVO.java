@@ -7,7 +7,4 @@ import lombok.Setter;
 @Setter 
 public class BodyVO {
 	private ItemsVO items;
-	
-	private Integer numOfRows;
-	private Integer pageNo;
 }

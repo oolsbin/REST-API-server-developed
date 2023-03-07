@@ -8,5 +8,5 @@ public interface UserService {
 	int join(UserVO vo) throws Exception;
 	int userId(UserVO vo) throws Exception;
 	UserVO login(UserVO vo) throws Exception;
-//	int refreshToken(TokenVO vo) throws Exception;
+	int refreshToken(TokenVO vo) throws Exception;
 }

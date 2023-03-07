@@ -2,30 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.AirlineMapper">
 
-	<!-- 공항정보 조회 -->
-	<select id="selectAirline" resultType="com.example.demo.airline.AirlineVO">
-		select * from airline
-		where airlineId = #{airlineId} or airlineNm = #{airlineNm}
-	</select>
-	
 	<!-- 공항정보 저장 -->
 	<insert id='insertAirline'>
 		insert into airline(airlineId, airlineNm)
 		values (#{airlineId}, #{airlineNm})
 	</insert>
 	
-<!-- 	공항정보 수정 -->
-<!-- 	<update id="updateAirline"> -->
-<!-- 		update airport_db -->
-<!-- 		set airlineId = #{airlineId}, airlineNm = #{airlineNm} -->
-<!-- 	</update> -->
-<!-- 			where code_value = #{code_value} -->
+	<!-- 공항정보 조회 -->
+	<select id="selectAirline"
+		resultType="com.example.demo.airline.AirlineVO">
+		select * from airline
+		where airlineId = #{airlineId} and
+		airlineNm = #{airlineNm}
+	</select>
 
-<!-- 	<insert id="insertAirline" -->
-<!-- 		parameterType="com.example.demo.aiport.ListVO"> -->
-<!-- 		insert into airline_db(airportId, airportNm) -->
-<!-- 		values(#{airportId}, #{airportNm}) -->
-<!-- 	</insert> -->
+	<!-- 공항정보 수정 -->
+	<update id="updateAirline">
+		update airline
+		set airlineId = #{airlineId}, airlineNm = #{airlineNm}
+	</update>
+
+	<!-- 공항정보 삭제 -->
+	<delete id='deleteAirline'>
+		delete from airline where airlineId = #{airlineId}
+	</delete>
+
+
+	<!-- where code_value = #{code_value} -->
+
+	<!-- <insert id="insertAirline" -->
+	<!-- parameterType="com.example.demo.aiport.ListVO"> -->
+	<!-- insert into airline_db(airportId, airportNm) -->
+	<!-- values(#{airportId}, #{airportNm}) -->
+	<!-- </insert> -->
 
 
 </mapper>

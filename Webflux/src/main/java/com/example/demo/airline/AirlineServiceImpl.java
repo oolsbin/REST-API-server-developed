@@ -1,17 +1,8 @@
 package com.example.demo.airline;
 
-import java.net.URI;
-import java.util.List;
-
-import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import com.example.demo.dto.airlinedto.ListVO;
 import com.example.demo.mapper.AirlineMapper;
 
 //AirportService에서 생성한 기능을 구현하는 공간 : 구현체
@@ -22,14 +13,16 @@ public class AirlineServiceImpl implements AirlineService {
 	private AirlineMapper airlineMapper;
 	
 	@Override
-	public AirlineVO selectAirline() {
-		return airlineMapper.selectAirline();
+	public int insertAirline(AirlineVO vo) throws Exception {
+		return airlineMapper.insertAirline(vo);
 	}
 	
 	@Override
-	public int insertAirline(AirlineVO vo) {
-		return airlineMapper.insertAirline(vo);
+	public AirlineVO selectAirline(AirlineVO vo) throws Exception {
+		return airlineMapper.selectAirline(vo);
 	}
+	
+	
 //	  public String getName(){
 //	        URI uri = UriComponentsBuilder
 //	                .fromUriString("http://localhost:8080")

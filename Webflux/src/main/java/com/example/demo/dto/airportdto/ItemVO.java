@@ -6,8 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ItemVO {
-	private String depAirportId;
-	private String arrAirportId;
-	private Integer depPlandTime;
-	private String airlineId;
+	private String airportId;
+	private String airportNm;
 }

@@ -1,11 +1,17 @@
 package com.example.demo.refresh;
 
+
+
+import java.util.Date;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class TokenVO {
-	private String refreshToken;
 	private String id;
+	private String refreshToken;
+	private Date createDate;
+	private Date updateDate;
 }

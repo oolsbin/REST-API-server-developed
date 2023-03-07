@@ -1,5 +1,7 @@
 package com.example.demo;
 
+
+import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,10 +25,16 @@ import com.example.demo.user.UserVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@CrossOrigin(originPatterns = "http://localhost:8080")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
+	
+    @GetMapping("/api/view")
+    public String view() {
+        return "/cors";
+    }
 
 
 	private final JwtAccessService accessService;
@@ -71,10 +80,17 @@ public class UserController {
 			}};
 			
 		//refreshToken 저장
-//		String refreshToken = refreshService.login(vo.getId(), vo.getPw());
-//		String id = vo.getId();
+		String refreshToken = refreshService.login(vo.getId(), vo.getPw());
+		String id = vo.getId();
 		
-//		userService.refreshToken(vo);
+		TokenVO token_vo = new TokenVO();
+		Date today = new Date();
+		
+		token_vo.setId(id);
+		token_vo.setRefreshToken(refreshToken);
+		token_vo.setCreateDate(today);
+		token_vo.setUpdateDate(today);
+		userService.refreshToken(token_vo);
 		
 		return ResponseEntity.ok().body(map);
 	}
@@ -105,13 +121,14 @@ public class UserController {
         return userAgent;
     }
 	
-	@GetMapping("/example")
+	@GetMapping("/refresh")
 	public ResponseEntity<String> getUserFromToken(@RequestHeader HttpHeaders headers) {
 	    String authToken = headers.getFirst("Authorization");
 	    if(authToken != null & authToken.startsWith("Bearer ")) {
-	    	String token = null;
-	    	token = authToken.substring(7);
-	    	return new ResponseEntity<>("Bearer 토큰이 유효합니다.", HttpStatus.OK);
+	    	String refreshToken = null;
+	    	refreshToken = authToken.substring(7);
+	    	System.out.println(refreshToken);
+	    	return new ResponseEntity<>("refreshToken 요청을 받았습니다 = " + refreshToken + "\nBearer 토큰이 유효합니다.", HttpStatus.OK);
 	    }else {
 	    	return new ResponseEntity<>("Bearer 토큰이 필요합니다.", HttpStatus.UNAUTHORIZED);
 	    			

@@ -22,10 +22,10 @@
 	</select>
 	
 	<!-- refreshToken 저장 -->
-<!-- 	<insert id='refreshToken'> -->
-<!-- 		insert ignore into refresh_token(id, refresh_token) -->
-<!-- 		values (#{id}, #{refresh_token}) -->
-<!-- 	</insert> -->
+	<insert id='refreshToken'>
+		insert ignore into refresh_token(id, refresh_token, create_date, update_date)
+		values (#{id}, #{refreshToken}, #{createDate}, #{updateDate})
+	</insert>
 	
 	<!-- id에 맞는 encoding된 pw 가져오기 -->
 <!-- 	<select id='login_pw' resultType='String'> -->

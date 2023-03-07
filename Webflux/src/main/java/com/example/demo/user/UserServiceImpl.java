@@ -51,10 +51,10 @@ public class UserServiceImpl implements UserService{
 	}
 
 
-//	@Override
-//	public int refreshToken(TokenVO vo) throws Exception {
-//		return usermapper.refreshToken(vo);
-//	}
+	@Override
+	public int refreshToken(TokenVO vo) throws Exception {
+		return usermapper.refreshToken(vo);
+	}
 
 
 }
