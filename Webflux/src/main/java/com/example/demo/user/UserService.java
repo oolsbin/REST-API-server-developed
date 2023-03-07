@@ -9,4 +9,5 @@ public interface UserService {
 	int userId(UserVO vo) throws Exception;
 	UserVO login(UserVO vo) throws Exception;
 	int refreshToken(TokenVO vo) throws Exception;
+	TokenVO refreshToken_chk(TokenVO vo) throws Exception;
 }

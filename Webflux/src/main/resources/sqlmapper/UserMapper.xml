@@ -14,7 +14,6 @@
 		where id = #{id}
 	</select>
 	
-	
 	<!-- 로그인처리 -->
 	<select id='login' resultType='com.example.demo.user.UserVO'>
 		select * from user
@@ -27,10 +26,18 @@
 		values (#{id}, #{refreshToken}, #{createDate}, #{updateDate})
 	</insert>
 	
-	<!-- id에 맞는 encoding된 pw 가져오기 -->
-<!-- 	<select id='login_pw' resultType='String'> -->
-<!-- 		select pw from member -->
-<!-- 		where id = #{id} -->
-<!-- 	</select> -->
+	<!-- refreshToken 맞는지 확인 -->
+	<select id='refreshToken_chk' resultType="com.example.demo.refresh.TokenVO">
+		select * from refresh_token
+		where refresh_token = #{refreshToken}
+	</select>
+	
+	<!-- 선택한 방명록 글 삭제 -->
+	<delete id="refreshToken_delete">
+		delete from refresh_token
+		where refresh_token = #{refreshToken}
+	</delete>
+
+
 
 </mapper>

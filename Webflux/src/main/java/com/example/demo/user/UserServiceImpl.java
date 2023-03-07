@@ -56,5 +56,9 @@ public class UserServiceImpl implements UserService{
 		return usermapper.refreshToken(vo);
 	}
 
+	@Override
+	public TokenVO refreshToken_chk(TokenVO vo) throws Exception {
+		return usermapper.refreshToken_chk(vo);
+	}
 
 }

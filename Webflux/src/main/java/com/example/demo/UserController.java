@@ -16,12 +16,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.demo.refresh.TokenVO;
 import com.example.demo.token.JwtAccessService;
 import com.example.demo.token.JwtRefreshService;
 import com.example.demo.user.UserService;
 import com.example.demo.user.UserVO;
 
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,12 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-	
-    @GetMapping("/api/view")
-    public String view() {
-        return "/cors";
-    }
-
 
 	private final JwtAccessService accessService;
 	private final JwtRefreshService refreshService;
@@ -122,17 +119,70 @@ public class UserController {
     }
 	
 	@GetMapping("/refresh")
-	public ResponseEntity<String> getUserFromToken(@RequestHeader HttpHeaders headers) {
+	public ResponseEntity<String> getUserFromToken(@RequestHeader HttpHeaders headers) throws Exception {
 	    String authToken = headers.getFirst("Authorization");
 	    if(authToken != null & authToken.startsWith("Bearer ")) {
 	    	String refreshToken = null;
 	    	refreshToken = authToken.substring(7);
 	    	System.out.println(refreshToken);
-	    	return new ResponseEntity<>("refreshToken 요청을 받았습니다 = " + refreshToken + "\nBearer 토큰이 유효합니다.", HttpStatus.OK);
-	    }else {
-	    	return new ResponseEntity<>("Bearer 토큰이 필요합니다.", HttpStatus.UNAUTHORIZED);
+	    	
+	    	
+	    	TokenVO token_vo = new TokenVO();
+	    	token_vo.setRefreshToken(refreshToken);
+	    	if(userService.refreshToken_chk(token_vo)!=null) {
+	    		
+	    		//유효성 검사
+	    		DecodedJWT decodedJWT = JWT.decode(refreshToken);
+	    		Date date = new Date();
+	    		Date yom = decodedJWT.getExpiresAt();
+	    		if(decodedJWT.getExpiresAt()==date) {
+	    			
+	    			
+	    			return new ResponseEntity<>("기간이 만료되었습니다", HttpStatus.OK);
+	    		}
+	    		
+//	    		userService.refreshToken_delete(token_vo);
+
+	    		UserVO vo = new UserVO();
+	    		
+	    		//이미 있던걸 지우고 새로 만들어서 저장 (갱신)
+	    		HashMap<String, String> map = new HashMap<String, String>() {{
+					put("access", accessService.login(vo.getId(), vo.getPw()));
+					put("refresh", refreshService.login(vo.getId(), vo.getPw()));
+				}};
+				
+				
+				
+				
+			//refreshToken 저장
+			String re_refreshToken = refreshService.login(vo.getId(), vo.getPw());
+			String id = vo.getId();
+			
+			TokenVO re_token_vo = new TokenVO();
+			Date today = new Date();
+			
+			token_vo.setId(id);
+			token_vo.setRefreshToken(re_refreshToken);
+			token_vo.setCreateDate(today);
+			token_vo.setUpdateDate(today);
+			userService.refreshToken(token_vo);
+			
+			return ResponseEntity.ok().body(map+"");
+	    		
+//	    		return new ResponseEntity<>("refreshToken 요청을 받았습니다 = " + refreshToken + "\nBearer 토큰이 유효합니다.", HttpStatus.OK);
+	    	}else {	    		
+	    		//로그인 하라고 틩겨서
+	    		StringBuffer msg = new StringBuffer();
+				msg.append("Bearer 토큰이 필요합니다.");
+				return ResponseEntity.ok().body(msg.toString());
+	    	}
+
+//	    	return new ResponseEntity<>("refreshToken 요청을 받았습니다 = " + refreshToken + "\nBearer 토큰이 유효합니다.", HttpStatus.OK);
+//	    }else {
+//	    	return new ResponseEntity<>("Bearer 토큰이 필요합니다.", HttpStatus.UNAUTHORIZED);
 	    			
 	    }
+		return null;
 	}
 
 }
