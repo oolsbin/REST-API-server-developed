@@ -10,4 +10,5 @@ public interface UserService {
 	UserVO login(UserVO vo) throws Exception;
 	int refreshToken(TokenVO vo) throws Exception;
 	TokenVO refreshToken_chk(TokenVO vo) throws Exception;
+	int refreshToken_delete(TokenVO vo) throws Exception;
 }

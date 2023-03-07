@@ -60,5 +60,10 @@ public class UserServiceImpl implements UserService{
 	public TokenVO refreshToken_chk(TokenVO vo) throws Exception {
 		return usermapper.refreshToken_chk(vo);
 	}
+	
+	@Override
+	public int refreshToken_delete(TokenVO vo) throws Exception {
+		return usermapper.refreshToken_delete(vo);
+	}
 
 }
