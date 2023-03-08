@@ -9,8 +9,7 @@
 	</insert>
 	
 	<!-- 공항정보 조회 -->
-	<select id="selectAirline"
-		resultType="com.example.demo.airline.AirlineVO">
+	<select id="selectAirline" resultType="com.example.demo.airline.AirlineVO">
 		select * from airline
 		where airlineId = #{airlineId} and
 		airlineNm = #{airlineNm}

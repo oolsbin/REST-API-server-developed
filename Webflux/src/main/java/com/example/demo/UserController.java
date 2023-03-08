@@ -120,21 +120,23 @@ public class UserController {
 	
 	@GetMapping("/refresh")
 	public ResponseEntity<String> getUserFromToken(@RequestHeader HttpHeaders headers) throws Exception {
+		//1)client에서 refreshToken을 header에 담아서 보내면 그 token을 꺼내서 사용한다
 	    String authToken = headers.getFirst("Authorization");
 	    if(authToken != null & authToken.startsWith("Bearer ")) {
 	    	String refreshToken = null;
 	    	refreshToken = authToken.substring(7);
 	    	System.out.println(refreshToken);
-	    	
-	    	
+	    	//2)client에서 받은 token을 받아서 token_vo에 담는다
 	    	TokenVO token_vo = new TokenVO();
 	    	token_vo.setRefreshToken(refreshToken);
+	    	//3)token이 db에 있다면 유효성 검사를 실시한다
 	    	if(userService.refreshToken_chk(token_vo)!=null) {
 	    		
 	    		//유효성 검사
 	    		DecodedJWT decodedJWT = JWT.decode(refreshToken);
 	    		Date date = new Date();
 	    		Date yom = decodedJWT.getExpiresAt();
+	    		//4-1)만약에 받은 token의 유효기간이 오늘까지이면 "기간이 만료되었습니다"를 return한다
 	    		if(decodedJWT.getExpiresAt()==date) {
 	    			
 	    			
@@ -143,6 +145,7 @@ public class UserController {
 	    		
 //	    		userService.refreshToken_delete(token_vo);
 
+	    		//4-2)token의 유효기간이 남아 있으면 refreshToken과 accessToken을 재발급한다
 	    		UserVO vo = new UserVO();
 	    		
 	    		//이미 있던걸 지우고 새로 만들어서 저장 (갱신)
