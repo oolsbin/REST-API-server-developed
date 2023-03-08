@@ -19,8 +19,8 @@ public class ItemVO {
 	private String airlineNm;
 	private String depPlandTime;
 	private String arrPlandTime;
-	private Integer economyCharge;
-	private Integer prestigeCharge;
+	private Integer economyCharge;//Integer
+	private Integer prestigeCharge;//Integer
 	private String depAirportNm;
 	private String arrAirportNm;
 }

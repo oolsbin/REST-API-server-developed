@@ -23,12 +23,8 @@
 		where id = #{id}
 	</delete>
 	
-	
-	
-
-	<!-- 저장후 board 의 pk인 id의 시퀀스를 반환해준다 -->
-<!-- 	<selectKey keyProperty="id" resultType="integer" order='AFTER'> -->
-<!-- 		select recev_seq.id from dual -->
-<!-- 	</selectKey> -->
+	<select id="find" resultType = "com.example.demo.flight.FlightVO">
+		SELECT * FROM flight LIMIT #{pageNo}, #{numOfRows}
+	</select>
 
 </mapper>

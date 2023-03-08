@@ -26,14 +26,4 @@
 		delete from airline where airlineId = #{airlineId}
 	</delete>
 
-
-	<!-- where code_value = #{code_value} -->
-
-	<!-- <insert id="insertAirline" -->
-	<!-- parameterType="com.example.demo.aiport.ListVO"> -->
-	<!-- insert into airline_db(airportId, airportNm) -->
-	<!-- values(#{airportId}, #{airportNm}) -->
-	<!-- </insert> -->
-
-
 </mapper>

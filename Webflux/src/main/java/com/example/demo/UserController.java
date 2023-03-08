@@ -62,13 +62,13 @@ public class UserController {
 		if (userService.login(vo) == null) {
 			StringBuffer msg = new StringBuffer();
 			msg.append("로그인실패");
-			return ResponseEntity.ok().body(msg.toString());
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		
 		if (!passwordEncoder.matches(vo.getPw(), userService.login(vo).getPw())) {
 			StringBuffer msg = new StringBuffer();
 			msg.append("패스워드 불일치");
-			return ResponseEntity.ok().body(msg.toString());
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);//400
 		}
 		
 		HashMap<String, String> map = new HashMap<String, String>() {{
@@ -89,7 +89,7 @@ public class UserController {
 		token_vo.setUpdateDate(today);
 		userService.refreshToken(token_vo);
 		
-		return ResponseEntity.ok().body(map);
+		return ResponseEntity.status(HttpStatus.CREATED).body(map);//201
 	}
 	
 	// 회원가입
@@ -100,7 +100,7 @@ public class UserController {
 			
 			StringBuffer msg = new StringBuffer();
 			msg.append("가입에 실패했습니다 ㅜ");
-			return ResponseEntity.ok().body(msg.toString());
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
 		userService.join(vo);
@@ -137,7 +137,7 @@ public class UserController {
 	    		Date date = new Date();
 	    		Date yom = decodedJWT.getExpiresAt();
 	    		//4-1)만약에 받은 token의 유효기간이 오늘까지이면 "기간이 만료되었습니다"를 return한다
-	    		if(decodedJWT.getExpiresAt()==date) {
+	    		if(decodedJWT.getExpiresAt().before(date)) {
 	    			
 	    			
 	    			return new ResponseEntity<>("기간이 만료되었습니다", HttpStatus.OK);

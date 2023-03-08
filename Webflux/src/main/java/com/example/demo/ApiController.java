@@ -2,8 +2,12 @@ package com.example.demo;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.demo.dto.airlinedto.ListVO;
+import com.example.demo.dto.flightdto.ItemVO;
+import com.example.demo.dto.flightdto.ListVO;
+import com.example.demo.flight.FlightService;
+import com.example.demo.flight.FlightVO;
+import com.example.demo.flight.page.SearchDto;
+import com.example.demo.mapper.FlightMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,8 +39,14 @@ import lombok.extern.slf4j.Slf4j;
 //@RequiredArgsConstructor
 @Slf4j
 public class ApiController {
+	
+	@Autowired
+	private FlightMapper flightmapper;
 
 
+	@Autowired
+	private FlightService flightService;
+	
 	
 	// 공항목록조회(airportId:공항ID, airportNm:공항명)
 	@GetMapping(value = "/airline")//, produces = "application/json"
@@ -106,15 +121,15 @@ public class ApiController {
 
 		
 
-		//body..page가져와야한다..
+		//total count
 		@GetMapping(value = "/flight")
 		@Operation(summary = "항공운항정보 목록 조회", description = "출/도착지를 기준으로 국내선 항공운항정보 목록을 조회하는 기능")
 		public ResponseEntity<?> flightSelect
 			   (@RequestParam(value = "depAirportId", required = false) String depAirportId,
 			    @RequestParam(value = "arrAirportId", required = false) String arrAirportId,
-			    @RequestParam(value = "depPlandTime", required = false) Integer depPlandTime,
+			    @RequestParam(value = "depPlandTime", required = false) String depPlandTime,
 				@RequestParam(value = "airlineId", required = false) String airlineId,
-				@RequestParam(value = "numOfRows", required = false) Integer numOfRows,
+				@RequestParam(value = "numOfRows", required = false) Integer numOfRows,//시리얼라이져가 되서 보내주기 때문에 ㄱㅊ
 				@RequestParam(value = "pageNo", required = false) Integer pageNo			
 				)throws IOException, ParseException {
 
@@ -131,19 +146,53 @@ public class ApiController {
 
 				URI uri = new URI(urlBuilder);
 
-
-				final ResponseEntity<?> response = restTemplate
+				final ResponseEntity<ListVO> response = restTemplate
 						.exchange(uri
 								, HttpMethod.GET
 								, entity
-								, com.example.demo.dto.flightdto.ListVO.class);
+								, ListVO.class);
+				
+				if (!response.getStatusCode().is2xxSuccessful()) {	//status 코드
+					throw new Exception();
+					
+				}
+					
+				ListVO responsebody = response.getBody();
+				
+				List<ItemVO> itemList = responsebody.getResponse().getBody().getItems().getItem();
+				
+				itemList.size();
+					
+					
 
 				
-				if (response.getStatusCodeValue() == 200) {	
-					return response;
-				} else {
-					throw new Exception();
+				Map<String, Object> map = new HashMap<>();
+				map.put("pageNo", (pageNo-1) * numOfRows);
+				map.put("numOfRows", numOfRows);
+				List<FlightVO> result = flightService.find(map);
+				System.out.println(result.size());
+				
+				if (itemList.size() != result.size()) {
+					for (ItemVO vo : itemList) {
+						FlightVO flightVO = new FlightVO();
+						flightVO.setAirlineNm(vo.getAirlineNm());
+						flightVO.setArrAirportNm(vo.getArrAirportNm());
+						flightVO.setArrPlandTime(vo.getArrPlandTime());
+						flightVO.setDepAirportNm(vo.getDepAirportNm());
+						flightVO.setDepPlandTime(vo.getDepPlandTime());
+						flightVO.setEconomyCharge(vo.getEconomyCharge());
+						flightVO.setPrestigeCharge(vo.getPrestigeCharge());
+						flightVO.setVihicleId(vo.getVihicleId());
+
+						flightmapper.insertFlight(flightVO);
+					}
+					return ResponseEntity.ok(flightService.find(map));
 				}
+				return ResponseEntity.ok(response.getBody());//content length 차이날때 사용
+
+				//response.getHeaders().setContentLength(response.getBody().toString().length());
+				
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;

@@ -1,6 +1,7 @@
 package com.example.demo.flight;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public class FlightServiceImpl implements FlightService{
 	@Autowired
 	private FlightMapper flightmapper;
 	
+	//client에서 flag를 받아 여기서 다 처리한다
 	@Override
 	public int insertFlight(List<FlightVO> voList) throws Exception{
 		int result = 0;
@@ -30,6 +32,7 @@ public class FlightServiceImpl implements FlightService{
 		return result;
 	}
 
+	
 	@Override
 	public int updateFlight(FlightVO vo) throws Exception {
 		
@@ -42,6 +45,13 @@ public class FlightServiceImpl implements FlightService{
 		
 		
 		return flightmapper.deleteFlight(vo);
+	}
+
+
+	@Override
+	public List<FlightVO> find(Map<String, Object> vo) throws Exception {
+		// TODO Auto-generated method stub
+		return flightmapper.find(vo);
 	}
 	
 
