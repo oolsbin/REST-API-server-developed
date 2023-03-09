@@ -28,7 +28,9 @@ import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@CrossOrigin(originPatterns = "http://localhost:8080")
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -42,6 +44,7 @@ public class UserController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+//	@CrossOrigin(originPatterns = "http://172.30.1.40:3000")
 	// post로 호출시 토큰발생
 	@PostMapping("/login")
 	// ResponseEntity는 사용자의 HttpRequest에 대한 응답 데이터를 포함하는 클래스이다. 따라서 HttpStatus,
@@ -92,6 +95,7 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(map);//201
 	}
 	
+
 	// 회원가입
 	@PostMapping("/join")
 	public ResponseEntity<?> join(@RequestBody UserVO vo) throws Exception {
@@ -109,7 +113,7 @@ public class UserController {
 		return ResponseEntity.ok().body(msg.toString());
 	};
 	
-	
+
 	//test
 	@GetMapping("/jwtTest")
     public String jwtTest(@RequestHeader("User-Agent") String userAgent){

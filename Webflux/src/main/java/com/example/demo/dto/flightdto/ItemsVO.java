@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 public class ItemsVO {
 	
-	private List<ItemVO> item;
+//	private List<ItemVO> item;
+	private String item;
 	
 	
 }

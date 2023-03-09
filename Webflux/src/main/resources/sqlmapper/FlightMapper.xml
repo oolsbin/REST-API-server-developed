@@ -30,8 +30,8 @@
 	</select>
 	
 	<!-- totalCount -->
-	<select id="total" resultType="com.example.demo.flight.FlightVO">
-		select count(*) from flight
+	<select id="total" resultType="com.example.demo.flight.CountVO">
+		select count(*) AS total_count from flight
 	</select>
 
 

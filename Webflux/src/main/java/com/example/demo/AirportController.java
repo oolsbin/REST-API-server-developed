@@ -8,7 +8,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -17,6 +19,7 @@ import com.example.demo.dto.airportdto.ListVO;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RestController
 public class AirportController {
 	
@@ -47,7 +50,7 @@ public class AirportController {
 							, ListVO.class);
 
 			if (response.getStatusCodeValue() == 200) {
-				return response;
+				return ResponseEntity.ok(response);
 			} else {
 				throw new Exception();
 			}

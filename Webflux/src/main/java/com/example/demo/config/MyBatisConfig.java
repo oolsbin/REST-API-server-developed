@@ -31,11 +31,11 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableConfigurationProperties
 @EnableTransactionManagement
-@MapperScan(value = "com.example.demo", sqlSessionFactoryRef = "mainSqlSessionFactory")
+@MapperScan(value = "com.example.demo.mapper", sqlSessionFactoryRef = "mainSqlSessionFactory")
 public class MyBatisConfig {
     @Bean("mainDataSource")
     @Primary
-    @ConfigurationProperties(prefix = "spring.datasource.hikari.main")
+    @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource mainDataSource() {
         return DataSourceBuilder.create().type(HikariDataSource.class).build();
     }

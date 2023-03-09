@@ -1,7 +1,9 @@
 package com.example.demo;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,26 +15,32 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.dto.flightdto.ItemVO;
 import com.example.demo.dto.flightdto.ListVO;
+import com.example.demo.flight.CountVO;
 import com.example.demo.flight.FlightService;
 import com.example.demo.flight.FlightVO;
 import com.example.demo.flight.page.SearchDto;
 import com.example.demo.mapper.FlightMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
+import io.jsonwebtoken.lang.Arrays;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
-
-
-
-
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 //swagger-ui 타이틀 이름과 설명
 @Tag(name = "air Controller", description = "항공관련 컨트롤러") // 스프링 독
 @RestController
@@ -103,9 +111,12 @@ public class ApiController {
 							, HttpMethod.GET //request method
 							, entity	//http entity
 							, ListVO.class); //리턴받을 String타입 클래스
+			
+			
+			
 
 			if (response.getStatusCodeValue() == 200) {
-				return response;
+				return ResponseEntity.ok(response.getBody());
 			} else {
 				throw new Exception();
 			}
@@ -145,12 +156,25 @@ public class ApiController {
 						+ "&numOfRows=" + numOfRows + "&pageNo=" + pageNo +"&_type=json";
 
 				URI uri = new URI(urlBuilder);
+				
+				
 
 				final ResponseEntity<ListVO> response = restTemplate
 						.exchange(uri
 								, HttpMethod.GET
 								, entity
 								, ListVO.class);
+				
+				System.out.println(response);
+//				
+//				if (response instanceof Object) {
+//				    // 데이터가 객체인 경우
+//				    Object dataObject = (Object) response;
+//				    // 객체를 처리하는 코드 작성
+//				}
+			
+				
+
 				
 				if (!response.getStatusCode().is2xxSuccessful()) {	//status 코드
 					throw new Exception();
@@ -160,11 +184,28 @@ public class ApiController {
 				//
 				ListVO responsebody = response.getBody();
 				
-				List<ItemVO> itemList = responsebody.getResponse().getBody().getItems().getItem();
+				//api 데이터
+				String itemList = responsebody.getResponse().getBody().getItems().getItem();
 				
-				itemList.size();
+				List<ItemVO> parsedItemVOs = new ArrayList<>();
+				Gson gson = new Gson();
 				
+				if(!StringUtils.hasText(itemList)) {//text가 없는거 "", null, 공백
 					
+					//TODO String ""처리
+				}else if(itemList.startsWith("[")) {//gson t=제네릭 타입을 가변적으로 사용하고 싶을 때(컴파일 단계에서 어떤 클래스를 사용하느냐에 따름)
+					Class<List<ItemVO>> type = (Class<List<ItemVO>>) new ArrayList<ItemVO>().getClass();
+					List<ItemVO> listItem = gson.fromJson(itemList, type);
+					parsedItemVOs.addAll(listItem);
+					
+					//TODO List 처리
+				}else if(itemList.startsWith("{")) {
+					ItemVO stringItem = gson.fromJson(itemList, ItemVO.class);
+					parsedItemVOs.add(stringItem);
+					//TODO  처리
+				}
+
+				
 //				int totalCount = 0;
 //				totalCount = itemList.size();
 //
@@ -179,11 +220,21 @@ public class ApiController {
 				List<FlightVO> result = flightService.find(map);
 				System.out.println(result.size());
 				
+				CountVO countVO = new CountVO();
+				countVO = flightService.total();
+				System.out.println(countVO.getTotalCount());
+				int total = countVO.getTotalCount();
 				
+				Map<String, Object> responseMap = new HashMap<>();
+				responseMap.put("totalCount", total);
+				responseMap.put("pageNo", pageNo);
+				responseMap.put("numOfRows", numOfRows);
 				
+				flightService.total();
 				
-				if (itemList.size() != result.size()) {
-					for (ItemVO vo : itemList) {
+				if (parsedItemVOs.size() != result.size()) {
+						
+					for (ItemVO vo : parsedItemVOs) {
 						FlightVO flightVO = new FlightVO();
 						flightVO.setAirlineNm(vo.getAirlineNm());
 						flightVO.setArrAirportNm(vo.getArrAirportNm());
@@ -193,12 +244,23 @@ public class ApiController {
 						flightVO.setEconomyCharge(vo.getEconomyCharge());
 						flightVO.setPrestigeCharge(vo.getPrestigeCharge());
 						flightVO.setVihicleId(vo.getVihicleId());
-
+						
 						flightmapper.insertFlight(flightVO);
 					}
-					return ResponseEntity.ok(flightService.find(map));
+					responseMap.put("data", flightService.find(map));
+					
+					
+					
+					return ResponseEntity.ok(responseMap);
 				}
-				return ResponseEntity.ok(response.getBody());//content length 차이날때 사용
+				
+				Map<String, Object> apiResponseMap = new HashMap<>();
+				apiResponseMap.put("numOfRows", numOfRows);
+				apiResponseMap.put("pageNo", pageNo);
+				apiResponseMap.put("totalCount", responsebody.getResponse().getBody().getTotalCount());
+				apiResponseMap.put("data", itemList);//객체list<-flight에 대한
+				
+				return ResponseEntity.ok(apiResponseMap);//content length 차이날때 사용
 
 				//response.getHeaders().setContentLength(response.getBody().toString().length());
 				

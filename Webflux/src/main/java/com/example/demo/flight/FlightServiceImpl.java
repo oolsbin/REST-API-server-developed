@@ -51,8 +51,8 @@ public class FlightServiceImpl implements FlightService{
 
 
 	@Override
-	public int total(FlightVO vo) throws Exception {
-		return flightmapper.total(vo);
+	public CountVO total() throws Exception {
+		return flightmapper.total();
 	}
 	
 
