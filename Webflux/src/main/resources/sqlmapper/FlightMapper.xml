@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.FlightMapper">
 
+	<!-- 생성 -->
 	<insert id="insertFlight">
 		insert ignore into flight(vihicle_id, airline_nm, dep_pland_time, arr_pland_time,
 								  economy_charge, prestige_charge, dep_airport_nm, arr_airport_nm)
@@ -9,7 +10,7 @@
 				#{economyCharge}, #{prestigeCharge}, #{depAirportNm},#{arrAirportNm})
 	</insert>
 	
-	<!-- flight정보 조회 -->
+	<!-- 수정 -->
 	<update id="updateFlight">
 		update flight
 		set vihicle_id=#{vihicleId}, airline_nm=#{airlineNm}, dep_pland_time=#{depPlandTime}, arr_pland_time=#{arrPlandTime},
@@ -17,14 +18,21 @@
 		where id = #{id}
 	</update>
 	
-	<!-- 선택한 방명록 글 삭제 -->
+	<!-- 삭제 -->
 	<delete id="deleteFlight">
 		delete from flight
 		where id = #{id}
 	</delete>
 	
+	<!-- 페이징 -->
 	<select id="find" resultType = "com.example.demo.flight.FlightVO">
 		SELECT * FROM flight LIMIT #{pageNo}, #{numOfRows}
 	</select>
+	
+	<!-- totalCount -->
+	<select id="total" resultType="com.example.demo.flight.FlightVO">
+		select count(*) from flight
+	</select>
+
 
 </mapper>

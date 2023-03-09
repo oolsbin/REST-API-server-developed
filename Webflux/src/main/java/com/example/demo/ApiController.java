@@ -156,21 +156,31 @@ public class ApiController {
 					throw new Exception();
 					
 				}
-					
+				
+				//
 				ListVO responsebody = response.getBody();
 				
 				List<ItemVO> itemList = responsebody.getResponse().getBody().getItems().getItem();
 				
 				itemList.size();
+				
 					
-					
-
+//				int totalCount = 0;
+//				totalCount = itemList.size();
+//
+//				FlightVO fligtVo = new FlightVO();
+//				flightService.total();
+//				fligtVo.setTotalcount(itemList.size());
+				
 				
 				Map<String, Object> map = new HashMap<>();
 				map.put("pageNo", (pageNo-1) * numOfRows);
 				map.put("numOfRows", numOfRows);
 				List<FlightVO> result = flightService.find(map);
 				System.out.println(result.size());
+				
+				
+				
 				
 				if (itemList.size() != result.size()) {
 					for (ItemVO vo : itemList) {

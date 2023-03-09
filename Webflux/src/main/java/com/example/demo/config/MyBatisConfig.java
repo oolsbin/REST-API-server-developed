@@ -1,44 +1,68 @@
 package com.example.demo.config;
 
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.ApplicationContext;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.GeneralSecurityException;
+import java.text.ParseException;
+
 import javax.sql.DataSource;
 
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.JdbcType;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.zaxxer.hikari.HikariDataSource;
+
 @Configuration
-//패키지명 
-@MapperScan(value = "com.example.demo", sqlSessionFactoryRef = "SqlSessionFactory")
+@EnableConfigurationProperties
+@EnableTransactionManagement
+@MapperScan(value = "com.example.demo", sqlSessionFactoryRef = "mainSqlSessionFactory")
 public class MyBatisConfig {
+    @Bean("mainDataSource")
+    @Primary
+    @ConfigurationProperties(prefix = "spring.datasource.hikari.main")
+    public DataSource mainDataSource() {
+        return DataSourceBuilder.create().type(HikariDataSource.class).build();
+    }
 
- @Value("${spring.datasource.mapper-locations}")
- String mPath;
+    @Primary
+    @Bean(name = "mainSqlSessionFactory")
+    public SqlSessionFactory mainSqlSessionFactory(@Qualifier("mainDataSource") DataSource dataSource, ApplicationContext applicationContext) throws Exception{
+        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+        sqlSessionFactoryBean.setDataSource(dataSource);
+        Resource[] arrResource = new PathMatchingResourcePatternResolver()
+                .getResources("classpath:sqlmapper/*Mapper.xml");
+        sqlSessionFactoryBean.setMapperLocations(arrResource);
+        sqlSessionFactoryBean.getObject().getConfiguration().setMapUnderscoreToCamelCase(true);
+        sqlSessionFactoryBean.getObject().getConfiguration().setJdbcTypeForNull(JdbcType.NULL);
+        
+        return sqlSessionFactoryBean.getObject();
+    }
+    
+    @Primary
+    @Bean
+    public PlatformTransactionManager mainTransactionManager() throws URISyntaxException, GeneralSecurityException, ParseException, IOException {
+        return new DataSourceTransactionManager(mainDataSource());
+    }
 
- @Bean(name = "dataSource")
- @ConfigurationProperties(prefix = "spring.datasource")
- public DataSource DataSource() {
-     return DataSourceBuilder.create().build();
- }
-
-
- @Bean(name = "SqlSessionFactory")
- public SqlSessionFactory SqlSessionFactory(@Qualifier("dataSource") DataSource DataSource, ApplicationContext applicationContext) throws Exception {
-     SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-     sqlSessionFactoryBean.setDataSource(DataSource);
-     sqlSessionFactoryBean.setMapperLocations(applicationContext.getResources(mPath));
-     return sqlSessionFactoryBean.getObject();
- }
-
- @Bean(name = "SessionTemplate")
- public SqlSessionTemplate SqlSessionTemplate(@Qualifier("SqlSessionFactory") SqlSessionFactory firstSqlSessionFactory) {
-     return new SqlSessionTemplate(firstSqlSessionFactory);
- }
-
+    @Primary
+    @Bean(name = "mainSqlSessionTemplate")
+     public SqlSessionTemplate mainSqlSessionTemplate(@Qualifier("mainSqlSessionFactory") SqlSessionFactory mainSqlSessionFactory) {
+         return new SqlSessionTemplate(mainSqlSessionFactory);
+     }
 }

@@ -15,4 +15,5 @@ public interface FlightMapper {
 	int insertFlight(FlightVO vo) throws Exception;//flight 저장
 	int updateFlight(FlightVO vo) throws Exception;//flight 수정
 	int deleteFlight(FlightVO vo) throws Exception;//flight 삭제
+	int total(FlightVO vo) throws Exception;//total count
 }

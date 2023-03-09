@@ -18,4 +18,5 @@ public class FlightVO {
 	private String depAirportNm;
 	private String arrAirportNm;
 	private String flag;
+	private Integer totalcount;
 }

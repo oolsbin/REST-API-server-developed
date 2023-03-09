@@ -35,23 +35,24 @@ public class FlightServiceImpl implements FlightService{
 	
 	@Override
 	public int updateFlight(FlightVO vo) throws Exception {
-		
-		
 		return flightmapper.updateFlight(vo);
 	}
 
 	@Override
 	public int deleteFlight(FlightVO vo) throws Exception {
-		
-		
 		return flightmapper.deleteFlight(vo);
 	}
 
 
 	@Override
 	public List<FlightVO> find(Map<String, Object> vo) throws Exception {
-		// TODO Auto-generated method stub
 		return flightmapper.find(vo);
+	}
+
+
+	@Override
+	public int total(FlightVO vo) throws Exception {
+		return flightmapper.total(vo);
 	}
 	
 
