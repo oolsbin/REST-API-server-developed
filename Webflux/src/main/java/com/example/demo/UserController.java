@@ -149,6 +149,10 @@ public class UserController {
 	    		
 //	    		userService.refreshToken_delete(token_vo);
 
+	    		
+	    		
+	    		
+	    		
 	    		//4-2)token의 유효기간이 남아 있으면 refreshToken과 accessToken을 재발급한다
 	    		UserVO vo = new UserVO();
 	    		
@@ -162,7 +166,12 @@ public class UserController {
 				
 				
 			//refreshToken 저장
+//			if(decodedJWT.getId())) {
+//	    			userService.refreshToken_delete(token_vo);
+//	    		}	
 			String re_refreshToken = refreshService.login(vo.getId(), vo.getPw());
+			
+			
 			String id = vo.getId();
 			
 			TokenVO re_token_vo = new TokenVO();

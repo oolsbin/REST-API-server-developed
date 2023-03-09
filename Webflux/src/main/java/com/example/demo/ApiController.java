@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.dto.flightdto.ItemVO;
@@ -34,6 +36,7 @@ import com.example.demo.mapper.FlightMapper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 import io.jsonwebtoken.lang.Arrays;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,6 +57,8 @@ public class ApiController {
 
 	@Autowired
 	private FlightService flightService;
+	
+	Gson gson = new Gson();
 	
 	
 	// 공항목록조회(airportId:공항ID, airportNm:공항명)
@@ -157,24 +162,54 @@ public class ApiController {
 
 				URI uri = new URI(urlBuilder);
 				
-				
-
-				final ResponseEntity<ListVO> response = restTemplate
+				final ResponseEntity<String> response;
+				try {
+					response = restTemplate
 						.exchange(uri
 								, HttpMethod.GET
 								, entity
-								, ListVO.class);
+								, String.class);
 				
 				System.out.println(response);
-//				
-//				if (response instanceof Object) {
-//				    // 데이터가 객체인 경우
-//				    Object dataObject = (Object) response;
-//				    // 객체를 처리하는 코드 작성
-//				}
-			
+				}catch(RestClientException e){
+					e.printStackTrace();
+					return ResponseEntity.notFound().build();
+				}
 				
-
+				JsonElement je = gson.fromJson(response.getBody(), JsonElement.class);
+				
+				if (!je.isJsonObject()) {
+					return ResponseEntity.notFound().build();
+				}
+				
+				if (!je.getAsJsonObject().get("response").isJsonObject()) {
+					return ResponseEntity.notFound().build();
+				}
+				
+				if (!je.getAsJsonObject().get("response").getAsJsonObject().get("body").isJsonObject()) {
+					return ResponseEntity.notFound().build();
+				}
+				
+				if (!je.getAsJsonObject().get("response").getAsJsonObject().get("body").getAsJsonObject().get("items").isJsonObject()) {
+					return ResponseEntity.notFound().build();
+				}
+				
+				JsonElement itemJe = je.getAsJsonObject().get("response").getAsJsonObject().get("body").getAsJsonObject().get("items").getAsJsonObject().get("item");
+				Integer totalCount = je.getAsJsonObject().get("response").getAsJsonObject().get("body").getAsJsonObject().get("totalCount").getAsInt();
+				
+				List<ItemVO> parsedItemVOs = new ArrayList<>();
+				
+				if (itemJe.isJsonPrimitive()) {
+					return ResponseEntity.notFound().build();
+				} else if (itemJe.isJsonObject()) {
+					ItemVO stringItem = gson.fromJson(itemJe, ItemVO.class);
+					parsedItemVOs.add(stringItem);
+				} else if (itemJe.isJsonArray()) {
+					Class<List<ItemVO>> type = (Class<List<ItemVO>>) new ArrayList<ItemVO>().getClass();
+					parsedItemVOs.addAll(gson.fromJson(itemJe, type));
+				}
+				
+//////
 				
 				if (!response.getStatusCode().is2xxSuccessful()) {	//status 코드
 					throw new Exception();
@@ -182,29 +217,13 @@ public class ApiController {
 				}
 				
 				//
-				ListVO responsebody = response.getBody();
+//				ListVO responsebody = response.getBody();
 				
 				//api 데이터
-				String itemList = responsebody.getResponse().getBody().getItems().getItem();
+//				String itemList = responsebody.getResponse().getBody().getItems().getItem();
+//				List<ItemVO> itemList = responsebody.getResponse().getBody().getItems().getItem();
 				
-				List<ItemVO> parsedItemVOs = new ArrayList<>();
-				Gson gson = new Gson();
-				
-				if(!StringUtils.hasText(itemList)) {//text가 없는거 "", null, 공백
-					
-					//TODO String ""처리
-				}else if(itemList.startsWith("[")) {//gson t=제네릭 타입을 가변적으로 사용하고 싶을 때(컴파일 단계에서 어떤 클래스를 사용하느냐에 따름)
-					Class<List<ItemVO>> type = (Class<List<ItemVO>>) new ArrayList<ItemVO>().getClass();
-					List<ItemVO> listItem = gson.fromJson(itemList, type);
-					parsedItemVOs.addAll(listItem);
-					
-					//TODO List 처리
-				}else if(itemList.startsWith("{")) {
-					ItemVO stringItem = gson.fromJson(itemList, ItemVO.class);
-					parsedItemVOs.add(stringItem);
-					//TODO  처리
-				}
-
+//////
 				
 //				int totalCount = 0;
 //				totalCount = itemList.size();
@@ -235,6 +254,9 @@ public class ApiController {
 				if (parsedItemVOs.size() != result.size()) {
 						
 					for (ItemVO vo : parsedItemVOs) {
+//						if (itemList.size() != result.size()) {
+//							
+//							for (ItemVO vo : itemList) {
 						FlightVO flightVO = new FlightVO();
 						flightVO.setAirlineNm(vo.getAirlineNm());
 						flightVO.setArrAirportNm(vo.getArrAirportNm());
@@ -257,8 +279,8 @@ public class ApiController {
 				Map<String, Object> apiResponseMap = new HashMap<>();
 				apiResponseMap.put("numOfRows", numOfRows);
 				apiResponseMap.put("pageNo", pageNo);
-				apiResponseMap.put("totalCount", responsebody.getResponse().getBody().getTotalCount());
-				apiResponseMap.put("data", itemList);//객체list<-flight에 대한
+				apiResponseMap.put("totalCount", totalCount);
+				apiResponseMap.put("data", parsedItemVOs);//객체list<-flight에 대한
 				
 				return ResponseEntity.ok(apiResponseMap);//content length 차이날때 사용
 
