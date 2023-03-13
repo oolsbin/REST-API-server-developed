@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.UserBookMapper">
+
+	<!-- id값에 맞게 조회 -->
+	<select id='seatCnt' resultType="com.example.demo.vo.UserBookVO">
+		select reservation_id, tclass from seat
+		where reservation_id=#{flight_id}
+	</select>
+	
+	<!-- id값에 맞게 좌석 저장 -->
+<!-- 	<insert id='join'>
+		insert ignore into user(id, pw, name, address, email, phone_number)
+		values (#{id}, #{pw}, #{name}, #{address}, #{email}, #{phoneNumber})
+	</insert> -->
+
+	<!-- 마이페이지 예약정보 -->
+	<select id='selectUserBook' resultType="com.example.demo.vo.UserBookVO">
+		SELECT *
+		FROM seat AS s
+		JOIN flight AS f
+		ON s.reservation_id = f.flight_id
+		WHERE user_id=#{user_id}
+
+<!-- 		JOIN user AS u
+		ON s.user_id = u.id -->
+	</select>
+
+</mapper>

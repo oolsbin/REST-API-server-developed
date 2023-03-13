@@ -33,7 +33,7 @@ public class AirlineController {
 	private AirlineService airlineService;
 	
 	// 공항목록조회(airportId:공항ID, airportNm:공항명)
-		@GetMapping(value = "/airline")//, produces = "application/json"
+		@GetMapping(value = "/airline")
 		@Operation(summary = "항공사 목록 조회", description = "국내 항공사의 목록을 조회하는 기능")
 		//HttpEntity = HttpHeader와 HttpBody를 포함하는 클래스
 		//HttpEntity를 상속받아 구현한 클래스가 RequestEntity, ResponseEntity이다.
@@ -63,24 +63,7 @@ public class AirlineController {
 						+ "&airlineId=" + airlineId + "&airlineNm=" + airlineNm + "&_type=json";
 				
 				URI uri = new URI(urlBuilder);
-				
-			
-			   //2. fromUri를 통한 queryparam 방식
-				
-//				UriComponentsBuilder builder = UriComponentsBuilder.fromUri(
-//						URI.create("http://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getAirmanList"))
-//						.queryParam("serviceKey", "s%2FJMx%2B0d4t%2Ffp3JEpST7EJe7bhAJ7Tvuh%2FXkexlOqbuUEzEZxeUBH2UZ%2BXHjwDN8%2Fywz%2F9a%2BFGIUE6k%2FqcmZTg%3D%3D")
-//						.queryParam("airlineId", airlineId)
-//						.queryParam("airlineNm", airlineNm)
-//						.queryParam("_type", "json");
-				
-				//3. fromHttpUrl
-//				String uri = UriComponentsBuilder.fromHttpUrl("http://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getAirmanList")
-//						.queryParam("serviceKey", "s%2FJMx%2B0d4t%2Ffp3JEpST7EJe7bhAJ7Tvuh%2FXkexlOqbuUEzEZxeUBH2UZ%2BXHjwDN8%2Fywz%2F9a%2BFGIUE6k%2FqcmZTg%3D%3D")
-////						.queryParam("airlineId", airlineId)
-////						.queryParam("airlineNm", airlineNm)
-//						.queryParam("_type", "json")
-//						.build().toString();
+
 				
 				final ResponseEntity<?> response = restTemplate
 						.exchange(uri
@@ -103,8 +86,8 @@ public class AirlineController {
 
 		}
 	
-	//db에 저장
-	@PostMapping("/insert-airline")
+	//db 저장
+	@PostMapping("/airline-create")
 	public ResponseEntity<?> insertAirline(@RequestBody AirlineVO vo) throws Exception {
 		if(airlineService.insertAirline(vo)!=1) {
 		StringBuffer msg = new StringBuffer();
@@ -117,8 +100,8 @@ public class AirlineController {
 		return ResponseEntity.ok().body(msg);
 	}
 	
-	//db
-	@RequestMapping(value="/select-airline")
+	//db 조회
+	@RequestMapping(value="/airline-read")
 	public ResponseEntity<?> selectAirline(@RequestBody AirlineVO vo) throws Exception{
 //		if(airlineService.selectAirline(vo) != null) {
 		AirlineVO test = airlineService.selectAirline(vo);
@@ -127,16 +110,21 @@ public class AirlineController {
 //		}
 	}
 
+	//db 수정
+	@RequestMapping(value="/airline-update")
+	public ResponseEntity<?> update(@RequestBody AirlineVO vo) throws Exception{
+		airlineService.updateAirline(vo);
+		StringBuffer msg = new StringBuffer();
+		msg.append("수정됨");
+		return ResponseEntity.ok().body(msg);
+	}
 	
-//	@RequestMapping(value="/modify")
-//	public String modify(String airlineId){
-//		airlineService.updateAirline(airlineId);
-//		return "modify";
-//	}
-//	
-//	@RequestMapping("/delete")
-//	public String modify(String airlineId){
-//		model.addAttribute("vo", airlineService.selectAirline(airlineId));
-//		return "delete";
-//	}
+	//db 삭제
+	@RequestMapping("/airline-delete")
+	public ResponseEntity<?> delete(@RequestBody AirlineVO vo) throws Exception{
+		airlineService.deleteAirline(vo);
+		StringBuffer msg = new StringBuffer();
+		msg.append("삭제");
+		return ResponseEntity.ok().body(msg);
+	}
 }

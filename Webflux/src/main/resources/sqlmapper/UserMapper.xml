@@ -4,14 +4,20 @@
 
 	<!-- 회원가입처리 -->
 	<insert id='join'>
-		insert ignore into user(id, pw)
-		values (#{id}, #{pw})
+		insert ignore into user(id, pw, name, address, email, phone_number)
+		values (#{id}, #{pw}, #{name}, #{address}, #{email}, #{phoneNumber})
 	</insert>
 	
 	<!-- 아이디중복체크 -->
 	<select id='userId' resultType="int">
 		select count(*) from user
 		where id = #{id}
+	</select>
+
+	<!-- 비밀번호체크 -->
+	<select id='userPw' resultType='int'>
+		select count(*) from user
+		where pw = #{pw}
 	</select>
 	
 	<!-- 로그인처리 -->
@@ -37,6 +43,8 @@
 		delete from refresh_token
 		where refresh_token = #{refreshToken}
 	</delete>
+	
+	
 	
 	
 

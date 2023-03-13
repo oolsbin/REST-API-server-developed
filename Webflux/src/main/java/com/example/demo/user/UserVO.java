@@ -8,6 +8,12 @@ import lombok.Setter;
 public class UserVO {
 	private String id;
 	private String pw;
+	
+	private String name;
+	private String address;
+	private String email;
+	private String phoneNumber;
+	
 //	private String refreshToken;
 	
     // 생성자

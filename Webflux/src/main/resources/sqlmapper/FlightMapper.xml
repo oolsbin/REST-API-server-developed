@@ -10,6 +10,12 @@
 				#{economyCharge}, #{prestigeCharge}, #{depAirportNm},#{arrAirportNm})
 	</insert>
 	
+	<!-- 항공운항정보에 따른 좌석생성 -->
+	<insert id="insertSeatFlight">
+		insert ignore into seat(id, seat_uid, reservation)
+		values (#{id}, #{seat_uid}, #{reservation})
+	</insert>
+	
 	<!-- 수정 -->
 	<update id="updateFlight">
 		update flight
@@ -24,7 +30,7 @@
 		where id = #{id}
 	</delete>
 	
-	<!-- 페이징 -->
+	<!-- 페이징 (mybatis if 테스트 필요)-->
 	<select id="find" resultType = "com.example.demo.flight.FlightVO">
 		SELECT * FROM flight LIMIT #{pageNo}, #{numOfRows}
 	</select>

@@ -11,8 +11,7 @@
 	<!-- 공항정보 조회 -->
 	<select id="selectAirline" resultType="com.example.demo.airline.AirlineVO">
 		select * from airline
-		where airlineId = #{airlineId} and
-		airlineNm = #{airlineNm}
+		where airlineId = #{airlineId} and airlineNm = #{airlineNm}
 	</select>
 
 	<!-- 공항정보 수정 -->

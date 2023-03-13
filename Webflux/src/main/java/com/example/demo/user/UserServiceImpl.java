@@ -50,7 +50,11 @@ public class UserServiceImpl implements UserService{
 		return usermapper.userId(vo);
 	}
 
-
+	@Override
+	public int userPw(UserVO vo) throws Exception {
+		return usermapper.userPw(vo);
+	}
+	
 	@Override
 	public int refreshToken(TokenVO vo) throws Exception {
 		return usermapper.refreshToken(vo);
@@ -65,5 +69,8 @@ public class UserServiceImpl implements UserService{
 	public int refreshToken_delete(TokenVO vo) throws Exception {
 		return usermapper.refreshToken_delete(vo);
 	}
+
+
+	
 
 }

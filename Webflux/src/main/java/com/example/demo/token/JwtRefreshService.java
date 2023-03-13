@@ -8,7 +8,7 @@ public class JwtRefreshService {
 	@Value("${JWT.REFRESH}")
 	private String secreKey;
 
-	//token 기한 설정
+	//token 기한 설정//3000 * 70 * 60L;
 	private Long expiredMs = 3000 * 70 * 60L;
 	
 	//login 정보 가져오기
@@ -16,6 +16,23 @@ public class JwtRefreshService {
 		//인증과정 생략
 		return JwtUtil.createJwt(id, secreKey, expiredMs);
 	}
+	
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 //	// 토큰 유효성 검증
 //	public Boolean validationToken(String jwt){
@@ -53,4 +70,4 @@ public class JwtRefreshService {
 //			}
 ////			throw new NullArgumentException("Token is NULL");
 //		}
-}
+
