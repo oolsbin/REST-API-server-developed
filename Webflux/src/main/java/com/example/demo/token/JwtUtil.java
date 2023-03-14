@@ -15,6 +15,7 @@ public class JwtUtil {
 	@Value("${JWT.SECRET}")
 	private String secretKey;
 	
+	@SuppressWarnings("deprecation")
 	public static String createJwt(String id, String secretKey, Long expiredMs) {
 		Claims claims = Jwts.claims();//claims: 클라이언트에 대한 정보
 		claims.put("id", id);

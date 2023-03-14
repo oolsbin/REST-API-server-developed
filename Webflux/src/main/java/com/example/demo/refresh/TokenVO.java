@@ -12,6 +12,7 @@ import lombok.Setter;
 public class TokenVO {
 	private String id;
 	private String refreshToken;
+	private String accessToken;
 	private Date createDate;
 	private Date updateDate;
 }

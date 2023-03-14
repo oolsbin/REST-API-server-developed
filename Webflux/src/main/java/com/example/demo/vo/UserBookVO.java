@@ -6,10 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserBookVO {
-	private String flight_id;//flight id
+	private String flightId;//flight id
 	private String tclass;//좌석등급
     private	int reservation;//예약여부 0 = 예약안됨, 1 = 예약됨
-    private String user_id;//사용자 아이디
+    private String userId;//사용자 아이디
     private String vihicleId;//항공편명
 	private String airlineNm;//항공사명
 	private String depPlandTime;//출발시간

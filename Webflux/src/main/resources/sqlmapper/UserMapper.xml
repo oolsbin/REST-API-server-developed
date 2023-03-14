@@ -43,11 +43,6 @@
 		delete from refresh_token
 		where refresh_token = #{refreshToken}
 	</delete>
-	
-	
-	
-	
-
 
 
 </mapper>

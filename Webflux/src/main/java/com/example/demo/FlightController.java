@@ -37,6 +37,7 @@ import com.example.demo.flight.FlightService;
 import com.example.demo.flight.FlightVO;
 import com.example.demo.flight.page.SearchDto;
 import com.example.demo.mapper.FlightMapper;
+import com.example.demo.vo.SeatVO;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -175,6 +176,9 @@ public class FlightController {
 						flightVO.setEconomyCharge(vo.getEconomyCharge());
 						flightVO.setPrestigeCharge(vo.getPrestigeCharge());
 						flightVO.setVihicleId(vo.getVihicleId());
+						
+//						SeatVO seatVO = new SeatVO();
+//					    
 						
 						flightmapper.insertFlight(flightVO);
 					}

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.flightdto.BodyVO;
 import com.example.demo.dto.flightdto.ItemVO;
 import com.example.demo.mapper.FlightMapper;
+import com.example.demo.vo.SeatVO;
 
 @Service
 public class FlightServiceImpl implements FlightService{
@@ -53,6 +54,12 @@ public class FlightServiceImpl implements FlightService{
 	@Override
 	public CountVO total() throws Exception {
 		return flightmapper.total();
+	}
+
+
+	@Override
+	public int seatInsert(SeatVO vo) throws Exception {
+		return flightmapper.seatInsert(vo);
 	}
 	
 

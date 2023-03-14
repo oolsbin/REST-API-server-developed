@@ -3,6 +3,7 @@ package com.example.demo.user;
 import java.util.Map;
 
 import com.example.demo.refresh.TokenVO;
+import com.example.demo.vo.SeatVO;
 
 public interface UserService {
 	int join(UserVO vo) throws Exception;

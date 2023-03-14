@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.example.demo.refresh.TokenVO;
 import com.example.demo.user.UserVO;
+import com.example.demo.vo.SeatVO;
 
 @Mapper
 public interface UserMapper {

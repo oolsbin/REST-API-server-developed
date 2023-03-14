@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.mapper.UserBookMapper;
 import com.example.demo.vo.UserBookVO;
+import com.example.demo.vo.SeatVO;
 
 @Service
 public class UserBookServiceImpl implements UserBookService{
@@ -25,7 +26,22 @@ public class UserBookServiceImpl implements UserBookService{
 	}
 
 	@Override
-	public List<UserBookVO> seatCnt(UserBookVO vo) throws Exception {
-		return userbookmapper.seatCnt(vo);
+	public List<SeatVO> seatList(SeatVO vo) throws Exception {
+		return userbookmapper.seatList(vo);
+	}
+
+	@Override
+	public int economyCnt() throws Exception {
+		return userbookmapper.economyCnt();
+	}
+
+	@Override
+	public int prestigeCnt() throws Exception {
+		return userbookmapper.prestigeCnt();
+	}
+
+	@Override
+	public int insertUserBook(SeatVO vo) throws Exception {
+		return userbookmapper.insertUserBook(vo);
 	}
 }

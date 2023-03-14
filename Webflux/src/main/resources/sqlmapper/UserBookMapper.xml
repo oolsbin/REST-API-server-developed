@@ -2,17 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.UserBookMapper">
 
-	<!-- id값에 맞게 조회 -->
-	<select id='seatCnt' resultType="com.example.demo.vo.UserBookVO">
-		select reservation_id, tclass from seat
-		where reservation_id=#{flight_id}
+	<!-- id값에 맞게 좌석 전체조회 -->
+	<select id='seatList' resultType="com.example.demo.vo.SeatVO">
+		select * from seat
+		where reservation_id=#{flightId}
 	</select>
 	
-	<!-- id값에 맞게 좌석 저장 -->
-<!-- 	<insert id='join'>
-		insert ignore into user(id, pw, name, address, email, phone_number)
-		values (#{id}, #{pw}, #{name}, #{address}, #{email}, #{phoneNumber})
-	</insert> -->
+	<!-- id값에 맞게 좌석 개수조회 -->
+	<select id='seatCnt' resultType="com.example.demo.vo.SeatVO">
+		select count(*) from seat
+		where reservation_id=#{flightId}
+	</select>
+	
+	<!-- 이코노미 좌석조회 -->
+	<select id='economyCnt' resultType="int">
+		select count(*) from seat
+		where tclass like 'E%'
+	</select>
+	
+	<!-- 비즈니스 좌석조회 -->
+	<select id='prestigeCnt' resultType="int">
+		select count(*) from seat
+		where tclass like 'B%'
+	</select>
+
 
 	<!-- 마이페이지 예약정보 -->
 	<select id='selectUserBook' resultType="com.example.demo.vo.UserBookVO">
@@ -20,10 +33,17 @@
 		FROM seat AS s
 		JOIN flight AS f
 		ON s.reservation_id = f.flight_id
-		WHERE user_id=#{user_id}
-
-<!-- 		JOIN user AS u
+		WHERE user_id=#{userId}
+	<!--JOIN user AS u
 		ON s.user_id = u.id -->
 	</select>
+	
+	<!-- id값에 맞게 좌석 저장 -->
+	<insert id='insertUserBook'>
+		insert into user(reservation_id, tclass, reservation, user_id)
+		values (#{flightId}, #{seatType}, 1, #{userId})
+	</insert>
+	
+	
 
 </mapper>

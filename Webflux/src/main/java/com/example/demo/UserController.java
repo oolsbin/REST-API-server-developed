@@ -177,7 +177,7 @@ public class UserController {
 				
 				
 				
-				
+//				String id_d = decodedJWT.getId();//id=null
 			//refreshToken 저장
 			if(decodedJWT.getId()==vo.getId()) {
 	    			userService.refreshToken_delete(token_vo);

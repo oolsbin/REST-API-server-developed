@@ -39,6 +39,12 @@
 	<select id="total" resultType="com.example.demo.flight.CountVO">
 		select count(*) AS total_count from flight
 	</select>
+	
+		<!-- refreshToken 저장 -->
+	<insert id='seatInsert'>
+		insert into seat(reservation_id)
+		values (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id})
+	</insert>
 
 
 </mapper>
