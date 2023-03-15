@@ -98,27 +98,42 @@ public class UserController {
 //		CustomException e = null;
 //		CustomErrorCode errorCode = e.getErrorCode();
 		
-		//유효성 검사
-		if (userService.userId(vo) == 0) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		//id 유효성 검사
+		String id = userService.userId(vo); // 아이디 검색 결과
+		if (!(id==null)) {//id가 있으면
+			HttpStatus status = HttpStatus.UNAUTHORIZED;
+	        String message = "이미 존재하는 아이디 입니다.";
+			return new ResponseEntity<>(message, status);
 		}
 		
-		if (userService.userId(vo) < 5 || userService.userId(vo) > 12) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
-		
-		
-		if (userService.userId(vo) == 1) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
-		
-		if (userService.userPw(vo) == 0) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
-		
-		if (userService.userPw(vo) < 8) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
+//		// 정규식 패턴 작성
+//		String pattern = "[ㄱ-ㅎㅏ-ㅣ가-힣]";
+//		if (id.matches(pattern) || id.length() > 10) {
+//			HttpStatus status = HttpStatus.BAD_REQUEST;
+//			String message = "아이디는 10자 이하의 영문/숫자만 사용 가능합니다.";
+//	        return new ResponseEntity<>(message, status);
+//		}
+//		
+//		//pw 유효성 검사
+//		String pw = userService.userPw(vo);
+//		if(pw.matches(pattern) || pw.length() )
+//		
+//		if (userService.userId(vo) < 5 || userService.userId(vo) > 12) {
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//		}
+//		
+//		
+//		if (userService.userId(vo) == 1) {
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//		}
+//		
+//		if (userService.userPw(vo) == 0) {
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//		}
+//		
+//		if (userService.userPw(vo) < 8) {
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//		}
 
 		userService.join(vo);
 		StringBuffer msg = new StringBuffer();

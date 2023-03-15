@@ -8,7 +8,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -140,17 +142,23 @@ public class FlightController {
 				}
 				
 				
+				
 				if (!response.getStatusCode().is2xxSuccessful()) {	//status 코드
 					throw new Exception();
 					
 				}
-				
+				System.out.println(response);
+				System.out.println(itemJe);
+				System.out.println(parsedItemVOs);
+//				----파싱하여 타입검사-----------------------------------------------------------------
 				
 				Map<String, Object> map = new HashMap<>();
 				map.put("pageNo", (pageNo-1) * numOfRows);
 				map.put("numOfRows", numOfRows);
-				List<FlightVO> result = flightService.find(map);
-				System.out.println(result.size());
+//				if(flightService.find(map)!=null) {
+					List<FlightVO> result = flightService.find(map);
+					System.out.println(result.size());
+//				}
 				
 				CountVO countVO = new CountVO();
 				countVO = flightService.total();
@@ -164,10 +172,21 @@ public class FlightController {
 				
 				flightService.total();
 				
-				if (parsedItemVOs.size() != result.size()) {
-						
+				System.out.println("DB 찾아온 값 수 : " + result.size());
+				System.out.println("DB에서 찾아온 데이터 : " + flightService.find(map));
+				System.out.println("API 찾아온 값 수 : " + parsedItemVOs.size());
+				if (parsedItemVOs.size() == result.size()) {
+					responseMap.put("data", flightService.find(map));
+					return ResponseEntity.ok(responseMap);	
+					}
+				
+				
+					//items안에 값이 같은게 있으면 그것을 제외하고 저장
+					FlightVO flightVO = new FlightVO();
+					
 					for (ItemVO vo : parsedItemVOs) {
-						FlightVO flightVO = new FlightVO();
+						String uuid = RandomStringUtils.random(36, true, true);
+						flightVO.setFlightId(uuid+"");
 						flightVO.setAirlineNm(vo.getAirlineNm());
 						flightVO.setArrAirportNm(vo.getArrAirportNm());
 						flightVO.setArrPlandTime(vo.getArrPlandTime());
@@ -177,16 +196,7 @@ public class FlightController {
 						flightVO.setPrestigeCharge(vo.getPrestigeCharge());
 						flightVO.setVihicleId(vo.getVihicleId());
 						
-//						SeatVO seatVO = new SeatVO();
-//					    
-						
 						flightmapper.insertFlight(flightVO);
-					}
-					responseMap.put("data", flightService.find(map));
-					
-					
-					
-					return ResponseEntity.ok(responseMap);
 				}
 				
 				Map<String, Object> apiResponseMap = new HashMap<>();

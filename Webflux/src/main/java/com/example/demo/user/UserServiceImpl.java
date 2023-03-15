@@ -47,12 +47,12 @@ public class UserServiceImpl implements UserService{
 
 
 	@Override
-	public int userId(UserVO vo) throws Exception {
+	public String userId(UserVO vo) throws Exception {
 		return usermapper.userId(vo);
 	}
 
 	@Override
-	public int userPw(UserVO vo) throws Exception {
+	public String userPw(UserVO vo) throws Exception {
 		return usermapper.userPw(vo);
 	}
 	

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class FlightVO {
-	private String flight_id;//아이디
+	private String flightId;//아이디
 	private String vihicleId;//항공편명
 	private String airlineNm;//항공사명
 	private String depPlandTime;//출발시간

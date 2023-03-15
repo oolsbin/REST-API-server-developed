@@ -9,14 +9,14 @@
 	</insert>
 	
 	<!-- 아이디중복체크 -->
-	<select id='userId' resultType="int">
-		select count(*) from user
+	<select id='userId' resultType="String">
+		select id from user
 		where id = #{id}
 	</select>
 
 	<!-- 비밀번호체크 -->
-	<select id='userPw' resultType='int'>
-		select count(*) from user
+	<select id='userPw' resultType='String'>
+		select pw from user
 		where pw = #{pw}
 	</select>
 	

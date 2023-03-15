@@ -4,9 +4,9 @@
 
 	<!-- 생성 -->
 	<insert id="insertFlight">
-		insert ignore into flight(vihicle_id, airline_nm, dep_pland_time, arr_pland_time,
-								  economy_charge, prestige_charge, dep_airport_nm, arr_airport_nm)
-		values (#{vihicleId}, #{airlineNm}, #{depPlandTime}, #{arrPlandTime},
+		insert into flight(flight_id, vihicle_id, airline_nm, dep_pland_time, arr_pland_time,
+							economy_charge, prestige_charge, dep_airport_nm, arr_airport_nm)
+		values (#{flightId}, #{vihicleId}, #{airlineNm}, #{depPlandTime}, #{arrPlandTime},
 				#{economyCharge}, #{prestigeCharge}, #{depAirportNm},#{arrAirportNm})
 	</insert>
 	
