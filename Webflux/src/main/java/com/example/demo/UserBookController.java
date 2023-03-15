@@ -138,7 +138,7 @@ public class UserBookController {
 			    userBookService.insertUserBook(vo);
 			}
 			HttpStatus status = HttpStatus.OK;
-			int economyExtra = 7 - economyCnt - cnt;
+			int economyExtra = 6 - economyCnt - cnt;
 			String message = "현재 이코노미좌석이 " + economyExtra + " 남았습니다.";
 			Map<String, Object> response = new HashMap<>();
 			response.put("message", message);
@@ -161,12 +161,12 @@ public class UserBookController {
 				    userBookService.insertUserBook(vo);
 				}
 				HttpStatus status = HttpStatus.OK;
-		        int prestigeExtra = 7 - economyCnt - cnt;
+		        int prestigeExtra = 4 - prestigeCnt - cnt;
 		        String message = "현재 비즈니스좌석이 " + prestigeExtra + " 남았습니다.";
 				Map<String, Object> response = new HashMap<>();
 				response.put("message", message);
 				response.put("prestigeExtra", prestigeExtra);
-		        return new ResponseEntity<>(message, status);
+		        return new ResponseEntity<>(response, status);
 			}
 		}
 	}
