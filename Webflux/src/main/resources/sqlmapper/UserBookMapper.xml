@@ -39,8 +39,8 @@
 	</select>
 	
 	<!-- id값에 맞게 좌석 저장 -->
-	<insert id='insertUserBook'>
-		insert into user(reservation_id, tclass, reservation, user_id)
+	<insert id='insertUserBook' parameterType="com.example.demo.vo.SeatVO">
+		insert into seat(reservation_id, tclass, reservation, user_id)
 		values (#{flightId}, #{seatType}, 1, #{userId})
 	</insert>
 	

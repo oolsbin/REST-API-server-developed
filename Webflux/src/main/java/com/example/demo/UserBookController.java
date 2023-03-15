@@ -87,48 +87,6 @@ public class UserBookController {
 		return ResponseEntity.ok().body(list);
 	}
 	
-//	@PostMapping(value = "/userBookInsert")
-//	public ResponseEntity<?> UserBookInsert(@RequestBody UserBookVO vo) throws Exception {
-//		return ResponseEntity.ok().body();
-//	}
-	
-//	@PostMapping("/reservation")//예약하기 눌렀을 때 저장되는
-//	public ResponseEntity<?> UserReservation(@ResponseBody UserBookVO vo) throws Exception {
-//		return ResponseEntity.ok().body();
-//	}
-	
-//	@PostMapping("/userBookInsert")//예약
-//	public ResponseEntity<?> Economy_cnt(
-//			@RequestHeader HttpHeaders headers,
-//			@RequestBody SeatVO vo) throws Exception {
-//		
-//		String authToken = headers.getFirst("Authorization");
-//	    if(authToken != null & authToken.startsWith("Bearer ")) {
-//	    	String accessToken = null;
-//	    	accessToken = authToken.substring(7);
-//	    	
-//	    	System.out.println(accessToken);
-//	    	TokenVO token_vo = new TokenVO();
-//	    	token_vo.setAccessToken(accessToken);
-//	    	//accessToken 사용자정보 꺼내기 (id값)
-//	    	String[] splitToken = accessToken.split("\\.");
-//	    	String payload = new String(Base64.getDecoder().decode(splitToken[1]), StandardCharsets.UTF_8);
-//	    	JSONObject jsonObject = new JSONObject(payload);
-//	    	System.out.println(jsonObject);
-//	    	//user_id
-//	    	String id = jsonObject.getString("id");
-//	    	System.out.println(id);
-//
-////	    	byte[] decodeByte = DatatypeConverter.parseBase64Binary(accessToken);//1)
-////	
-////	    	String decodeString = new String(decodeByte, StandardCharsets.UTF_8);//2)
-////	    	System.out.println("!111"+decodeString);//3)
-////	    	System.out.println(new String(decodeByte));//{"alg":"HS256"}{"id":"test12","iat":1678696659,"exp":1678700259}I��;8�Z�J���B���\��q��mp���
-//
-//	    
-//		return null;
-//	}
-	
 	@PostMapping(value = "/seatCnt")//마이페이지 예약목록
 	public ResponseEntity<?> UserBookSelect(
 			@RequestHeader HttpHeaders headers,
@@ -151,6 +109,7 @@ public class UserBookController {
 	    	String id = jsonObject.getString("id");
 	    	System.out.println(id);
     	//id추출 완료----------------------------------------------------
+	    	vo.setUserId(id);
 	    	
 		List<SeatVO> list = userBookService.seatList(vo);
 		System.out.println("userBookList" + list);
@@ -160,53 +119,59 @@ public class UserBookController {
 		int economyCnt = userBookService.economyCnt();
 		int prestigeCnt = userBookService.prestigeCnt();
 		
-		if(vo.getSeatType()=="economy") {
-			if(economyCnt>6) {
+		if(!vo.getSeatType().equals("prestige")) {
+			int cnt = Integer.parseInt(vo.getPersonal());
+			if(economyCnt + cnt >6) {
 			HttpStatus status = HttpStatus.NOT_FOUND;
 	        String message = "이코노미좌석이 초과하였습니다.";
 			return new ResponseEntity<>(message, status);
 			}else {
-			//1)좌석값 번호의 누적값 세팅
-			long i = 1;
-			long sum = 0;
-			while (sum < 10000000000L) {  // 누적값이 100억 미만일 때 반복
-			    sum += i;
-			    i++;
-			}
-			System.out.println("누적 값: " + sum);
-			//좌석저장
-			vo.setSeatType("E"+sum);//E뒤에 누적값으로 set
-			vo.setFlightId(id);
+//			// 요청 헤더에서 추출한 사용자 ID를 mybatis 매퍼에 전달하여 SQL 쿼리에서 사용할 수 있도록
+//	        userBookService.insertUserBook(vo);
 			//2) personal에 따른 insert문 반복실행
-			int cnt = Integer.parseInt(vo.getPersonal());
-			for(int ii = 0; ii < cnt; ii ++) {
-				userBookService.insertUserBook(vo);
+			for (int ii = 0; ii < cnt; ii++) {
+			    //1)좌석값 번호의 누적값 세팅
+			    long sum = ii + 1;
+			    System.out.println("누적 값: " + sum);
+			    //좌석저장
+			    vo.setSeatType("E" + sum); //E뒤에 누적값으로 set
+			    userBookService.insertUserBook(vo);
 			}
-
 			HttpStatus status = HttpStatus.OK;
-	        String message = "현재 이코노미좌석이 " + (6 - economyCnt) + " 남았습니다.";
-			return new ResponseEntity<>(message, status);
+			int economyExtra = 7 - economyCnt - cnt;
+			String message = "현재 이코노미좌석이 " + economyExtra + " 남았습니다.";
+			Map<String, Object> response = new HashMap<>();
+			response.put("message", message);
+			response.put("economyExtra", economyExtra);
+			return new ResponseEntity<>(response, status);
 			}
-		}else if(vo.getSeatType()=="prestige") {
-			if(prestigeCnt>4) {
+		}else if(!vo.getSeatType().equals("economy")) {
+			int cnt = Integer.parseInt(vo.getPersonal());
+			if(prestigeCnt + cnt >4) {
 				HttpStatus status = HttpStatus.NOT_FOUND;
 		        String message = "비즈니스좌석이 초과하였습니다.";
 				return new ResponseEntity<>(message, status);
 			}else {
+				for (int ii = 0; ii < cnt; ii++) {
+				    //1)좌석값 번호의 누적값 세팅
+				    long sum = ii + 1;
+				    System.out.println("누적 값: " + sum);
+				    //좌석저장
+				    vo.setSeatType("B" + sum); //B뒤에 누적값으로 set
+				    userBookService.insertUserBook(vo);
+				}
 				HttpStatus status = HttpStatus.OK;
-				
-				//좌석저장
-				
-		        String message = "현재 비즈니스좌석이 " + (4 - prestigeCnt) + " 남았습니다.";
-				return new ResponseEntity<>(message, status);
+		        int prestigeExtra = 7 - economyCnt - cnt;
+		        String message = "현재 비즈니스좌석이 " + prestigeExtra + " 남았습니다.";
+				Map<String, Object> response = new HashMap<>();
+				response.put("message", message);
+				response.put("prestigeExtra", prestigeExtra);
+		        return new ResponseEntity<>(message, status);
 			}
 		}
-
 	}
 	    return null;
 	}
-		
-	
 }	
 	
 	
