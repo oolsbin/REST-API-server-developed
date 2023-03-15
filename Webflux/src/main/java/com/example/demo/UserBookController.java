@@ -38,11 +38,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -66,11 +67,11 @@ import ch.qos.logback.core.status.Status;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-
+import java.lang.Integer;
 
 // 예매 클래스
-@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
+		RequestMethod.DELETE })
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -79,108 +80,101 @@ public class UserBookController {
 
 	@Autowired
 	private UserBookService userBookService;
-	
-	@GetMapping(value = "/userBookList")//마이페이지 예약목록
-	public ResponseEntity<?> UserBookSelect(@RequestBody UserBookVO vo) throws Exception {
+
+	@GetMapping(value = "/userBookList") // 마이페이지 예약목록
+	public ResponseEntity<?> UserBookSelect(@RequestParam UserBookVO vo) throws Exception {
 		List<UserBookVO> list = userBookService.selectUserBook(vo);
 		System.out.println("userBookList" + list);
 		return ResponseEntity.ok().body(list);
 	}
 	
-	@PostMapping(value = "/seatCnt")//마이페이지 예약목록
-	public ResponseEntity<?> UserBookSelect(
-			@RequestHeader HttpHeaders headers,
-			@RequestBody SeatVO vo) throws Exception {
-		//헤더토큰 꺼내온다
+	
+
+	@GetMapping(value = "/flight/extra-seat") // 남은 좌석정보
+	public ResponseEntity<?> UserBookCnt(@RequestParam String flightId) throws Exception {
+
+		int economyCnt = userBookService.economyCnt(flightId);
+		int prestigeCnt = userBookService.prestigeCnt(flightId);
+//			    if (prestigeCnt == 0) {
+//			        return 0; // 기본값으로 0을 반환하도록 수정
+//			    }
+// DB 조회 결과 값을 반환
+		
+		
+		int economyExtra = 6 - economyCnt;
+		int prestigeExtra = 4 - prestigeCnt;
+		
+		HttpStatus status = HttpStatus.OK;
+		Map<String, Object> response = new HashMap<>();
+		response.put("economyExtra", economyExtra);
+		response.put("prestigeExtra", prestigeExtra);
+		return new ResponseEntity<>(response, status);
+	}
+	
+	
+
+	@PostMapping(value = "/flight/booking") // 마이페이지 예약목록
+	public ResponseEntity<?> UserBookInsert(@RequestHeader HttpHeaders headers,
+			@RequestBody SeatVO vo)
+			throws Exception {
+		// 헤더토큰 꺼내온다
 		String authToken = headers.getFirst("Authorization");
-	    if(authToken != null & authToken.startsWith("Bearer ")) {
-	    	String accessToken = null;
-	    	accessToken = authToken.substring(7);
-	    	
-	    	System.out.println(accessToken);
-	    	TokenVO token_vo = new TokenVO();
-	    	token_vo.setAccessToken(accessToken);
-	    	//accessToken 사용자정보 꺼내기 (id값)
-	    	String[] splitToken = accessToken.split("\\.");
-	    	String payload = new String(Base64.getDecoder().decode(splitToken[1]), StandardCharsets.UTF_8);
-	    	JSONObject jsonObject = new JSONObject(payload);
-	    	System.out.println(jsonObject);
-	    	//user_id
-	    	String id = jsonObject.getString("id");
-	    	System.out.println(id);
-    	//id추출 완료----------------------------------------------------
-	    	vo.setUserId(id);
-	    	
-		List<SeatVO> list = userBookService.seatList(vo);
-		System.out.println("userBookList" + list);
-//		int seatCount = Collections.frequency(list, vo.getFlightId());
-		int seatCount = list.size();
-		
-		int economyCnt = userBookService.economyCnt();
-		int prestigeCnt = userBookService.prestigeCnt();
-		
-		if(!vo.getSeatType().equals("prestige")) {
-			int cnt = Integer.parseInt(vo.getPersonal());
-			if(economyCnt + cnt >6) {
-			HttpStatus status = HttpStatus.NOT_FOUND;
-	        String message = "이코노미좌석이 초과하였습니다.";
-			return new ResponseEntity<>(message, status);
-			}else {
-//			// 요청 헤더에서 추출한 사용자 ID를 mybatis 매퍼에 전달하여 SQL 쿼리에서 사용할 수 있도록
-//	        userBookService.insertUserBook(vo);
-			//2) personal에 따른 insert문 반복실행
-			for (int ii = 0; ii < cnt; ii++) {
-			    //1)좌석값 번호의 누적값 세팅
-			    long sum = ii + 1;
-			    System.out.println("누적 값: " + sum);
-			    //좌석저장
-			    vo.setSeatType("E" + sum); //E뒤에 누적값으로 set
-			    userBookService.insertUserBook(vo);
-			}
+		if (authToken != null & authToken.startsWith("Bearer ")) {
+			String accessToken = null;
+			accessToken = authToken.substring(7);
+
+			System.out.println(accessToken);
+			TokenVO token_vo = new TokenVO();
+			token_vo.setAccessToken(accessToken);
+			// accessToken 사용자정보 꺼내기 (id값)
+			String[] splitToken = accessToken.split("\\.");
+			String payload = new String(Base64.getDecoder().decode(splitToken[1]), StandardCharsets.UTF_8);
+			JSONObject jsonObject = new JSONObject(payload);
+			System.out.println(jsonObject);
+			// user_id
+			String id = jsonObject.getString("id");
+			System.out.println(id);
+			// id추출 완료----------------------------------------------------
+//			int economyCnt = userBookService.economyCnt(vo.getFlightId());
+//			System.out.println("economyCnt = " + economyCnt);
+//			int prestigeCnt = userBookService.prestigeCnt();
+//			System.out.println("prestigeCnt = " + prestigeCnt);
+			
+//			int economyCntAll = economyCnt + vo.getPersonal();
+//			String prestigeCntAll;
+//			prestigeCntAll = prestigeCnt + vo.getPersonal();
+//			
+//			if(!(economyCnt<7 || prestigeCnt<5)) {//정상범위 내에 있지 않으면
+//				HttpStatus status = HttpStatus.BAD_REQUEST;
+//				String message = "예약할 수 없습니다.";
+//				Map<String, Object> response = new HashMap<>();
+//				response.put("message", message);
+//				return new ResponseEntity<>(response, status);
+//			}
+			
+			vo.setUserId(id);
+			String uuid = RandomStringUtils.random(36, true, true);
+			vo.setReservationId(uuid);
+			vo.setPersonal(vo.getPersonal());
+			vo.setFlightId(vo.getFlightId());
+			vo.setSeatType(vo.getSeatType());
+			
+//			userBookService.UserInfo();
+			userBookService.insertUserBook(vo);
 			HttpStatus status = HttpStatus.OK;
-			int economyExtra = 6 - economyCnt - cnt;
-			String message = "현재 이코노미좌석이 " + economyExtra + " 남았습니다.";
+			String message = "저장되었습니다.";
 			Map<String, Object> response = new HashMap<>();
 			response.put("message", message);
-			response.put("economyExtra", economyExtra);
+			response.put("vo", vo);
+//			response.put("", );
 			return new ResponseEntity<>(response, status);
-			}
-		}else if(!vo.getSeatType().equals("economy")) {
-			int cnt = Integer.parseInt(vo.getPersonal());
-			if(prestigeCnt + cnt >4) {
-				HttpStatus status = HttpStatus.NOT_FOUND;
-		        String message = "비즈니스좌석이 초과하였습니다.";
-				return new ResponseEntity<>(message, status);
-			}else {
-				for (int ii = 0; ii < cnt; ii++) {
-				    //1)좌석값 번호의 누적값 세팅
-				    long sum = ii + 1;
-				    System.out.println("누적 값: " + sum);
-				    //좌석저장
-				    vo.setSeatType("B" + sum); //B뒤에 누적값으로 set
-				    userBookService.insertUserBook(vo);
 				}
-				HttpStatus status = HttpStatus.OK;
-		        int prestigeExtra = 4 - prestigeCnt - cnt;
-		        String message = "현재 비즈니스좌석이 " + prestigeExtra + " 남았습니다.";
-				Map<String, Object> response = new HashMap<>();
-				response.put("message", message);
-				response.put("prestigeExtra", prestigeExtra);
-		        return new ResponseEntity<>(response, status);
-			}
-		}
+		return null;
 	}
-	    return null;
-	}
-}	
 	
-	
-	
-	
-	
-	
-	
-	
+
+}
+
 //
 ////	static Scanner sc = new Scanner(System.in);
 ////	static String id;
@@ -268,4 +262,3 @@ public class UserBookController {
 //			} 
 //		}
 //	}
-
