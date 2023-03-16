@@ -29,15 +29,48 @@
 		delete from flight
 		where id = #{id}
 	</delete>
-	
-	<!-- 페이징 (mybatis if 테스트 필요)-->
-	<select id="find" resultType = "com.example.demo.flight.FlightVO">
-		SELECT * FROM flight LIMIT #{pageNo}, #{numOfRows}
+
+	<!-- client에서 조회한 데이터를 조회 페이징처리 -->
+	<select id="find" resultType="com.example.demo.flight.FlightVO">
+		SELECT * FROM flight
+		<where>
+			<if test="depAirportNm != null and arrAirportNm != null and depPlandTime != null">
+				AND (dep_airport_nm LIKE CONCAT('%', #{depAirportNm}, '%') 
+					 AND arr_airport_nm LIKE CONCAT('%', #{arrAirportNm}, '%')
+					 AND dep_pland_time LIKE CONCAT('%', #{depPlandTime}, '%')
+					 )
+			</if>
+		</where>
+		LIMIT #{pageNo}, #{numOfRows}
 	</select>
+	
+	<!-- client에서 조회한 데이터를 조회-->
+	<select id="findAirline" resultType="com.example.demo.flight.FlightVO">
+		SELECT * FROM flight
+		<where>
+			<if test="depAirportNm != null and arrAirportNm != null and depPlandTime != null and airlineNm != null">
+				AND (dep_airport_nm LIKE CONCAT('%', #{depAirportNm}, '%') 
+					 AND arr_airport_nm LIKE CONCAT('%', #{arrAirportNm}, '%')
+					 AND dep_pland_time LIKE CONCAT('%', #{depPlandTime}, '%')
+					 AND airline_nm LIKE CONCAT('%', #{airlineNm}, '%')
+					 )
+			</if>
+		</where>
+		LIMIT #{pageNo}, #{numOfRows}
+	</select>
+	
+	<!-- client에서 조회한 데이터 + airline 조회 -->
+	
+<!-- 	<select id="findAirline" resultType = "com.example.demo.flight.FlightVO">
+		SELECT * FROM flight 
+		where dep_airport_nm=#{depAirportNm} and arr_airport_nm=#{arrAirportNm} and dep_pland_time=#{depPlandTime} and airline_nm=#{airlineNm}
+ 		LIMIT #{pageNo}, #{numOfRows}
+	</select> -->
 	
 	<!-- totalCount -->
 	<select id="total" resultType="com.example.demo.flight.CountVO">
 		select count(*) AS total_count from flight
+		where dep_airport_nm=#{depAirportNm} and arr_airport_nm=#{arrAirportNm} and dep_pland_time=#{depPlandTime} and airline_nm=#{airlineNm}
 	</select>
 	
 		<!-- refreshToken 저장 -->
@@ -46,5 +79,16 @@
 		values (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id})
 	</insert>
 
+	<!-- airline id를 통한 항공사 조회-->
+	<select id="airlineNm" resultType = "String">
+		SELECT airlineNm FROM airline 
+		where airlineId=#{airlineId}
+	</select>
+	
+	<!-- airport id를 통한 공항 조회-->
+	<select id="airportNm" resultType = "String">
+		SELECT airportNm FROM airport 
+		where airportId=#{airportId}
+	</select>
 
 </mapper>

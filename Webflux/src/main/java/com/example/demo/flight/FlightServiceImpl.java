@@ -49,17 +49,40 @@ public class FlightServiceImpl implements FlightService{
 	public List<FlightVO> find(Map<String, Object> vo) throws Exception {
 		return flightmapper.find(vo);
 	}
+	
+	@Override
+	public List<FlightVO> findAll(Map<String, Object> vo) throws Exception {
+		return flightmapper.find(vo);
+	}
 
 
 	@Override
-	public CountVO total() throws Exception {
-		return flightmapper.total();
+	public CountVO total(Map<String, Object> vo) throws Exception {
+		return flightmapper.total(vo);
 	}
 
 
 	@Override
 	public int seatInsert(SeatVO vo) throws Exception {
 		return flightmapper.seatInsert(vo);
+	}
+
+
+	@Override
+	public String airlineNm(String airlineId) throws Exception {
+		return flightmapper.airlineNm(airlineId);
+	}
+
+
+	@Override
+	public String airportNm(String airportNm) throws Exception {
+		return flightmapper.airportNm(airportNm);
+	}
+
+
+	@Override
+	public List<FlightVO> findAirline(Map<String, Object> vo) throws Exception {
+		return flightmapper.findAirline(vo);
 	}
 	
 
