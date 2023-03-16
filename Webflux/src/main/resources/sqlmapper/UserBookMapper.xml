@@ -52,7 +52,7 @@
 	<select id='UserInfo' resultType="com.example.demo.user.UserVO">
 		SELECT name, address, email, phone_number
 		FROM user
-		WHERE user_id=#{userId}
+		WHERE user_id=#{id}
 	</select>
 	
 	<!-- 아래것 필요없음 -->

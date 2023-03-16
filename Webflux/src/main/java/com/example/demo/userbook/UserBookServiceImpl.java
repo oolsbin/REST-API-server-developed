@@ -59,12 +59,12 @@ public class UserBookServiceImpl implements UserBookService{
 //	}
 
 	@Override
-	public UserVO UserInfo(UserVO vo) throws Exception {
-		return userbookmapper.UserInfo(vo);
+	public UserVO UserInfo(String userId) throws Exception {
+		return userbookmapper.UserInfo(userId);
 	}
 
 	@Override
-	public FlightVO FlightInfo(FlightVO vo) throws Exception {
-		return userbookmapper.FlightInfo(vo);
+	public FlightVO FlightInfo(String flightId) throws Exception {
+		return userbookmapper.FlightInfo(flightId);
 	}
 }

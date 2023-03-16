@@ -95,11 +95,6 @@ public class UserBookController {
 
 		int economyCnt = userBookService.economyCnt(flightId);
 		int prestigeCnt = userBookService.prestigeCnt(flightId);
-//			    if (prestigeCnt == 0) {
-//			        return 0; // 기본값으로 0을 반환하도록 수정
-//			    }
-// DB 조회 결과 값을 반환
-		
 		
 		int economyExtra = 6 - economyCnt;
 		int prestigeExtra = 4 - prestigeCnt;
@@ -159,14 +154,16 @@ public class UserBookController {
 			vo.setFlightId(vo.getFlightId());
 			vo.setSeatType(vo.getSeatType());
 			
-//			userBookService.UserInfo();
+			System.out.println(userBookService.UserInfo(id));
 			userBookService.insertUserBook(vo);
 			HttpStatus status = HttpStatus.OK;
 			String message = "저장되었습니다.";
 			Map<String, Object> response = new HashMap<>();
 			response.put("message", message);
 			response.put("vo", vo);
-//			response.put("", );
+			response.put("userInfo", userBookService.UserInfo(id));
+			response.put("flightInfo", userBookService.FlightInfo(vo.getFlightId()));
+			
 			return new ResponseEntity<>(response, status);
 				}
 		return null;

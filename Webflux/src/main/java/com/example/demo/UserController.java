@@ -63,7 +63,8 @@ public class UserController {
 		if (userService.login(vo) == null) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		
+		System.out.println(userService.login(vo).getPw());
+		System.out.println(userService.login(vo).getId());
 		if (!passwordEncoder.matches(vo.getPw(), userService.login(vo).getPw())) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);//400
 		}

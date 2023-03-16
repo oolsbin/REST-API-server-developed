@@ -175,6 +175,7 @@ public class FlightController {
 				System.out.println("DB 찾아온 값 수 : " + result.size());
 				System.out.println("DB에서 찾아온 데이터 : " + flightService.find(map));
 				System.out.println("API 찾아온 값 수 : " + parsedItemVOs.size());
+				
 				if (parsedItemVOs.size() == result.size()) {
 					responseMap.put("data", flightService.find(map));
 					return ResponseEntity.ok(responseMap);	

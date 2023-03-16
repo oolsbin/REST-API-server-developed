@@ -16,6 +16,6 @@ public interface UserBookService {
 	int insertUserBook(SeatVO vo) throws Exception;//예약저장
 //	int economySeatCnt() throws Exception;//이코노미 좌석번호 최댓값
 //	int prestigeSeatCnt() throws Exception;//비즈니스 좌석번호 최댓값
-	UserVO UserInfo(UserVO vo) throws Exception;
-	FlightVO FlightInfo(FlightVO vo) throws Exception;
+	UserVO UserInfo(String userId) throws Exception;
+	FlightVO FlightInfo(String flightId) throws Exception;
 }
