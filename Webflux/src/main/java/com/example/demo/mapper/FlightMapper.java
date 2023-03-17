@@ -23,4 +23,6 @@ public interface FlightMapper {
 	int seatInsert(SeatVO vo) throws Exception;//좌석저장
 	String airlineNm(String airlineId) throws Exception;
 	String airportNm(String airportNm) throws Exception;
+	FlightVO flightUserBook(Map<String, Object> vo) throws Exception;
+	FlightVO flightUserBookAirline(Map<String, Object> vo) throws Exception;
 }

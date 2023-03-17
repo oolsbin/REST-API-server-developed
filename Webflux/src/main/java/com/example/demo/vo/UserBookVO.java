@@ -18,6 +18,8 @@ public class UserBookVO {
 	private Integer prestigeCharge;//비즈니스석운임
 	private String depAirportNm;//출발공항
 	private String arrAirportNm;//도착공항
+	private int chargeSum;
+	private String personal;//인원수
 //	private String name;//사용자 이름
 //	private String address;//주소
 //	private String email;//이메일

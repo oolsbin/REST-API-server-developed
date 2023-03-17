@@ -4,19 +4,27 @@
 
 	<!-- 생성 -->
 	<insert id="insertFlight">
-	INSERT INTO flight (flight_id, vihicle_id, airline_nm, dep_pland_time,
-	arr_pland_time, economy_charge, prestige_charge, dep_airport_nm,
-	arr_airport_nm)
-	SELECT #{flightId}, #{vihicleId}, #{airlineNm}, #{depPlandTime},
-	#{arrPlandTime}, IFNULL(#{economyCharge}, 0), IFNULL(#{prestigeCharge},
-	0), #{depAirportNm},#{arrAirportNm}
+	INSERT INTO flight (flight_id, vihicle_id, airline_nm, dep_pland_time,arr_pland_time, economy_charge, prestige_charge, dep_airport_nm, arr_airport_nm)
+	SELECT #{flightId}, #{vihicleId}, #{airlineNm}, #{depPlandTime}, #{arrPlandTime}, IFNULL(#{economyCharge}, 0), IFNULL(#{prestigeCharge}, 0), #{depAirportNm},#{arrAirportNm}
 	FROM dual
-	WHERE NOT EXISTS (
-	SELECT 1
-	FROM flight
+		WHERE NOT EXISTS (
+			SELECT 1
+		FROM flight
 	WHERE flight_id = #{flightId}
 	)
 	</insert>
+	
+	<!-- 항공운항정보 조회 -->
+	<select id="flightUserBook" resultType="com.example.demo.flight.FlightVO">
+		select count(*) AS total_count from flight
+		where dep_airport_nm=#{depAirportNm} and arr_airport_nm=#{arrAirportNm} and LEFT(dep_pland_time, 8)=#{depPlandTime}
+	</select>
+	
+	<!-- 항공운항정보 조회 + airline -->
+	<select id="flightUserBookAirline" resultType="com.example.demo.flight.FlightVO">
+		select count(*) AS total_count from flight
+		where dep_airport_nm=#{depAirportNm} and arr_airport_nm=#{arrAirportNm} and LEFT(dep_pland_time, 8)=#{depPlandTime} and airline_nm=#{airlineNm}
+	</select>
 	
 	<!-- 항공운항정보에 따른 좌석생성 -->
 	<insert id="insertSeatFlight">

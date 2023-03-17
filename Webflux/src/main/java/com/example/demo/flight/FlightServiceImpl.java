@@ -91,6 +91,18 @@ public class FlightServiceImpl implements FlightService{
 	}
 
 
+	@Override
+	public FlightVO flightUserBook(Map<String, Object> vo) throws Exception {
+		return flightmapper.flightUserBook(vo);
+	}
+
+
+	@Override
+	public FlightVO flightUserBookAirline(Map<String, Object> vo) throws Exception {
+		return flightmapper.flightUserBookAirline(vo);
+	}
+
+
 	
 	
 

@@ -82,7 +82,7 @@ public class UserBookController {
 	private UserBookService userBookService;
 
 	
-	@PostMapping(value = "/userBookList") // 마이페이지 예약목록
+	@GetMapping(value = "/userBookList") // 마이페이지 예약목록
 	public ResponseEntity<?> UserBookMypage(@RequestHeader HttpHeaders headers)
 			throws Exception {
 		// 헤더토큰 꺼내온다
@@ -105,9 +105,7 @@ public class UserBookController {
 			//////////////아이디 추출//////////////////////
 			List<UserBookVO> list = userBookService.selectUserBook(id);
 			HttpStatus status = HttpStatus.OK;
-			String message = "저장되었습니다.";
 			Map<String, Object> response = new HashMap<>();
-			response.put("message", message);
 			response.put("reservationInfo", list);
 			
 			return new ResponseEntity<>(response, status);
@@ -179,6 +177,20 @@ public class UserBookController {
 			vo.setPersonal(vo.getPersonal());
 			vo.setFlightId(vo.getFlightId());
 			vo.setSeatType(vo.getSeatType());
+			
+			int economyCharge = userBookService.FlightInfo(vo.getFlightId()).getEconomyCharge();
+			int prestigeCharge = userBookService.FlightInfo(vo.getFlightId()).getPrestigeCharge();
+			String seatType = vo.getSeatType();
+			String personalStr = vo.getPersonal();
+			int personalInt = Integer.parseInt(personalStr);
+			
+			if(seatType.equals("economy")) {
+				vo.setChargeSum(personalInt*economyCharge);
+			}else {
+				vo.setChargeSum(personalInt*prestigeCharge);
+			}
+				
+			
 			
 			System.out.println(userBookService.UserInfo(id));
 			userBookService.insertUserBook(vo);

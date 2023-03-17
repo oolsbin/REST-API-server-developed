@@ -11,4 +11,5 @@ public class SeatVO {
 	private String personal;//인원수
 	private String reservationId;//예약여부
 	private String userId;//사용자Id
+	private int chargeSum;
 }

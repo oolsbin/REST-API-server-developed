@@ -11,6 +11,7 @@ import com.example.demo.vo.SeatVO;
 public interface UserBookService {
 //	int insertSeat(List<????> vo) throw Exception;
 	List<UserBookVO> selectUserBook(String id) throws Exception;
+	List<UserBookVO> ChargeSum(String id) throws Exception;
 	List<SeatVO> seatList(SeatVO vo) throws Exception;
 	int economyCnt(String flightId) throws Exception;//이코노미 좌석개수
 	int prestigeCnt(String flightId) throws Exception;//비즈니스 좌석개수

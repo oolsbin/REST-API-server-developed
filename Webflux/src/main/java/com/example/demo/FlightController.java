@@ -19,6 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -127,7 +128,10 @@ public class FlightController {
 				System.out.println(response);
 				}catch(RestClientException e){
 					e.printStackTrace();
-					return ResponseEntity.notFound().build();
+					HttpStatus status = HttpStatus.NOT_FOUND;
+					String message = "데이터가 없습니다.";
+					
+					return new ResponseEntity<>(message, status);
 				}
 				
 				JsonElement je = gson.fromJson(response.getBody(), JsonElement.class);
@@ -154,7 +158,10 @@ public class FlightController {
 				List<ItemVO> parsedItemVOs = new ArrayList<>();
 				
 				if (itemJe.isJsonPrimitive()) {
-					return ResponseEntity.notFound().build();
+					HttpStatus status = HttpStatus.NOT_FOUND;
+					String message = "데이터가 없습니다.";
+					
+					return new ResponseEntity<>(message, status);
 				} else if (itemJe.isJsonObject()) {
 					ItemVO stringItem = gson.fromJson(itemJe, ItemVO.class);
 					parsedItemVOs.add(stringItem);
@@ -325,11 +332,19 @@ public class FlightController {
 //						for (FlightVO flightVO : parsedItemList) {
 //						    flightmapper.insertFlight(flightVO);
 //						}
-
-						responseMap.put("data", result);
-						responseMap.put("api", parsedItemVOs);
+						Map<String, Object> resultMap = new HashMap<>();
+						resultMap.put("pageNo", pageNo);
+						resultMap.put("numOfRows", numOfRows);
+						resultMap.put("depAirportNm", depAirportNm);
+						resultMap.put("arrAirportNm", arrAirportNm);
+						resultMap.put("depPlandTime", plandTime.substring(0, 8));
+						//출발지&도착지에 따른 DB검색결과
+						System.out.println(result);
+						responseMap.put("data", flightService.find(resultMap));
+//						responseMap.put("api", parsedItemVOs);
 						return ResponseEntity.ok(responseMap);
 					}
+					
 				} else {
 				//1-2)airlineId가 있는 경우
 					if (parsedItemVOs.size() == airline_result.size()) {
@@ -394,9 +409,18 @@ public class FlightController {
 //					        flightmapper.insertFlight(flightVO);
 //					    }
 //					}
-
-					responseMap_airline.put("data", airline_result);
-					responseMap_airline.put("api", parsedItemVOs);
+					
+					Map<String, Object> resultMap = new HashMap<>();
+					resultMap.put("pageNo", pageNo);
+					resultMap.put("numOfRows", numOfRows);
+					resultMap.put("depAirportNm", depAirportNm);
+					resultMap.put("arrAirportNm", arrAirportNm);
+					resultMap.put("airlineNm", airlineNm);
+					resultMap.put("depPlandTime", plandTime.substring(0, 8));
+					//출발지&도착지에 따른 DB검색결과
+					System.out.println(result);
+					responseMap.put("data", flightService.findAirline(resultMap));
+//					responseMap_airline.put("api", parsedItemVOs);
 					return ResponseEntity.ok(responseMap_airline);
 				
 			}

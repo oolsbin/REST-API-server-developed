@@ -36,8 +36,8 @@
 	
 	<!-- id값에 맞게 좌석 저장 -->
 	<insert id='insertUserBook' parameterType="com.example.demo.vo.SeatVO">
-		insert into seat(flight_id, seat_type, personal, user_id, reservation_id)
-		values (#{flightId}, #{seatType}, #{personal}, #{userId}, #{reservationId})
+		insert into seat(flight_id, seat_type, personal, user_id, reservation_id, charge_sum)
+		values (#{flightId}, #{seatType}, #{personal}, #{userId}, #{reservationId}, #{chargeSum})
 	</insert>
 	
 	<!-- flight정보조회 -->
@@ -55,9 +55,18 @@
 		WHERE id=#{id}
 	</select>
 	
+	<!-- 가격조회 -->
+	<select id='ChargeSum' resultType="com.example.demo.vo.UserInfoVO">
+		SELECT flight_id, seat_type, personal, economy_charge, prestige_charge
+		FROM seat AS s
+		JOIN flight AS f
+		ON s.flight_id = f.flight_id
+		WHERE user_id=#{userId}
+	</select>
+	
 	<!-- 아래것 필요없음 -->
 	
-	<select id='economySeatCnt'>
+<!-- 	<select id='economySeatCnt'>
 	SELECT MAX(CAST(SUBSTRING(tclass, 2) AS SIGNED)) AS max_num FROM seat
 	WHERE tclass LIKE 'E%';
 	</select>
@@ -65,7 +74,7 @@
 	<select id='prestigeSeatCnt'>
 	SELECT MAX(CAST(SUBSTRING(tclass, 2) AS SIGNED)) AS max_num FROM seat
 	WHERE tclass LIKE 'B%';
-	</select>
+	</select> -->
 	
 
 </mapper>
