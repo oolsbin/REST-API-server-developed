@@ -207,9 +207,11 @@ public class UserController {
 				
 //				String id_d = decodedJWT.getId();//id=null
 			//refreshToken 저장
-			if(id==vo.getId()) {
-	    			userService.refreshToken_delete(token_vo);
-	    		}	
+////////////////////////////////////////////////////////////////////////////////////////				
+//				String refreshId = userService.refreshToken_chk(token_vo).getId();
+//			if(id.equals(refreshId)) {
+//	    			userService.refreshToken_delete(token_vo);
+//	    		}	
 			String re_refreshToken = refreshService.login(vo.getId(), vo.getPw());
 
 			
