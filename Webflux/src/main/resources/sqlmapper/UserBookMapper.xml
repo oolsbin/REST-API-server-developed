@@ -49,10 +49,10 @@
 	
 	
 	<!-- user정보조회 -->
-	<select id='UserInfo' resultType="com.example.demo.user.UserVO">
+	<select id='UserInfo' resultType="com.example.demo.vo.UserInfoVO">
 		SELECT name, address, email, phone_number
 		FROM user
-		WHERE user_id=#{id}
+		WHERE id=#{id}
 	</select>
 	
 	<!-- 아래것 필요없음 -->

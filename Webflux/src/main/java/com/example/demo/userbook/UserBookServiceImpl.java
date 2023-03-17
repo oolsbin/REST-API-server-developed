@@ -9,6 +9,7 @@ import com.example.demo.flight.FlightVO;
 import com.example.demo.mapper.UserBookMapper;
 import com.example.demo.user.UserVO;
 import com.example.demo.vo.UserBookVO;
+import com.example.demo.vo.UserInfoVO;
 import com.example.demo.vo.SeatVO;
 
 @Service
@@ -23,8 +24,8 @@ public class UserBookServiceImpl implements UserBookService{
 //	}
 	
 	@Override
-	public List<UserBookVO> selectUserBook(UserBookVO vo) throws Exception {
-		return userbookmapper.selectUserBook(vo);
+	public List<UserBookVO> selectUserBook(String id) throws Exception {
+		return userbookmapper.selectUserBook(id);
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class UserBookServiceImpl implements UserBookService{
 //	}
 
 	@Override
-	public UserVO UserInfo(String userId) throws Exception {
+	public UserInfoVO UserInfo(String userId) throws Exception {
 		return userbookmapper.UserInfo(userId);
 	}
 

@@ -181,7 +181,6 @@ public class UserController {
 	    		
 	    		
 	    		
-	    		
 	    		//4-2)token의 유효기간이 남아 있으면 refreshToken과 accessToken을 재발급한다
 	    		UserVO vo = new UserVO();
 	    		

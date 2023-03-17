@@ -6,8 +6,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -20,6 +22,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,6 +75,7 @@ public class FlightController {
 		//total count
 		@GetMapping(value = "/flight")
 		@Operation(summary = "항공운항정보 목록 조회", description = "출/도착지를 기준으로 국내선 항공운항정보 목록을 조회하는 기능")
+		@Scheduled(fixedDelay = 300000)
 		public ResponseEntity<?> flightSelect
 			   (@RequestParam(value = "depAirportId", required = false) String depAirportId,
 			    @RequestParam(value = "arrAirportId", required = false) String arrAirportId,
@@ -146,7 +150,7 @@ public class FlightController {
 				
 				JsonElement itemJe = je.getAsJsonObject().get("response").getAsJsonObject().get("body").getAsJsonObject().get("items").getAsJsonObject().get("item");
 				Integer totalCount = je.getAsJsonObject().get("response").getAsJsonObject().get("body").getAsJsonObject().get("totalCount").getAsInt();
-				
+				System.out.println("totalCount = " + totalCount);
 				List<ItemVO> parsedItemVOs = new ArrayList<>();
 				
 				if (itemJe.isJsonPrimitive()) {
@@ -175,6 +179,7 @@ public class FlightController {
 				String arrAirportNm = firstParsedItem.getArrAirportNm();
 				String plandTime = firstParsedItem.getDepPlandTime();
 				String airlineNm = firstParsedItem.getAirlineNm();
+				
 //				int charg = firstParsedItem.getEconomyCharge();
 //				System.out.println(charg);
 				System.out.println(depAirportNm);//출발지
@@ -187,7 +192,7 @@ public class FlightController {
 				map.put("numOfRows", numOfRows);
 				map.put("depAirportNm", depAirportNm);
 				map.put("arrAirportNm", arrAirportNm);
-				map.put("depPlandTime", plandTime);
+				map.put("depPlandTime", plandTime.substring(0, 8));
 				//출발지&도착지에 따른 DB검색결과
 				List<FlightVO> result = flightService.find(map);
 				System.out.println(result);
@@ -198,7 +203,7 @@ public class FlightController {
 				airline_map.put("numOfRows", numOfRows);
 				airline_map.put("depAirportNm", depAirportNm);
 				airline_map.put("arrAirportNm", arrAirportNm);
-				airline_map.put("depPlandTime", plandTime);
+				airline_map.put("depPlandTime", plandTime.substring(0, 8));
 				airline_map.put("airlineNm", airlineNm);
 				//출발지&도착지에 따른 DB검색결과
 				List<FlightVO> airline_result = flightService.findAirline(airline_map);
@@ -211,115 +216,189 @@ public class FlightController {
 				Map<String, Object> total_map = new HashMap<>();
 				total_map.put("depAirportNm", depAirportNm);
 				total_map.put("arrAirportNm", arrAirportNm);
-				total_map.put("depPlandTime", plandTime);
-				total_map.put("airlineNm", airlineNm);
+				total_map.put("depPlandTime", plandTime.substring(0, 8));
 				
-				CountVO countVO = new CountVO();
-				//DB flight 데이터 총 개수 
-				countVO = flightService.total(total_map);
-				System.out.println("[DB] total count : " + countVO.getTotalCount());
-				int total = countVO.getTotalCount();
+//				CountVO countVO = new CountVO();
+//				//DB flight 데이터 총 개수 
+//				countVO = flightService.total(total_map);
+//				int total = countVO.getTotalCount();
+				System.out.println("[DB] total count : " + totalCount);
+				
+				Map<String, Object> total_airline_map = new HashMap<>();
+				total_airline_map.put("depAirportNm", depAirportNm);
+				total_airline_map.put("arrAirportNm", arrAirportNm);
+				total_airline_map.put("depPlandTime", plandTime.substring(0, 8));
+				total_airline_map.put("airlineNm", airlineNm);
+				
+//				CountVO countVOVO = new CountVO();
+//				//DB flight 데이터 총 개수 
+//				countVOVO = flightService.totalAirline(total_airline_map);
+//				int total_airline = countVOVO.getTotalCount();
+				System.out.println("[DB](airline) total count : " + totalCount);
+				
+//--------------2) 검색값에 따른 페이징 total 값 -----------------------------------------------------------------------
 				
 				Map<String, Object> responseMap = new HashMap<>();
-				responseMap.put("totalCount", total);
-				responseMap.put("pageNo", (pageNo-1) * numOfRows);
+				responseMap.put("totalCount", totalCount);//////////////////
+				responseMap.put("pageNo", pageNo);
 				responseMap.put("numOfRows", numOfRows);
+				
+				Map<String, Object> responseMap_airline = new HashMap<>();
+				responseMap_airline.put("totalCount", totalCount);//////////////////
+				responseMap_airline.put("pageNo", pageNo);
+				responseMap_airline.put("numOfRows", numOfRows);
 				
 				System.out.println("DB 찾아온 값 수 : " + result.size());
 				System.out.println("DB에서 찾아온 (airline없는)데이터 : " + result);
+				System.out.println("DB + airlineNm : " + airline_result);
 				System.out.println("API 찾아온 값 수 : " + parsedItemVOs.size());
 				
-				//airlineId가 없는 경우
+				//1-1) airlineId가 없는 경우
 				if (airlineId == "" || airlineId == null) {
 					if (parsedItemVOs.size() == result.size()) {
 						responseMap.put("data", result);
 						return ResponseEntity.ok(responseMap);
 					} else {
-						// parsedItemVOs와 result의 크기가 다른 경우
-						List<FlightVO> parsedItemList = new ArrayList<>();
-
-						for (ItemVO item : parsedItemVOs) {
-						    // item이 airline_result에도 존재하는지 확인
-						    boolean isDuplicate = false;
-						    for (FlightVO resultItem : result) {
-						        if (resultItem.getAirlineNm().equals(item.getAirlineNm())
-						            && resultItem.getArrAirportNm().equals(item.getArrAirportNm())
-						            && resultItem.getDepAirportNm().equals(item.getDepAirportNm())
-						            && resultItem.getArrPlandTime().equals(item.getArrPlandTime())
-						            && resultItem.getDepPlandTime().equals(item.getDepPlandTime())) {
-						            // 항목이 중복됨
-						            isDuplicate = true;
-						            break;
-						        }
-						    }
-
-						    if (!isDuplicate) {
-						        // 중복되지 않는 항목일 경우, parsedItemList에 추가
-						        FlightVO flightVO = new FlightVO();
-						        String uuid = RandomStringUtils.random(36, true, true);
-						        flightVO.setFlightId(uuid + "");
-						        flightVO.setAirlineNm(item.getAirlineNm());
-						        flightVO.setArrAirportNm(item.getArrAirportNm());
-						        flightVO.setArrPlandTime(item.getArrPlandTime());
-						        flightVO.setDepAirportNm(item.getDepAirportNm());
-						        flightVO.setDepPlandTime(item.getDepPlandTime());
-						        flightVO.setEconomyCharge(item.getEconomyCharge());
-						        flightVO.setPrestigeCharge(item.getPrestigeCharge());
-						        flightVO.setVihicleId(item.getVihicleId());
-						        parsedItemList.add(flightVO);
-						    }
+						
+						FlightVO flightVO = new FlightVO();
+						
+						for (ItemVO vo : parsedItemVOs) {
+							String uuid = RandomStringUtils.random(36, true, true);
+							flightVO.setFlightId(uuid+"");
+							flightVO.setAirlineNm(vo.getAirlineNm());
+							flightVO.setArrAirportNm(vo.getArrAirportNm());
+							flightVO.setArrPlandTime(vo.getArrPlandTime());
+							flightVO.setDepAirportNm(vo.getDepAirportNm());
+							flightVO.setDepPlandTime(vo.getDepPlandTime());
+							flightVO.setEconomyCharge(vo.getEconomyCharge());
+							flightVO.setPrestigeCharge(vo.getPrestigeCharge());
+							flightVO.setVihicleId(vo.getVihicleId());
+							
+//							SeatVO seatVO = new SeatVO();
+//						    
+							
+							flightmapper.insertFlight(flightVO);
+						
 						}
+						
+						
+//						// parsedItemVOs와 result의 크기가 다른 경우
+//						List<FlightVO> parsedItemList = new ArrayList<>();
+////						Set<FlightVO> result_set = new HashSet<>(result);
+//
+//						for (ItemVO item : parsedItemVOs) {
+//						    // item이 airline_result에도 존재하는지 확인
+//						    boolean isDuplicate = false;
+//						    for (FlightVO resultItem : result) {
+//						        if (resultItem.getArrAirportNm().equals(item.getArrAirportNm())
+//						            && resultItem.getDepAirportNm().equals(item.getDepAirportNm())
+//						            && resultItem.getArrPlandTime().substring(0, 8).equals(item.getArrPlandTime().substring(0, 8))
+//						            && resultItem.getDepPlandTime().substring(0, 8).equals(item.getDepPlandTime().substring(0, 8)))
+//						        {
+//						            // 항목이 중복됨
+//						        	isDuplicate = true;
+//						        	break;
+//						        }
+//						    }
+//							    if (!isDuplicate) {
+//							        // 중복되지 않는 항목일 경우, parsedItemList에 추가
+//							        FlightVO flightVO = new FlightVO();
+//							        String uuid = RandomStringUtils.random(36, true, true);
+//							        flightVO.setFlightId(uuid + "");
+//							        flightVO.setAirlineNm(item.getAirlineNm());
+//							        flightVO.setArrAirportNm(item.getArrAirportNm());
+//							        flightVO.setArrPlandTime(item.getArrPlandTime());
+//							        flightVO.setDepAirportNm(item.getDepAirportNm());
+//							        flightVO.setDepPlandTime(item.getDepPlandTime());
+//							        flightVO.setEconomyCharge(item.getEconomyCharge());
+//							        flightVO.setPrestigeCharge(item.getPrestigeCharge());
+//							        flightVO.setVihicleId(item.getVihicleId());
+//							        parsedItemList.add(flightVO);
+//							        
+//							        flightmapper.insertFlight(flightVO);
+//							    }
+////						    }
+//						    
+//						}
 
 						// parsedItemList에 있는 항목을 DB에 저장
-						for (FlightVO flightVO : parsedItemList) {
-						    flightmapper.insertFlight(flightVO);
-						}
+//						for (FlightVO flightVO : parsedItemList) {
+//						    flightmapper.insertFlight(flightVO);
+//						}
 
 						responseMap.put("data", result);
+						responseMap.put("api", parsedItemVOs);
 						return ResponseEntity.ok(responseMap);
 					}
 				} else {
-				//airlineId가 있는 경우
-					List<FlightVO> parsedItemList = new ArrayList<>();
-
-					for (ItemVO item : parsedItemVOs) {
-					    // item이 airline_result에도 존재하는지 확인
-					    boolean isDuplicate = false;
-					    for (FlightVO resultItem : airline_result) {
-					        if (resultItem.getAirlineNm().equals(item.getAirlineNm())
-					            && resultItem.getArrAirportNm().equals(item.getArrAirportNm())
-					            && resultItem.getDepAirportNm().equals(item.getDepAirportNm())
-					            && resultItem.getArrPlandTime().equals(item.getArrPlandTime())
-					            && resultItem.getDepPlandTime().equals(item.getDepPlandTime())) {
-					            // 항목이 중복됨
-					            isDuplicate = true;
-					            break;
-					        }
-					    }
-
-					    if (!isDuplicate) {
-					        // 중복되지 않는 항목일 경우, parsedItemList에 추가
-					        FlightVO flightVO = new FlightVO();
-					        String uuid = RandomStringUtils.random(36, true, true);
-					        flightVO.setFlightId(uuid + "");
-					        flightVO.setAirlineNm(item.getAirlineNm());
-					        flightVO.setArrAirportNm(item.getArrAirportNm());
-					        flightVO.setArrPlandTime(item.getArrPlandTime());
-					        flightVO.setDepAirportNm(item.getDepAirportNm());
-					        flightVO.setDepPlandTime(item.getDepPlandTime());
-					        flightVO.setEconomyCharge(item.getEconomyCharge());
-					        flightVO.setPrestigeCharge(item.getPrestigeCharge());
-					        flightVO.setVihicleId(item.getVihicleId());
-					        parsedItemList.add(flightVO);
-					    }
-					// parsedItemList에 있는 항목을 DB에 저장
-					for (FlightVO flightVO : parsedItemList) {
-					    flightmapper.insertFlight(flightVO);
+				//1-2)airlineId가 있는 경우
+					if (parsedItemVOs.size() == airline_result.size()) {
+						responseMap_airline.put("data", airline_result);
+						return ResponseEntity.ok(responseMap_airline);
 					}
+					
+					FlightVO flightVO = new FlightVO();
+					
+					for (ItemVO vo : parsedItemVOs) {
+						String uuid = RandomStringUtils.random(36, true, true);
+						flightVO.setFlightId(uuid+"");
+						flightVO.setAirlineNm(vo.getAirlineNm());
+						flightVO.setArrAirportNm(vo.getArrAirportNm());
+						flightVO.setArrPlandTime(vo.getArrPlandTime());
+						flightVO.setDepAirportNm(vo.getDepAirportNm());
+						flightVO.setDepPlandTime(vo.getDepPlandTime());
+						flightVO.setEconomyCharge(vo.getEconomyCharge());
+						flightVO.setPrestigeCharge(vo.getPrestigeCharge());
+						flightVO.setVihicleId(vo.getVihicleId());
+						
+//						SeatVO seatVO = new SeatVO();
+//					    
+						
+						flightmapper.insertFlight(flightVO);
+					
+					}
+					
+//					List<FlightVO> parsedItemList = new ArrayList<>();
+//					Set<FlightVO> airline_result_set = new HashSet<>(airline_result);
+//
+//					for (ItemVO item : parsedItemVOs) {
+//					    // item이 airline_result에도 존재하는지 확인
+//					    boolean isDuplicate = false;
+//					    for (FlightVO resultItem : airline_result_set) {
+//					        if (resultItem.getAirlineNm().equals(item.getAirlineNm())
+//					            && resultItem.getArrAirportNm().equals(item.getArrAirportNm())
+//					            && resultItem.getDepAirportNm().equals(item.getDepAirportNm())
+//					            && resultItem.getArrPlandTime().substring(0, 8).equals(item.getArrPlandTime().substring(0, 8))
+//					            && resultItem.getDepPlandTime().substring(0, 8).equals(item.getDepPlandTime().substring(0, 8)))
+//					        {
+//					            // 항목이 중복됨
+//					            isDuplicate = true;
+//					            break;
+//					        }
+//					    }
+//
+//					    if (!isDuplicate) {
+//					        // 중복되지 않는 항목일 경우, parsedItemList에 추가
+//					        FlightVO flightVO = new FlightVO();
+//					        String uuid = RandomStringUtils.random(36, true, true);
+//					        flightVO.setFlightId(uuid + "");
+//					        flightVO.setAirlineNm(item.getAirlineNm());
+//					        flightVO.setArrAirportNm(item.getArrAirportNm());
+//					        flightVO.setArrPlandTime(item.getArrPlandTime());
+//					        flightVO.setDepAirportNm(item.getDepAirportNm());
+//					        flightVO.setDepPlandTime(item.getDepPlandTime());
+//					        flightVO.setEconomyCharge(item.getEconomyCharge());
+//					        flightVO.setPrestigeCharge(item.getPrestigeCharge());
+//					        flightVO.setVihicleId(item.getVihicleId());
+//					        
+//					        flightmapper.insertFlight(flightVO);
+//					    }
+//					}
 
-					responseMap.put("data", airline_result);
-					return ResponseEntity.ok(responseMap);
-				}
+					responseMap_airline.put("data", airline_result);
+					responseMap_airline.put("api", parsedItemVOs);
+					return ResponseEntity.ok(responseMap_airline);
+				
 			}
 //					if (parsedItemVOs.size() == airline_result.size()) {
 //						responseMap.put("data", airline_result);
@@ -356,7 +435,7 @@ public class FlightController {
 //				apiResponseMap.put("data", parsedItemVOs);//객체list<-flight에 대한
 //				
 //				return ResponseEntity.ok(apiResponseMap);//content length 차이날때 사용
-				return null;
+//				return null;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;

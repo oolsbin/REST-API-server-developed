@@ -19,6 +19,7 @@ public interface FlightMapper {
 	int updateFlight(FlightVO vo) throws Exception;//flight 수정
 	int deleteFlight(FlightVO vo) throws Exception;//flight 삭제
 	CountVO total(Map<String, Object> vo) throws Exception;//total count
+	CountVO totalAirline(Map<String, Object> vo) throws Exception;//total count
 	int seatInsert(SeatVO vo) throws Exception;//좌석저장
 	String airlineNm(String airlineId) throws Exception;
 	String airportNm(String airportNm) throws Exception;

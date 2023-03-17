@@ -81,14 +81,40 @@ public class UserBookController {
 	@Autowired
 	private UserBookService userBookService;
 
-	@GetMapping(value = "/userBookList") // 마이페이지 예약목록
-	public ResponseEntity<?> UserBookSelect(@RequestParam UserBookVO vo) throws Exception {
-		List<UserBookVO> list = userBookService.selectUserBook(vo);
-		System.out.println("userBookList" + list);
-		return ResponseEntity.ok().body(list);
+	
+	@PostMapping(value = "/userBookList") // 마이페이지 예약목록
+	public ResponseEntity<?> UserBookMypage(@RequestHeader HttpHeaders headers)
+			throws Exception {
+		// 헤더토큰 꺼내온다
+		String authToken = headers.getFirst("Authorization");
+		if (authToken != null & authToken.startsWith("Bearer ")) {
+			String accessToken = null;
+			accessToken = authToken.substring(7);
+
+			System.out.println(accessToken);
+			TokenVO token_vo = new TokenVO();
+			token_vo.setAccessToken(accessToken);
+			// accessToken 사용자정보 꺼내기 (id값)
+			String[] splitToken = accessToken.split("\\.");
+			String payload = new String(Base64.getDecoder().decode(splitToken[1]), StandardCharsets.UTF_8);
+			JSONObject jsonObject = new JSONObject(payload);
+			System.out.println(jsonObject);
+			// user_id
+			String id = jsonObject.getString("id");
+			System.out.println(id);
+			//////////////아이디 추출//////////////////////
+			List<UserBookVO> list = userBookService.selectUserBook(id);
+			HttpStatus status = HttpStatus.OK;
+			String message = "저장되었습니다.";
+			Map<String, Object> response = new HashMap<>();
+			response.put("message", message);
+			response.put("reservationInfo", list);
+			
+			return new ResponseEntity<>(response, status);
+				}
+		return null;
 	}
-	
-	
+			
 
 	@GetMapping(value = "/flight/extra-seat") // 남은 좌석정보
 	public ResponseEntity<?> UserBookCnt(@RequestParam String flightId) throws Exception {
@@ -160,7 +186,7 @@ public class UserBookController {
 			String message = "저장되었습니다.";
 			Map<String, Object> response = new HashMap<>();
 			response.put("message", message);
-			response.put("vo", vo);
+			response.put("reservationInfo", vo);
 			response.put("userInfo", userBookService.UserInfo(id));
 			response.put("flightInfo", userBookService.FlightInfo(vo.getFlightId()));
 			

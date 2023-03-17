@@ -60,6 +60,11 @@ public class FlightServiceImpl implements FlightService{
 	public CountVO total(Map<String, Object> vo) throws Exception {
 		return flightmapper.total(vo);
 	}
+	
+	@Override
+	public CountVO totalAirline(Map<String, Object> vo) throws Exception {
+		return flightmapper.totalAirline(vo);
+	}
 
 
 	@Override
@@ -84,6 +89,9 @@ public class FlightServiceImpl implements FlightService{
 	public List<FlightVO> findAirline(Map<String, Object> vo) throws Exception {
 		return flightmapper.findAirline(vo);
 	}
+
+
+	
 	
 
 	// 페이지 별 회원 조회
