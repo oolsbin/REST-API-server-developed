@@ -36,8 +36,8 @@
 	
 	<!-- id값에 맞게 좌석 저장 -->
 	<insert id='insertUserBook' parameterType="com.example.demo.vo.SeatVO">
-		insert into seat(flight_id, seat_type, personal, user_id, reservation_id, charge_sum)
-		values (#{flightId}, #{seatType}, #{personal}, #{userId}, #{reservationId}, #{chargeSum})
+		insert into seat(flight_id, seat_type, personal, user_id, reservation_id, charge_sum, create_date)
+		values (#{flightId}, #{seatType}, #{personal}, #{userId}, #{reservationId}, #{chargeSum}, #{createDate})
 	</insert>
 	
 	<!-- flight정보조회 -->

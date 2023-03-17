@@ -1,5 +1,7 @@
 package com.example.demo.vo;
 
+import java.sql.Date;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,4 +14,5 @@ public class SeatVO {
 	private String reservationId;//예약여부
 	private String userId;//사용자Id
 	private int chargeSum;
+	private Date createDate;
 }

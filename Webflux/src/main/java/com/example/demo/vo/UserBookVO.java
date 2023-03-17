@@ -1,5 +1,7 @@
 package com.example.demo.vo;
 
+import java.sql.Date;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +22,7 @@ public class UserBookVO {
 	private String arrAirportNm;//도착공항
 	private int chargeSum;
 	private String personal;//인원수
+	private Date createDate;
 //	private String name;//사용자 이름
 //	private String address;//주소
 //	private String email;//이메일

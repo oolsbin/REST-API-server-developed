@@ -1,9 +1,12 @@
 package com.example.demo;
 
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.json.JSONObject;
 import org.springdoc.api.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -162,6 +165,16 @@ public class UserController {
 	    	//2)client에서 받은 token을 받아서 token_vo에 담는다
 	    	TokenVO token_vo = new TokenVO();
 	    	token_vo.setRefreshToken(refreshToken);
+	    	// accessToken 사용자정보 꺼내기 (id값)
+			String[] splitToken = refreshToken.split("\\.");
+			String payload = new String(Base64.getDecoder().decode(splitToken[1]), StandardCharsets.UTF_8);
+			JSONObject jsonObject = new JSONObject(payload);
+			System.out.println(jsonObject);
+			// user_id
+			String id = jsonObject.getString("id");
+			System.out.println(id);
+			//////////////아이디 추출//////////////////////
+	    	
 	    	//3)token이 db에 있다면 유효성 검사를 실시한다
 	    	if(userService.refreshToken_chk(token_vo)!=null) {
 	    		
@@ -194,13 +207,11 @@ public class UserController {
 				
 //				String id_d = decodedJWT.getId();//id=null
 			//refreshToken 저장
-			if(decodedJWT.getId()==vo.getId()) {
+			if(id==vo.getId()) {
 	    			userService.refreshToken_delete(token_vo);
 	    		}	
 			String re_refreshToken = refreshService.login(vo.getId(), vo.getPw());
-			
-			
-			String id = vo.getId();
+
 			
 			TokenVO re_token_vo = new TokenVO();
 			Date today = new Date();
