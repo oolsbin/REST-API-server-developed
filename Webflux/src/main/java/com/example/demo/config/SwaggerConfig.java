@@ -117,7 +117,6 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
         responseMessages.add(new ResponseMessageBuilder().code(401).message("미 로그인").build());
         responseMessages.add(new ResponseMessageBuilder().code(403).message("권한없음").build());
         responseMessages.add(new ResponseMessageBuilder().code(412).message("처리중 오류").build());
-        responseMessages.add(new ResponseMessageBuilder().code(500).message("서버에러").build());
         return responseMessages;
     }
 	

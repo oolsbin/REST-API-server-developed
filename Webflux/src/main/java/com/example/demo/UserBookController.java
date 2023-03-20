@@ -47,7 +47,7 @@ public class UserBookController {
 	private UserBookService userBookService;
 
 	@ApiOperation(value = "사용자 항공편 예매 조회", notes = "마이페이지에서 사용자가 예매한 항공편을 조회하는 기능")
-	@GetMapping(value = "/userBookList") // 마이페이지 예약목록
+	@GetMapping(value = "flight/user-booking") // 마이페이지 예약목록
 	public ResponseEntity<?> UserBookMypage(
 			@RequestHeader HttpHeaders headers)
 			throws Exception {
@@ -76,7 +76,9 @@ public class UserBookController {
 			
 			return new ResponseEntity<>(response, status);
 				}
-		return null;
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		String message = "항공편 예매를 조회할 수 없습니다.";
+		return new ResponseEntity<>(message, status);
 	}
 			
 
@@ -126,18 +128,33 @@ public class UserBookController {
 			// id추출 완료----------------------------------------------------
 
 //			남은좌석이 없을 시 예약할 수 없음			
+			
+			String personalStr = vo.getPersonal();
+			int personalInt = Integer.parseInt(personalStr);
+			
+			String seatType = vo.getSeatType();
+			
 //			int economyCnt = userBookService.economyCnt(vo.getFlightId());
 //			int prestigeCnt = userBookService.prestigeCnt(vo.getFlightId());
 //			
-//			int economyExtra = 6 - economyCnt;
-//			int prestigeExtra = 4 - prestigeCnt;
+//			int economyExtra = 6 - economyCnt - personalInt;
+//			int prestigeExtra = 4 - prestigeCnt - personalInt;
 //			
-//			if(economyExtra == 0 || prestigeExtra == 0) {
-//				HttpStatus status = HttpStatus.BAD_REQUEST;
-//				String message = "좌석이 남아있지 않아 예약할 수 없습니다.";
-//				return new ResponseEntity<>(message, status);
+//			if(seatType.equals("economy")) {
+//				if(economyExtra == 0) {
+//					HttpStatus status = HttpStatus.BAD_REQUEST;
+//					String message = "economy 좌석이 남아있지 않아 예약할 수 없습니다.";
+//					return new ResponseEntity<>(message, status);
+//				}
+//				
+//			}else{
+//				if(prestigeExtra == 0) {
+//					HttpStatus status = HttpStatus.BAD_REQUEST;
+//					String message = "prestige 좌석이 남아있지 않아 예약할 수 없습니다.";
+//					return new ResponseEntity<>(message, status);
+//				}
 //			}
-			
+//			
 			vo.setUserId(id);
 			String uuid = RandomStringUtils.random(36, true, true);
 			vo.setReservationId(uuid);
@@ -149,9 +166,9 @@ public class UserBookController {
 			
 			int economyCharge = userBookService.FlightInfo(vo.getFlightId()).getEconomyCharge();
 			int prestigeCharge = userBookService.FlightInfo(vo.getFlightId()).getPrestigeCharge();
-			String seatType = vo.getSeatType();
-			String personalStr = vo.getPersonal();
-			int personalInt = Integer.parseInt(personalStr);
+//			String seatType = vo.getSeatType();
+//			String personalStr = vo.getPersonal();
+//			int personalInt = Integer.parseInt(personalStr);
 			
 			if(seatType.equals("economy")) {
 				vo.setChargeSum(personalInt*economyCharge);
@@ -173,7 +190,9 @@ public class UserBookController {
 			
 			return new ResponseEntity<>(response, status);
 				}
-		return null;
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		String message = "항공편예약에 실패하였습니다.";
+		return new ResponseEntity<>(message, status);
 	}
 	
 

@@ -12,19 +12,19 @@
 	<select id="selectAirline" resultType="com.example.demo.airline.AirlineVO">
 		SELECT * 
 		  FROM airline_tb
-		 WHERE airlineId = #{airlineId} and airlineNm = #{airlineNm}
+		 WHERE airline_id = #{airlineId} and airlineNm = #{airlineNm}
 	</select>
 
 	<!-- 공항정보 수정 -->
 	<update id="updateAirline">
 		UPDATE airline_tb
-		   SET airlineId = #{airlineId}, airlineNm = #{airlineNm}
+		   SET airline_id = #{airlineId}, airlineNm = #{airlineNm}
 	</update>
 
 	<!-- 공항정보 삭제 -->
 	<delete id='deleteAirline'>
 		DELETE from airline_tb
-		 WHERE airlineId = #{airlineId}
+		 WHERE airline_id = #{airlineId}
 	</delete>
 
 </mapper>

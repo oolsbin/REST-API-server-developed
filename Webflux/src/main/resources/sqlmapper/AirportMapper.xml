@@ -4,7 +4,7 @@
 
 	<!-- 비행정보 저장 -->
 	<insert id='insertAirport'>
-		INSERT INTO airport_tb(airportId, airportNm)
+		INSERT INTO airport_tb(airport_id, airport_nm)
 		VALUES (#{airportId}, #{airportNm})
 	</insert>
 
@@ -12,19 +12,19 @@
 	<select id="selectAirport" resultType="com.example.demo.airport.AirportVO">
 		SELECT *
 		  FROM airport_tb
-		 WHERE airportId = #{airportId} and airportNm = #{airportNm}
+		 WHERE airport_id = #{airportId} and airport_nm = #{airportNm}
 	</select>
 
 	<!-- 비행정보 수정 -->
 	<update id="updateAirport">
 		UPDATE airport_tb
-		   SET airportId = #{airportId}, airportNm= #{airportNm}
+		   SET airport_id = #{airportId}, airport_nm= #{airportNm}
 	</update>
 
 	<!-- 비행정보 삭제 -->
 	<delete id='deleteAirport'>
 		DELETE from airport_tb
-		 WHERE airportId = #{airportId}
+		 WHERE airport_id = #{airportId}
 	</delete>
 
 </mapper>
