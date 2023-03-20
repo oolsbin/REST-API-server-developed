@@ -4,46 +4,52 @@
 
 	<!-- id값에 맞게 좌석 전체조회 -->
 	<select id='seatList' resultType="com.example.demo.vo.SeatVO">
-		select * from seat
-		where flight_id=#{flightId}
+		SELECT * 
+		  FROM seat_tb
+	   	 WHERE flight_id=#{flightId}
 	</select>
 	
 	<!-- id값에 맞게 좌석 개수조회 -->
 	<select id='seatCnt' resultType="com.example.demo.vo.SeatVO">
-		select count(*) from seat
-		where flight_id=#{flightId}
+		SELECT count(*) 
+		  FROM seat_tb
+		 WHERE flight_id=#{flightId}
 	</select>
 	
 	<!-- 이코노미 좌석조회 -->
 	<select id='economyCnt' resultType="int">
-		SELECT COALESCE(SUM(personal), 0) FROM seat WHERE flight_id=#{flightId} and seat_type = 'economy'
+		SELECT COALESCE(SUM(personal), 0)
+		  FROM seat_tb
+		 WHERE flight_id=#{flightId} AND seat_type = 'economy'
 	</select>
 	
 	<!-- 비즈니스 좌석조회 -->
 	<select id='prestigeCnt' resultType="int">
-		SELECT COALESCE(SUM(personal), 0) FROM seat WHERE seat_type = 'prestige' and flight_id=#{flightId}
+		SELECT COALESCE(SUM(personal), 0)
+		  FROM seat_tb
+		 WHERE seat_type = 'prestige' AND flight_id=#{flightId}
 	</select>
 
 
 	<!-- 마이페이지 예약정보 -->
 	<select id='selectUserBook' resultType="com.example.demo.vo.UserBookVO">
 		SELECT *
-		FROM seat AS s
-		JOIN flight AS f
+		FROM seat_tb AS s
+		JOIN flight_tb AS f
 		ON s.flight_id = f.flight_id
 		WHERE user_id=#{userId}
 	</select>
 	
 	<!-- id값에 맞게 좌석 저장 -->
 	<insert id='insertUserBook' parameterType="com.example.demo.vo.SeatVO">
-		insert into seat(flight_id, seat_type, personal, user_id, reservation_id, charge_sum, create_date)
-		values (#{flightId}, #{seatType}, #{personal}, #{userId}, #{reservationId}, #{chargeSum}, #{createDate})
+		INSERT INTO seat_tb(flight_id, seat_type, personal, user_id, reservation_id, charge_sum, create_date)
+		VALUES (#{flightId}, #{seatType}, #{personal}, #{userId}, #{reservationId}, #{chargeSum}, #{createDate})
 	</insert>
 	
 	<!-- flight정보조회 -->
 	<select id='FlightInfo' resultType="com.example.demo.flight.FlightVO">
 		SELECT *
-		FROM flight
+		FROM flight_tb
 		WHERE flight_id=#{flightId}
 	</select>
 	
@@ -51,15 +57,15 @@
 	<!-- user정보조회 -->
 	<select id='UserInfo' resultType="com.example.demo.vo.UserInfoVO">
 		SELECT name, address, email, phone_number
-		FROM user
-		WHERE id=#{id}
+		FROM user_tb
+		WHERE user_id=#{id}
 	</select>
 	
 	<!-- 가격조회 -->
 	<select id='ChargeSum' resultType="com.example.demo.vo.UserInfoVO">
 		SELECT flight_id, seat_type, personal, economy_charge, prestige_charge
-		FROM seat AS s
-		JOIN flight AS f
+		FROM seat_tb AS s
+		JOIN flight_tb AS f
 		ON s.flight_id = f.flight_id
 		WHERE user_id=#{userId}
 	</select>

@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
-import com.example.demo.dto.flightdto.ItemVO;
+
 import com.example.demo.flight.CountVO;
 import com.example.demo.flight.FlightVO;
-import com.example.demo.flight.page.SearchDto;
 import com.example.demo.vo.SeatVO;
 
 @Mapper

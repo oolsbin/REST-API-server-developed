@@ -4,51 +4,54 @@
 
 	<!-- 생성 -->
 	<insert id="insertFlight">
-	INSERT INTO flight (flight_id, vihicle_id, airline_nm, dep_pland_time,arr_pland_time, economy_charge, prestige_charge, dep_airport_nm, arr_airport_nm)
+	INSERT INTO flight_tb (flight_id, vihicle_id, airline_nm, dep_pland_time,arr_pland_time, economy_charge, prestige_charge, dep_airport_nm, arr_airport_nm)
 	SELECT #{flightId}, #{vihicleId}, #{airlineNm}, #{depPlandTime}, #{arrPlandTime}, IFNULL(#{economyCharge}, 0), IFNULL(#{prestigeCharge}, 0), #{depAirportNm},#{arrAirportNm}
 	FROM dual
 		WHERE NOT EXISTS (
 			SELECT 1
-		FROM flight
+		FROM flight_tb
 	WHERE flight_id = #{flightId}
 	)
 	</insert>
 	
 	<!-- 항공운항정보 조회 -->
 	<select id="flightUserBook" resultType="com.example.demo.flight.FlightVO">
-		select count(*) AS total_count from flight
-		where dep_airport_nm=#{depAirportNm} and arr_airport_nm=#{arrAirportNm} and LEFT(dep_pland_time, 8)=#{depPlandTime}
+		SELECT count(*) AS total_count 
+		  FROM flight_tb
+		 WHERE dep_airport_nm=#{depAirportNm} AND arr_airport_nm=#{arrAirportNm} AND LEFT(dep_pland_time, 8)=#{depPlandTime}
 	</select>
 	
 	<!-- 항공운항정보 조회 + airline -->
 	<select id="flightUserBookAirline" resultType="com.example.demo.flight.FlightVO">
-		select count(*) AS total_count from flight
-		where dep_airport_nm=#{depAirportNm} and arr_airport_nm=#{arrAirportNm} and LEFT(dep_pland_time, 8)=#{depPlandTime} and airline_nm=#{airlineNm}
+		SELECT count(*) AS total_count 
+		  FROM flight_tb
+		 WHERE dep_airport_nm=#{depAirportNm} AND arr_airport_nm=#{arrAirportNm} AND LEFT(dep_pland_time, 8)=#{depPlandTime} AND airline_nm=#{airlineNm}
+	  ORDER BY dep_pland_time
 	</select>
 	
 	<!-- 항공운항정보에 따른 좌석생성 -->
 	<insert id="insertSeatFlight">
-		insert ignore into seat(id, seat_uid, reservation)
-		values (#{id}, #{seat_uid}, #{reservation})
+		INSERT IGNORE INTO seat(id, seat_uid, reservation)
+		VALUES (#{id}, #{seat_uid}, #{reservation})
 	</insert>
 	
 	<!-- 수정 -->
 	<update id="updateFlight">
-		update flight
-		set vihicle_id=#{vihicleId}, airline_nm=#{airlineNm}, dep_pland_time=#{depPlandTime}, arr_pland_time=#{arrPlandTime},
-			  economy_charge=#{economyCharge}, prestige_charge=#{prestigeCharge}, dep_airport_nm=#{depAirportNm}, arr_airport_nm=#{arrAirportNm}
-		where id = #{id}
+		UPDATE flight_tb
+		   SET vihicle_id=#{vihicleId}, airline_nm=#{airlineNm}, dep_pland_time=#{depPlandTime}, arr_pland_time=#{arrPlandTime},
+			   economy_charge=#{economyCharge}, prestige_charge=#{prestigeCharge}, dep_airport_nm=#{depAirportNm}, arr_airport_nm=#{arrAirportNm}
+		 WHERE id = #{id}
 	</update>
 	
 	<!-- 삭제 -->
 	<delete id="deleteFlight">
-		delete from flight
-		where id = #{id}
+		DELETE FROM flight_tb
+		WHERE id = #{id}
 	</delete>
 
 	<!-- client에서 조회한 데이터를 조회 페이징처리 -->
 	<select id="find" resultType="com.example.demo.flight.FlightVO">
-		SELECT * FROM flight
+		SELECT * FROM flight_tb
 		<where>
 			<if test="depAirportNm != null and arrAirportNm != null and depPlandTime != null">
 				AND (dep_airport_nm LIKE CONCAT('%', #{depAirportNm}, '%') 
@@ -57,12 +60,13 @@
 					 )
 			</if>
 		</where>
+		ORDER BY dep_pland_time ASC
 		LIMIT #{pageNo}, #{numOfRows}
 	</select>
 	
 	<!-- client에서 조회한 데이터를 조회-->
 	<select id="findAirline" resultType="com.example.demo.flight.FlightVO">
-		SELECT * FROM flight
+		SELECT * FROM flight_tb
 		<where>
 			<if test="depAirportNm != null and arrAirportNm != null and depPlandTime != null and airlineNm != null">
 				AND (dep_airport_nm LIKE CONCAT('%', #{depAirportNm}, '%') 
@@ -72,6 +76,7 @@
 					 )
 			</if>
 		</where>
+		ORDER BY dep_pland_time ASC
 		LIMIT #{pageNo}, #{numOfRows}
 	</select>
 	
@@ -85,32 +90,36 @@
 	
 	<!-- totalCount -->
 	<select id="total" resultType="com.example.demo.flight.CountVO">
-		select count(*) AS total_count from flight
-		where dep_airport_nm=#{depAirportNm} and arr_airport_nm=#{arrAirportNm} and LEFT(dep_pland_time, 8)=#{depPlandTime}
+		SELECT count(*) AS total_count 
+		  FROM flight_tb
+		 WHERE dep_airport_nm=#{depAirportNm} AND arr_airport_nm=#{arrAirportNm} AND LEFT(dep_pland_time, 8)=#{depPlandTime}
 	</select>
 	
 	<!-- airline_totalCount -->
 	<select id="totalAirline" resultType="com.example.demo.flight.CountVO">
-		select count(*) AS total_count from flight
-		where dep_airport_nm=#{depAirportNm} and arr_airport_nm=#{arrAirportNm} and LEFT(dep_pland_time, 8)=#{depPlandTime} and airline_nm=#{airlineNm}
+		SELECT count(*) AS total_count 
+		  FROM flight_tb
+		 WHERE dep_airport_nm=#{depAirportNm} AND arr_airport_nm=#{arrAirportNm} AND LEFT(dep_pland_time, 8)=#{depPlandTime} AND airline_nm=#{airlineNm}
 	</select>
 	
 		<!-- refreshToken 저장 -->
 	<insert id='seatInsert'>
-		insert into seat(reservation_id)
-		values (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id})
+		INSERT INTO seat_tb(reservation_id)
+		VALUES (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id}), (#{id})
 	</insert>
 
 	<!-- airline id를 통한 항공사 조회-->
 	<select id="airlineNm" resultType = "String">
-		SELECT airlineNm FROM airline 
-		where airlineId=#{airlineId}
+		SELECT airlineNm
+		  FROM airline_tb 
+	   	 WHERE airlineId=#{airlineId}
 	</select>
 	
 	<!-- airport id를 통한 공항 조회-->
 	<select id="airportNm" resultType = "String">
-		SELECT airportNm FROM airport 
-		where airportId=#{airportId}
+		SELECT airportNm
+		  FROM airport_tb 
+		 WHERE airportId=#{airportId}
 	</select>
 
 </mapper>

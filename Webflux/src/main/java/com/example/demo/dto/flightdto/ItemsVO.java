@@ -1,7 +1,5 @@
 package com.example.demo.dto.flightdto;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 

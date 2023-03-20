@@ -4,31 +4,22 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,27 +28,20 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.dto.flightdto.ItemVO;
-import com.example.demo.dto.flightdto.ListVO;
-import com.example.demo.flight.CountVO;
 import com.example.demo.flight.FlightService;
 import com.example.demo.flight.FlightVO;
-import com.example.demo.flight.page.SearchDto;
 import com.example.demo.mapper.FlightMapper;
-import com.example.demo.vo.SeatVO;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
-import io.jsonwebtoken.lang.Arrays;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+@Api(tags = "항공운항정보")
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
-//swagger-ui 타이틀 이름과 설명
-@Tag(name = "air Controller", description = "항공관련 컨트롤러") // 스프링 독
 @RestController
 //@RequiredArgsConstructor
 @Slf4j
@@ -75,14 +59,20 @@ public class FlightController {
 	
 		//total count
 		@GetMapping(value = "/flight")
-		@Operation(summary = "항공운항정보 목록 조회", description = "출/도착지를 기준으로 국내선 항공운항정보 목록을 조회하는 기능")
+		@ApiOperation(value = "API 항공운항정보 목록 조회", notes = "출/도착지를 기준으로 국내선 항공운항정보 목록을 조회하는 기능")
 		@Scheduled(fixedDelay = 300000)
 		public ResponseEntity<?> flightSelect
-			   (@RequestParam(value = "depAirportId", required = false) String depAirportId,
+			   (@ApiParam(value = "출발공항ID", required = true, example = "NAARKJJ")
+   			    @RequestParam(value = "depAirportId", required = false) String depAirportId,
+   		  	    @ApiParam(value = "도착공항ID", required = true, example = "NAARKPC")
 			    @RequestParam(value = "arrAirportId", required = false) String arrAirportId,
+			    @ApiParam(value = "출발일", required = true, example = "20201201")
 			    @RequestParam(value = "depPlandTime", required = false) String depPlandTime,
+			    @ApiParam(value = "항공사ID", required = true, example = "AAR")
 				@RequestParam(value = "airlineId", required = false) String airlineId,
+				@ApiParam(value = "한 페이지 결과 수", required = true, example = "10")
 				@RequestParam(value = "numOfRows", required = false) Integer numOfRows,//시리얼라이져가 되서 보내주기 때문에 ㄱㅊ
+				@ApiParam(value = "페이지 번호", required = true, example = "1")
 				@RequestParam(value = "pageNo", required = false) Integer pageNo			
 				)throws Exception, IOException, ParseException {
 
@@ -466,7 +456,7 @@ public class FlightController {
 			}
 		}
 		
-		
+		@ApiOperation(value = "항공운항정보 조회/등록/수정/삭제", notes = "flag를 통해 항공운항정보를 조회, 등록, 수정, 삭제하는 기능")
 		@PostMapping(value = "/flight")
 		public ResponseEntity<?> flightInsert(@RequestBody List<FlightVO> vo) throws Exception {
 			int test = flightService.insertFlight(vo);

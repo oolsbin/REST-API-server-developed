@@ -3,9 +3,6 @@ package com.example.demo.flight;
 import java.util.List;
 import java.util.Map;
 
-import com.example.demo.dto.flightdto.BodyVO;
-import com.example.demo.dto.flightdto.ItemVO;
-import com.example.demo.refresh.TokenVO;
 import com.example.demo.vo.SeatVO;
 
 public interface FlightService {

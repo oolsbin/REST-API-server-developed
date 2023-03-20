@@ -4,11 +4,10 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.example.demo.flight.FlightVO;
+import com.example.demo.vo.SeatVO;
 import com.example.demo.vo.UserBookVO;
 import com.example.demo.vo.UserInfoVO;
-import com.example.demo.flight.FlightVO;
-import com.example.demo.user.UserVO;
-import com.example.demo.vo.SeatVO;
 
 @Mapper
 public interface UserBookMapper {

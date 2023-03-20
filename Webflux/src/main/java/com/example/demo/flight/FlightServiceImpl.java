@@ -6,8 +6,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.flightdto.BodyVO;
-import com.example.demo.dto.flightdto.ItemVO;
 import com.example.demo.mapper.FlightMapper;
 import com.example.demo.vo.SeatVO;
 

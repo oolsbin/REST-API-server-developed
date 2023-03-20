@@ -10,10 +10,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,8 +24,11 @@ import com.example.demo.airport.AirportService;
 import com.example.demo.airport.AirportVO;
 import com.example.demo.dto.airportdto.ListVO;
 
-import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
+@Api(tags = "공항정보")
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RestController
 public class AirportController {
@@ -33,9 +37,11 @@ public class AirportController {
 	private AirportService airportService;
 	
 	@GetMapping(value = "/airport")
-	@Operation(summary = "공항 목록 조회", description = "국내 공항 목록을 조회하는 기능")
+	@ApiOperation(value = "API 공항 목록 조회", notes = "공공데이터 API에 등록된 국내 공항의 목록을 조회하는 기능")
 	public ResponseEntity<?> airportSelect
-		   (@RequestParam(value = "airportId", required = false) String airportId,
+		   (@ApiParam(value = "공항아이디", required = true, example = "NAARKSS")
+		    @RequestParam(value = "airportId", required = false) String airportId,
+		    @ApiParam(value = "공항이름", required = true, example = "김포")
 			@RequestParam(value = "airportNm", required = false) String airportNm)
 			throws IOException, ParseException {
 
@@ -71,6 +77,7 @@ public class AirportController {
 	}
 	
 	//db에 저장
+		@ApiOperation(value = "공항 목록 생성", notes = "국내 공항 목록을 생성하는 기능")
 		@PostMapping("/airport-create")
 		public ResponseEntity<?> insertairport(@RequestBody AirportVO vo) throws Exception {
 			if(airportService.insertAirport(vo)!=1) {
@@ -85,7 +92,8 @@ public class AirportController {
 		}
 		
 		//db
-		@RequestMapping(value="/airport-read")
+		@ApiOperation(value = "공항 목록 조회", notes = "국내 공항 목록을 조회하는 기능")
+		@GetMapping(value="/airport-read")
 		public ResponseEntity<?> selectAirport(@RequestBody AirportVO vo) throws Exception{
 //			if(airportService.selectairport(vo) != null) {
 			AirportVO test = airportService.seletAirport(vo);
@@ -94,8 +102,8 @@ public class AirportController {
 //			}
 		}
 
-		
-		@RequestMapping(value="/airport-update")
+		@ApiOperation(value = "공항 목록 수정", notes = "국내 공항 목록을 수정하는 기능")
+		@PutMapping(value="/airport-update")
 		public ResponseEntity<?> updateAirport(@RequestBody AirportVO vo) throws Exception{
 			airportService.updateAirport(vo);
 			StringBuffer msg = new StringBuffer();
@@ -103,7 +111,8 @@ public class AirportController {
 			return ResponseEntity.ok().body(msg);
 		}
 		
-		@RequestMapping("/airport-delete")
+		@ApiOperation(value = "공항 목록 삭제", notes = "국내 공항 목록을 삭제하는 기능")
+		@DeleteMapping(value = "/airport-delete")
 		public ResponseEntity<?> deleteAirport(@RequestBody AirportVO vo) throws Exception{
 			airportService.deleteAirport(vo);
 			StringBuffer msg = new StringBuffer();

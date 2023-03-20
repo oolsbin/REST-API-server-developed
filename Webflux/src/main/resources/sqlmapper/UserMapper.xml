@@ -4,44 +4,55 @@
 
 	<!-- 회원가입처리 -->
 	<insert id='join'>
-		insert ignore into user(id, pw, name, address, email, phone_number)
-		values (#{id}, #{pw}, #{name}, #{address}, #{email}, #{phoneNumber})
+		INSERT IGNORE INTO user_tb(user_id, pw, name, address, email, phone_number)
+		VALUES (#{id}, #{pw}, #{name}, #{address}, #{email}, #{phoneNumber})
 	</insert>
 	
 	<!-- 아이디중복체크 -->
 	<select id='userId' resultType="String">
-		select id from user
-		where id = #{id}
+		SELECT user_id
+		  FROM user_tb
+		 WHERE user_id = #{id}
 	</select>
 
 	<!-- 비밀번호체크 -->
 	<select id='userPw' resultType='String'>
-		select pw from user
-		where pw = #{pw}
+		SELECT pw 
+		  FROM user_tb
+		 WHERE pw = #{pw}
 	</select>
 	
 	<!-- 로그인처리 -->
 	<select id='login' resultType='com.example.demo.user.UserVO'>
-		select * from user
-		where id = #{id}
+		SELECT * 
+		  FROM user_tb
+		 WHERE user_id = #{id}
 	</select>
 	
 	<!-- refreshToken 저장 -->
 	<insert id='refreshToken'>
-		insert ignore into refresh_token(id, refresh_token, create_date, update_date)
-		values (#{id}, #{refreshToken}, #{createDate}, #{updateDate})
+		INSERT IGNORE INTO refresh_token(user_id, refresh_token, create_date, update_date)
+		VALUES (#{id}, #{refreshToken}, #{createDate}, #{updateDate})
 	</insert>
 	
 	<!-- refreshToken 맞는지 확인 -->
 	<select id='refreshToken_chk' resultType="com.example.demo.refresh.TokenVO">
-		select * from refresh_token
-		where refresh_token = #{refreshToken}
+		SELECT * 
+		  FROM refresh_token
+		 WHERE refresh_token = #{refreshToken}
 	</select>
 	
-	<!-- 선택한 방명록 글 삭제 -->
+	<!-- refreshToken 맞는지 확인 -->
+	<select id='refreshToken_id_chk' resultType='String'>
+		SELECT *
+		  FROM refresh_token
+		 WHERE user_id = #{id}
+	</select>
+	
+	<!-- refreshToken 삭제 -->
 	<delete id="refreshToken_delete">
-		delete from refresh_token
-		where refresh_token = #{refreshToken}
+		DELETE FROM refresh_token
+		 WHERE refresh_token = #{refreshToken}
 	</delete>
 
 

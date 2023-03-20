@@ -27,10 +27,14 @@ import com.example.demo.userbook.UserBookService;
 import com.example.demo.vo.SeatVO;
 import com.example.demo.vo.UserBookVO;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 // 예매 클래스
+@Api(tags = "항공편예매")
 @CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
 		RequestMethod.DELETE })
 @RestController
@@ -42,9 +46,10 @@ public class UserBookController {
 	@Autowired
 	private UserBookService userBookService;
 
-	
+	@ApiOperation(value = "사용자 항공편 예매 조회", notes = "마이페이지에서 사용자가 예매한 항공편을 조회하는 기능")
 	@GetMapping(value = "/userBookList") // 마이페이지 예약목록
-	public ResponseEntity<?> UserBookMypage(@RequestHeader HttpHeaders headers)
+	public ResponseEntity<?> UserBookMypage(
+			@RequestHeader HttpHeaders headers)
 			throws Exception {
 		// 헤더토큰 꺼내온다
 		String authToken = headers.getFirst("Authorization");
@@ -75,8 +80,11 @@ public class UserBookController {
 	}
 			
 
+	@ApiOperation(value = "남은 좌석 조회", notes = "항공편에 따른 남은 좌석을 조회하는 기능")
 	@GetMapping(value = "/flight/extra-seat") // 남은 좌석정보
-	public ResponseEntity<?> UserBookCnt(@RequestParam String flightId) throws Exception {
+	public ResponseEntity<?> UserBookCnt(
+			@ApiParam(value = "항공편아이디", required = true, example = "0FDBXyQ9JZkUZMkCKtSAjtgmZeCaIbOpe4TO")
+			@RequestParam String flightId) throws Exception {
 
 		int economyCnt = userBookService.economyCnt(flightId);
 		int prestigeCnt = userBookService.prestigeCnt(flightId);
@@ -93,6 +101,7 @@ public class UserBookController {
 	
 	
 
+	@ApiOperation(value = "항공편 예약", notes = "사용자가 항공편을 예약하는 기능")
 	@PostMapping(value = "/flight/booking") // 마이페이지 예약목록
 	public ResponseEntity<?> UserBookInsert(@RequestHeader HttpHeaders headers,
 			@RequestBody SeatVO vo)
@@ -115,21 +124,18 @@ public class UserBookController {
 			String id = jsonObject.getString("id");
 			System.out.println(id);
 			// id추출 완료----------------------------------------------------
+
+//			남은좌석이 없을 시 예약할 수 없음			
 //			int economyCnt = userBookService.economyCnt(vo.getFlightId());
-//			System.out.println("economyCnt = " + economyCnt);
-//			int prestigeCnt = userBookService.prestigeCnt();
-//			System.out.println("prestigeCnt = " + prestigeCnt);
-			
-//			int economyCntAll = economyCnt + vo.getPersonal();
-//			String prestigeCntAll;
-//			prestigeCntAll = prestigeCnt + vo.getPersonal();
+//			int prestigeCnt = userBookService.prestigeCnt(vo.getFlightId());
 //			
-//			if(!(economyCnt<7 || prestigeCnt<5)) {//정상범위 내에 있지 않으면
+//			int economyExtra = 6 - economyCnt;
+//			int prestigeExtra = 4 - prestigeCnt;
+//			
+//			if(economyExtra == 0 || prestigeExtra == 0) {
 //				HttpStatus status = HttpStatus.BAD_REQUEST;
-//				String message = "예약할 수 없습니다.";
-//				Map<String, Object> response = new HashMap<>();
-//				response.put("message", message);
-//				return new ResponseEntity<>(response, status);
+//				String message = "좌석이 남아있지 않아 예약할 수 없습니다.";
+//				return new ResponseEntity<>(message, status);
 //			}
 			
 			vo.setUserId(id);

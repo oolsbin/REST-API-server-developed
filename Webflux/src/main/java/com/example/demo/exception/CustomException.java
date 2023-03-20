@@ -1,8 +1,5 @@
 package com.example.demo.exception;
 
-import java.io.Serializable;
-
-
 public class CustomException extends RuntimeException {
 
     private CustomErrorCode errorCode;

@@ -4,7 +4,6 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.example.demo.refresh.TokenVO;
 import com.example.demo.user.UserVO;
-import com.example.demo.vo.SeatVO;
 
 @Mapper
 public interface UserMapper {
@@ -15,4 +14,5 @@ public interface UserMapper {
 	String userId(UserVO vo) throws Exception;//user Id 리스트
 	TokenVO refreshToken_chk(TokenVO vo) throws Exception;//refreshToken check
 	int refreshToken_delete(TokenVO vo) throws Exception;//refreshToken check
+	String refreshToken_id_chk(String id) throws Exception;//token id중복값 확인
 }

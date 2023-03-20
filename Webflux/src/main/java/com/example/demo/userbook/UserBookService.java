@@ -2,11 +2,10 @@ package com.example.demo.userbook;
 
 import java.util.List;
 
+import com.example.demo.flight.FlightVO;
+import com.example.demo.vo.SeatVO;
 import com.example.demo.vo.UserBookVO;
 import com.example.demo.vo.UserInfoVO;
-import com.example.demo.flight.FlightVO;
-import com.example.demo.user.UserVO;
-import com.example.demo.vo.SeatVO;
 
 public interface UserBookService {
 //	int insertSeat(List<????> vo) throw Exception;

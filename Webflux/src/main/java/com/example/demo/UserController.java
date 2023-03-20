@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.json.JSONObject;
-import org.springdoc.api.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,24 +18,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.demo.exception.CustomException;
-import com.example.demo.exception.CustomErrorCode;
 import com.example.demo.refresh.TokenVO;
 import com.example.demo.token.JwtAccessService;
 import com.example.demo.token.JwtRefreshService;
 import com.example.demo.user.UserService;
 import com.example.demo.user.UserVO;
 
-import io.jsonwebtoken.Jwts;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.web.bind.annotation.RequestMethod;
-
+@Api(tags = "로그인/회원가입")
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RestController
 @RequiredArgsConstructor
@@ -53,6 +52,7 @@ public class UserController {
 
 	// post로 호출시 토큰발생
 	@PostMapping("/login")
+	@ApiOperation(value = "로그인", notes = "로그인 기능")
 	// ResponseEntity는 사용자의 HttpRequest에 대한 응답 데이터를 포함하는 클래스이다. 따라서 HttpStatus,
 	// HttpHeaders, HttpBody를 포함한다.
 	public ResponseEntity<?> loginId(@RequestBody UserVO vo)
@@ -97,6 +97,7 @@ public class UserController {
 	// 회원가입
 	@ExceptionHandler(CustomException.class)
 	@PostMapping("/join")
+	@ApiOperation(value = "회원가입", notes = "회원가입 기능")
 	public ResponseEntity<?> join(@RequestBody UserVO vo) throws Exception {
 		
 //		CustomException e = null;
@@ -110,34 +111,54 @@ public class UserController {
 			return new ResponseEntity<>(message, status);
 		}
 		
-//		// 정규식 패턴 작성
-//		String pattern = "[ㄱ-ㅎㅏ-ㅣ가-힣]";
-//		if (id.matches(pattern) || id.length() > 10) {
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//			String message = "아이디는 10자 이하의 영문/숫자만 사용 가능합니다.";
-//	        return new ResponseEntity<>(message, status);
+//		if (id.length() < 4 || id.length() > 12) {
+//			HttpStatus status = HttpStatus.UNAUTHORIZED;
+//			String message = "아이디를 4자리 초과 12자리 미만으로 작성해주세요.";
+//			return new ResponseEntity<>(message, status);
 //		}
-//		
-//		//pw 유효성 검사
-//		String pw = userService.userPw(vo);
-//		if(pw.matches(pattern) || pw.length() )
-//		
-//		if (userService.userId(vo) < 5 || userService.userId(vo) > 12) {
-//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//
+//		String idRegex = "^[a-z0-9]+$";
+//		Pattern pattern = Pattern.compile(idRegex);
+//		Matcher matcher = pattern.matcher(id);
+//		if (!matcher.matches()) {
+//			// id가 영문 소문자, 숫자로만 구성되어 있지 않음
+//			HttpStatus status = HttpStatus.UNAUTHORIZED;
+//			String message = "id를 다시 입력해주세요.";
+//			return new ResponseEntity<>(message, status);
 //		}
-//		
-//		
-//		if (userService.userId(vo) == 1) {
-//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//
+//		if (vo.getPw().length() < 8 || vo.getPw().length() > 16) {
+//			HttpStatus status = HttpStatus.UNAUTHORIZED;
+//			String message = "pw를 8자리 이상 16자리 이하로 작성해주세요.";
+//			return new ResponseEntity<>(message, status);
 //		}
-//		
-//		if (userService.userPw(vo) == 0) {
-//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//
+//		String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!_])[A-Za-z\\d@$!%*?&]{8,16}$";
+//		Pattern passwordpattern = Pattern.compile(passwordRegex);
+//		Matcher passwordmatcher = passwordpattern.matcher(vo.getPw());
+//		if (!passwordmatcher.matches()) {
+//			// password가 영문 대소문자, 숫자, 특수문자로만 구성되어 있는지 확인
+//			HttpStatus status = HttpStatus.UNAUTHORIZED;
+//			String message = "pw를 다시 입력해주세요.";
+//			return new ResponseEntity<>(message, status);
 //		}
-//		
-//		if (userService.userPw(vo) < 8) {
-//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//
+//		if (vo.getName().isEmpty()) {
+//			HttpStatus status = HttpStatus.UNAUTHORIZED;
+//			String message = "이름을 입력해주세요.";
+//			return new ResponseEntity<>(message, status);
 //		}
+//
+//		String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$";
+//		Pattern emailpattern = Pattern.compile(emailRegex);
+//		Matcher emailmatcher = emailpattern.matcher(vo.getPw());
+//		if (!emailmatcher.matches()) {
+//			// password가 영문 대소문자, 숫자, 특수문자로만 구성되어 있는지 확인
+//			HttpStatus status = HttpStatus.UNAUTHORIZED;
+//			String message = "이메일 형식에 맞게 다시 입력해주세요.";
+//			return new ResponseEntity<>(message, status);
+//		}
+
 
 		userService.join(vo);
 		StringBuffer msg = new StringBuffer();
@@ -155,6 +176,7 @@ public class UserController {
 //    }
 	
 	@GetMapping("/refresh")
+	@ApiOperation(value = "로그인 인증", notes = "자동로그인이 가능하도록 사용자 token을 확인하는 기능")
 	public ResponseEntity<String> getUserFromToken(@RequestHeader HttpHeaders headers) throws Exception {
 		//1)client에서 refreshToken을 header에 담아서 보내면 그 token을 꺼내서 사용한다
 	    String authToken = headers.getFirst("Authorization");
@@ -208,10 +230,10 @@ public class UserController {
 //				String id_d = decodedJWT.getId();//id=null
 			//refreshToken 저장
 ////////////////////////////////////////////////////////////////////////////////////////				
-//				String refreshId = userService.refreshToken_chk(token_vo).getId();
-//			if(id.equals(refreshId)) {
-//	    			userService.refreshToken_delete(token_vo);
-//	    		}	
+			String refreshId = userService.refreshToken_id_chk(id);
+			if(refreshId!=null) {
+	    			userService.refreshToken_delete(token_vo);
+	    		}
 			String re_refreshToken = refreshService.login(vo.getId(), vo.getPw());
 
 			

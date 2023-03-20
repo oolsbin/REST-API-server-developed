@@ -1,9 +1,6 @@
 package com.example.demo.user;
 
-import java.util.Map;
-
 import com.example.demo.refresh.TokenVO;
-import com.example.demo.vo.SeatVO;
 
 public interface UserService {
 	int join(UserVO vo) throws Exception;
@@ -13,4 +10,5 @@ public interface UserService {
 	int refreshToken(TokenVO vo) throws Exception;
 	TokenVO refreshToken_chk(TokenVO vo) throws Exception;
 	int refreshToken_delete(TokenVO vo) throws Exception;
+	String refreshToken_id_chk(String id) throws Exception;//token id중복값 확인
 }

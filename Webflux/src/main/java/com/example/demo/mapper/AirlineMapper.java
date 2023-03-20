@@ -3,7 +3,6 @@ package com.example.demo.mapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.example.demo.airline.AirlineVO;
-import com.example.demo.flight.FlightVO;
 
 @Mapper
 public interface AirlineMapper {
