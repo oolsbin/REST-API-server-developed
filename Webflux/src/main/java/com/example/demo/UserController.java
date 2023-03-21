@@ -51,7 +51,7 @@ public class UserController {
 	private PasswordEncoder passwordEncoder;
 
 	// post로 호출시 토큰발생
-	@PostMapping("/login")
+	@PostMapping("user/auth")
 	@ApiOperation(value = "로그인", notes = "로그인 기능")
 	// ResponseEntity는 사용자의 HttpRequest에 대한 응답 데이터를 포함하는 클래스이다. 따라서 HttpStatus,
 	// HttpHeaders, HttpBody를 포함한다.
@@ -96,7 +96,7 @@ public class UserController {
 
 	// 회원가입
 	@ExceptionHandler(CustomException.class)
-	@PostMapping("/join")
+	@PostMapping("user/register")
 	@ApiOperation(value = "회원가입", notes = "회원가입 기능")
 	public ResponseEntity<?> join(@RequestBody UserVO vo) throws Exception {
 		
@@ -175,7 +175,7 @@ public class UserController {
 //        return userAgent;
 //    }
 	
-	@GetMapping("/refresh")
+	@GetMapping("user/refresh")
 	@ApiOperation(value = "로그인 인증", notes = "자동로그인이 가능하도록 사용자 token을 확인하는 기능")
 	public ResponseEntity<String> getUserFromToken(@RequestHeader HttpHeaders headers) throws Exception {
 		//1)client에서 refreshToken을 header에 담아서 보내면 그 token을 꺼내서 사용한다

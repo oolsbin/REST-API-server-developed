@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
    };
    
    /**
-    * 정적 파일은 Security 적용 제외
+    * 정적 파일은 Securit	y 적용 제외
     */
    @Override
    public void configure(WebSecurity web) throws Exception {

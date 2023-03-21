@@ -3,6 +3,7 @@ package com.example.demo;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.simple.parser.ParseException;
@@ -25,16 +26,21 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.airline.AirlineService;
 import com.example.demo.airline.AirlineVO;
+import com.example.demo.dto.airlinedto.ItemsVO;
 import com.example.demo.dto.airlinedto.ListVO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonParser;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "항공사정보")
 @CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
 		RequestMethod.DELETE })
 @RestController
+@Slf4j
 public class AirlineController {
 
 	@Autowired
@@ -75,6 +81,15 @@ public class AirlineController {
 			final ResponseEntity<?> response = restTemplate.exchange(uri, HttpMethod.GET // request method
 					, entity // http entity
 					, ListVO.class); // 리턴받을 String타입 클래스
+			
+			log.info("info log={}", response.getBody());//Java객체로 반환된 것을 확인할 수 있다.
+			
+			
+			
+//			ObjectMapper objectMapper = new ObjectMapper();
+//			JsonParser parser = objectMapper.getFactory().createParser(response.getBody());
+//			AirlineVO airline = objectMapper.readValue(parser, AirlineVO.class);
+//			List<AirlineVO> itemsList = responseDto.getItemsList();
 
 			if (response.getStatusCodeValue() == 200) {
 				return ResponseEntity.ok(response.getBody());

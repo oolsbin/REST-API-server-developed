@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
 		RequestMethod.DELETE })
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor//쓰는이유가 뭐지
 @Slf4j
 public class UserBookController {
 //@RequestHeader HttpHeaders headers
