@@ -27,9 +27,12 @@ import com.example.demo.exception.CustomException;
 import com.example.demo.refresh.TokenVO;
 import com.example.demo.token.JwtAccessService;
 import com.example.demo.token.JwtRefreshService;
+import com.example.demo.token.JwtUtil;
 import com.example.demo.user.UserService;
 import com.example.demo.user.UserVO;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +52,9 @@ public class UserController {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+    private JwtUtil jwtUtil;
 
 	// post로 호출시 토큰발생
 	@PostMapping("user/auth")
@@ -187,14 +193,28 @@ public class UserController {
 	    	//2)client에서 받은 token을 받아서 token_vo에 담는다
 	    	TokenVO token_vo = new TokenVO();
 	    	token_vo.setRefreshToken(refreshToken);
+	    	
+	    	Jws<Claims> claims = jwtUtil.getClaims(refreshToken);//코드 복호화+서명검증
+	    	boolean isTokenValid = jwtUtil.validateToken(claims);//토큰 만료시간 검증
+	    	String id = jwtUtil.getKey(claims);//payload의 id를 취득
+//	    	Object data = jwtUtil.getClaims(claims, key);//payload의 데이터 취득
+	    	
+	    	log.info("token 복호화 : " + claims);
+	    	log.info("토큰만료시간 : " + isTokenValid);
+	    	log.info("payload id 취득 : " + id);
+//	    	log.info("payload data 취득 : " + data);
+	    	
+	    	
+	    	
+	    	
 	    	// accessToken 사용자정보 꺼내기 (id값)
-			String[] splitToken = refreshToken.split("\\.");
-			String payload = new String(Base64.getDecoder().decode(splitToken[1]), StandardCharsets.UTF_8);
-			JSONObject jsonObject = new JSONObject(payload);
-			System.out.println(jsonObject);
-			// user_id
-			String id = jsonObject.getString("id");
-			System.out.println(id);
+//			String[] splitToken = refreshToken.split("\\.");
+//			String payload = new String(Base64.getDecoder().decode(splitToken[1]), StandardCharsets.UTF_8);
+//			JSONObject jsonObject = new JSONObject(payload);
+//			System.out.println(jsonObject);
+//			// user_id
+//			String id = jsonObject.getString("id");
+//			System.out.println(id);
 			//////////////아이디 추출//////////////////////
 	    	
 	    	//3)token이 db에 있다면 유효성 검사를 실시한다

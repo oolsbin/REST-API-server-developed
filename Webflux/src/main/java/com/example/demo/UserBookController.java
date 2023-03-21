@@ -23,10 +23,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.refresh.TokenVO;
+import com.example.demo.token.JwtUtil;
 import com.example.demo.userbook.UserBookService;
 import com.example.demo.vo.SeatVO;
 import com.example.demo.vo.UserBookVO;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -45,6 +48,9 @@ public class UserBookController {
 
 	@Autowired
 	private UserBookService userBookService;
+	
+	@Autowired
+    private JwtUtil jwtUtil;
 
 	@ApiOperation(value = "사용자 항공편 예매 조회", notes = "마이페이지에서 사용자가 예매한 항공편을 조회하는 기능")
 	@GetMapping(value = "flight/user-booking") // 마이페이지 예약목록
@@ -61,13 +67,15 @@ public class UserBookController {
 			TokenVO token_vo = new TokenVO();
 			token_vo.setAccessToken(accessToken);
 			// accessToken 사용자정보 꺼내기 (id값)
-			String[] splitToken = accessToken.split("\\.");
-			String payload = new String(Base64.getDecoder().decode(splitToken[1]), StandardCharsets.UTF_8);
-			JSONObject jsonObject = new JSONObject(payload);
-			System.out.println(jsonObject);
-			// user_id
-			String id = jsonObject.getString("id");
-			System.out.println(id);
+
+			Jws<Claims> claims = jwtUtil.getClaims(accessToken);//코드 복호화+서명검증
+	    	boolean isTokenValid = jwtUtil.validateToken(claims);//토큰 만료시간 검증
+	    	String id = jwtUtil.getKey(claims);//payload의 id를 취득
+	    	
+	    	log.info("token 복호화 : " + claims);
+	    	log.info("토큰만료시간 : " + isTokenValid);
+	    	log.info("payload id 취득 : " + id);
+			
 			//////////////아이디 추출//////////////////////
 			List<UserBookVO> list = userBookService.selectUserBook(id);
 			HttpStatus status = HttpStatus.OK;
