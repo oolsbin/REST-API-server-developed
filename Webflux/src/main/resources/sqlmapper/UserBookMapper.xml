@@ -47,7 +47,7 @@
 	</insert>
 	
 	<!-- flight정보조회 -->
-	<select id='FlightInfo' resultType="com.example.demo.flight.FlightVO">
+	<select id='FlightInfo' resultType="com.example.demo.vo.FlightVO">
 		SELECT *
 		FROM flight_tb
 		WHERE flight_id=#{flightId}
@@ -69,6 +69,11 @@
 		ON s.flight_id = f.flight_id
 		WHERE user_id=#{userId}
 	</select>
+	
+	<delete id="deleteUserBook">
+		DELETE FROM seat_tb
+		WHERE reservation_id = #{reservationId}
+	</delete>
 	
 	<!-- 아래것 필요없음 -->
 	

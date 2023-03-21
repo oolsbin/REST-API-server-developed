@@ -9,7 +9,7 @@
 	</insert>
 
 	<!-- 비행정보 조회 -->
-	<select id="selectAirport" resultType="com.example.demo.airport.AirportVO">
+	<select id="selectAirport" resultType="com.example.demo.vo.AirportVO">
 		SELECT *
 		  FROM airport_tb
 		 WHERE airport_id = #{airportId} and airport_nm = #{airportNm}

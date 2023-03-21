@@ -23,7 +23,7 @@
 	</select>
 	
 	<!-- 로그인처리 -->
-	<select id='login' resultType='com.example.demo.user.UserVO'>
+	<select id='login' resultType='com.example.demo.vo.UserVO'>
 		SELECT * 
 		  FROM user_tb
 		 WHERE user_id = #{id}
@@ -36,23 +36,23 @@
 	</insert>
 	
 	<!-- refreshToken 맞는지 확인 -->
-	<select id='refreshToken_chk' resultType="com.example.demo.refresh.TokenVO">
+	<select id='refreshTokenChk' resultType="com.example.demo.vo.TokenVO">
 		SELECT * 
 		  FROM refresh_token
 		 WHERE refresh_token = #{refreshToken}
 	</select>
 	
 	<!-- refreshToken 맞는지 확인 -->
-	<select id='refreshToken_id_chk' resultType='String'>
+	<select id='refreshTokenIdChk' resultType='String'>
 		SELECT *
 		  FROM refresh_token
 		 WHERE user_id = #{id}
 	</select>
 	
 	<!-- refreshToken 삭제 -->
-	<delete id="refreshToken_delete">
+	<delete id="refreshTokenDelete">
 		DELETE FROM refresh_token
-		 WHERE refresh_token = #{refreshToken}
+		 WHERE user_id = #{id}
 	</delete>
 
 

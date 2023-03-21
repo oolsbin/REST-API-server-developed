@@ -15,14 +15,14 @@
 	</insert>
 	
 	<!-- 항공운항정보 조회 -->
-	<select id="flightUserBook" resultType="com.example.demo.flight.FlightVO">
+	<select id="flightUserBook" resultType="com.example.demo.vo.FlightVO">
 		SELECT count(*) AS total_count 
 		  FROM flight_tb
 		 WHERE dep_airport_nm=#{depAirportNm} AND arr_airport_nm=#{arrAirportNm} AND LEFT(dep_pland_time, 8)=#{depPlandTime}
 	</select>
 	
 	<!-- 항공운항정보 조회 + airline -->
-	<select id="flightUserBookAirline" resultType="com.example.demo.flight.FlightVO">
+	<select id="flightUserBookAirline" resultType="com.example.demo.vo.FlightVO">
 		SELECT count(*) AS total_count 
 		  FROM flight_tb
 		 WHERE dep_airport_nm=#{depAirportNm} AND arr_airport_nm=#{arrAirportNm} AND LEFT(dep_pland_time, 8)=#{depPlandTime} AND airline_nm=#{airlineNm}
@@ -50,7 +50,7 @@
 	</delete>
 
 	<!-- client에서 조회한 데이터를 조회 페이징처리 -->
-	<select id="find" resultType="com.example.demo.flight.FlightVO">
+	<select id="find" resultType="com.example.demo.vo.FlightVO">
 		SELECT * FROM flight_tb
 		<where>
 			<if test="depAirportNm != null and arrAirportNm != null and depPlandTime != null">
@@ -65,7 +65,7 @@
 	</select>
 	
 	<!-- client에서 조회한 데이터를 조회-->
-	<select id="findAirline" resultType="com.example.demo.flight.FlightVO">
+	<select id="findAirline" resultType="com.example.demo.vo.FlightVO">
 		SELECT * FROM flight_tb
 		<where>
 			<if test="depAirportNm != null and arrAirportNm != null and depPlandTime != null and airlineNm != null">
@@ -89,14 +89,14 @@
 	</select> -->
 	
 	<!-- totalCount -->
-	<select id="total" resultType="com.example.demo.flight.CountVO">
+	<select id="total" resultType="com.example.demo.vo.CountVO">
 		SELECT count(*) AS total_count 
 		  FROM flight_tb
 		 WHERE dep_airport_nm=#{depAirportNm} AND arr_airport_nm=#{arrAirportNm} AND LEFT(dep_pland_time, 8)=#{depPlandTime}
 	</select>
 	
 	<!-- airline_totalCount -->
-	<select id="totalAirline" resultType="com.example.demo.flight.CountVO">
+	<select id="totalAirline" resultType="com.example.demo.vo.CountVO">
 		SELECT count(*) AS total_count 
 		  FROM flight_tb
 		 WHERE dep_airport_nm=#{depAirportNm} AND arr_airport_nm=#{arrAirportNm} AND LEFT(dep_pland_time, 8)=#{depPlandTime} AND airline_nm=#{airlineNm}

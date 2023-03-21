@@ -1,11 +1,9 @@
-package com.example.demo.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
+package com.example.demo.service;
 
 import com.example.demo.vo.AirlineVO;
 
-@Mapper
-public interface AirlineMapper {
+//인터페이스
+public interface AirlineService {
 	AirlineVO selectAirline(AirlineVO vo) throws Exception;// airline 조회
 	int insertAirline(AirlineVO vo) throws Exception;//airline 저장
 	int updateAirline(AirlineVO vo) throws Exception;//airline 수정
