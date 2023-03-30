@@ -34,6 +34,7 @@ import com.example.demo.service.FlightService;
 import com.example.demo.vo.FlightVO;
 import com.example.demo.vo.flightvo.ItemVO;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
@@ -57,6 +58,7 @@ public class FlightController {
 	private FlightService flightService;
 	
 	Gson gson = new Gson();
+	private Gson pretty_gson = new GsonBuilder().setPrettyPrinting().create();
 
 	
 		//total count
@@ -257,6 +259,9 @@ public class FlightController {
 				if (airlineId == "" || airlineId == null) {
 					if (parsedItemVOs.size() == result.size()) {
 						responseMap.put("data", result);
+						responseMap.put("status", Status.OK);
+						responseMap.put("msg", "검색한 항공편이 조회 되었습니다.");
+						log.info("================================= flight response:\n" + pretty_gson.toJson(responseMap));
 						return ResponseEntity.ok(responseMap);
 					} else {
 						
@@ -289,9 +294,10 @@ public class FlightController {
 						System.out.println(result);
 						responseMap.put("data", flightService.find(resultMap));
 						responseMap.put("status", Status.OK);
-						responseMap.put("msg", "항공편 전체 조회");
-						
+						responseMap.put("status", Status.OK);
+						responseMap.put("msg", "검색한 항공편이 조회 되었습니다.");
 //						responseMap.put("api", parsedItemVOs);
+						log.info("================================= flight response:\n" + pretty_gson.toJson(responseMap));
 						return ResponseEntity.ok(responseMap);
 					}
 					
@@ -299,6 +305,9 @@ public class FlightController {
 				//1-2)airlineId가 있는 경우
 					if (parsedItemVOs.size() == airline_result.size()) {
 						responseMap_airline.put("data", airline_result);
+						responseMap_airline.put("status", Status.OK);
+						responseMap_airline.put("msg", "검색한 항공편이 조회 되었습니다.");
+						log.info("================================= flight response:\n" + pretty_gson.toJson(responseMap_airline));
 						return ResponseEntity.ok(responseMap_airline);
 					}
 					
@@ -327,10 +336,12 @@ public class FlightController {
 					resultMap.put("arrAirportNm", arrAirportNm);
 					resultMap.put("airlineNm", airlineNm);
 					resultMap.put("depPlandTime", plandTime.substring(0, 8));
-					resultMap.put("status", Status.OK);
 					//출발지&도착지에 따른 DB검색결과
 					System.out.println(result);
 					responseMap.put("data", flightService.findAirline(resultMap));
+					responseMap.put("status", Status.OK);
+					responseMap.put("msg", "검색한 항공편이 조회 되었습니다.");
+					log.info("================================= flight response:\n" + pretty_gson.toJson(responseMap));
 //					responseMap_airline.put("api", parsedItemVOs);
 					return ResponseEntity.ok(responseMap);
 //					responseMap.put("status", Status.OK);

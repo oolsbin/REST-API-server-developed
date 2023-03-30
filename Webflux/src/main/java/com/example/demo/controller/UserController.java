@@ -29,6 +29,8 @@ import com.example.demo.token.JwtUtil;
 import com.example.demo.vo.TokenVO;
 import com.example.demo.vo.UserInfoVO;
 import com.example.demo.vo.UserVO;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -44,6 +46,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
+	
+	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	private final JwtAccessService accessService;
 	private final JwtRefreshService refreshService;
@@ -106,7 +110,7 @@ public class UserController {
 		
 		userService.refreshToken(token_vo);
 		
-		log.info("================================= login response:\n" + response+"");
+		log.info("================================= login response:\n" + gson.toJson(response));
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);// 201
 	}
@@ -127,7 +131,8 @@ public class UserController {
 			Map<String, Object> map = new HashMap<>();
 			map.put("status", HttpStatus.UNAUTHORIZED);
 			map.put("msg", "이미 존재하는 아이디 입니다.");
-			log.info("================================= register response:\n" + map+"");
+			map.put("id", id);
+			log.info("================================= register response:\n" + gson.toJson(map));
 			return new ResponseEntity<>(map, status);
 //			HttpStatus status = HttpStatus.UNAUTHORIZED;
 //	        String message = "이미 존재하는 아이디 입니다.";
@@ -140,9 +145,9 @@ public class UserController {
 		HttpStatus status = HttpStatus.OK;
 		Map<String, Object> map = new HashMap<>();
 		map.put("status", HttpStatus.OK);
-		map.put("msg", "회원가입을 환영합니다^^*");
+		map.put("msg", vo.getName()+"님, 회원가입을 환영합니다^^*");
 		
-		log.info("================================= register response:\n" + map+"");
+		log.info("================================= register response:\n" + gson.toJson(map));
 		
 		return new ResponseEntity<>(map, status);
 //		return ResponseEntity.ok().body(msg.toString());
@@ -156,7 +161,7 @@ public class UserController {
 		if (authToken != null & authToken.startsWith("Bearer ")) {
 			String refreshToken = null;
 			refreshToken = authToken.substring(7);
-			System.out.println(refreshToken);
+//			System.out.println(refreshToken);
 			// 2)client에서 받은 token을 받아서 token_vo에 담는다
 			TokenVO token_vo = new TokenVO();
 			token_vo.setRefreshToken(refreshToken);
@@ -166,9 +171,9 @@ public class UserController {
 			String id = jwtUtil.getKey(claims);// payload의 id를 취득
 //	    	Object data = jwtUtil.getClaims(claims, key);//payload의 데이터 취득
 
-			log.info("token 복호화 : " + claims);
-			log.info("토큰만료시간 : " + isTokenValid);
-			log.info("payload id 취득 : " + id);
+			log.info("accessToken decryption : " + claims);
+			log.info("accessToken due date : " + isTokenValid);
+			log.info("payload id : " + id);
 //	    	log.info("payload data 취득 : " + data);
 
 //	    	
@@ -266,7 +271,7 @@ public class UserController {
 			map.put("userInfo", vo_id);
 			map.put("msg", id + "님의 정보를 조회합니다.");
 			map.put("status", status);
-			log.info("================================= userInfo response:\n" + map+"");
+			log.info("================================= userInfo response:\n" + gson.toJson(map));
 			return ResponseEntity.ok(map);
 		}
 		return null;

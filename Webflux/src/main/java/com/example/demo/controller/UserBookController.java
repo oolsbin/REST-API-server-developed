@@ -31,6 +31,8 @@ import com.example.demo.vo.FlightVO;
 import com.example.demo.vo.SeatVO;
 import com.example.demo.vo.TokenVO;
 import com.example.demo.vo.UserBookVO;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -50,6 +52,8 @@ import lombok.extern.slf4j.Slf4j;
 public class UserBookController {
 //@RequestHeader HttpHeaders headers
 
+	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	
 	@Autowired
 	private UserBookService userBookService;
 	
@@ -67,11 +71,11 @@ public class UserBookController {
 			String accessToken = null;
 			accessToken = authToken.substring(7);
 
-			System.out.println(accessToken);
-			TokenVO token_vo = new TokenVO();
-			token_vo.setAccessToken(accessToken);
+//			System.out.println(accessToken);
+//			TokenVO token_vo = new TokenVO();
+//			token_vo.setAccessToken(accessToken);
 			// accessToken 사용자정보 꺼내기 (id값)
-
+			
 			Jws<Claims> claims = jwtUtil.getClaims(accessToken);//코드 복호화+서명검증
 	    	boolean isTokenValid = jwtUtil.validateToken(claims);//토큰 만료시간 검증
 	    	String id = jwtUtil.getKey(claims);//payload의 id를 취득
@@ -84,16 +88,22 @@ public class UserBookController {
 			List<UserBookVO> list = userBookService.selectUserBook(id);
 			HttpStatus status = HttpStatus.OK;
 			Map<String, Object> response = new HashMap<>();
-			response.put("reservationInfo", list);
-			response.put("status", status);
-			response.put("mag", "항공편 예매 조회");
+			if(list.isEmpty()) {
+				response.put("reservationInfo", "예매한 항공편이 없습니다.");
+			}else {
+				response.put("reservationInfo", list);
+			}
 			
+			response.put("status", status);
+			response.put("mag", "사용자가 예매한 항공편을 조회합니다.");
+			log.info("================================= flight-mypage response:\n" + gson.toJson(response));
 			return new ResponseEntity<>(response, status);
 				}
 		HttpStatus status = HttpStatus.OK;
 		Map<String, Object> map = new HashMap<>();
 		map.put("status", HttpStatus.BAD_REQUEST);//400
 		map.put("msg", "항공편 예매를 조회할 수 없습니다.");
+		log.info("================================= flight userBook response:\n" + gson.toJson(map));
 		return new ResponseEntity<>(map, status);
 //		HttpStatus status = HttpStatus.BAD_REQUEST;
 //		String message = "항공편 예매를 조회할 수 없습니다.";
@@ -117,6 +127,7 @@ public class UserBookController {
 		Map<String, Object> response = new HashMap<>();
 		response.put("economyExtra", economyExtra);
 		response.put("prestigeExtra", prestigeExtra);
+		log.info("================================= flight extra-seat response:\n" + gson.toJson(response));
 		return new ResponseEntity<>(response, status);
 	}
 	
@@ -174,6 +185,7 @@ public class UserBookController {
 					Map<String, Object> map = new HashMap<>();
 					map.put("status", HttpStatus.BAD_REQUEST);
 					map.put("msg", "economy 좌석이 남아있지 않아 예약할 수 없습니다.");
+					log.info("================================= flight-userBook response:\n" + gson.toJson(map));
 					return new ResponseEntity<>(map, status);
 //			        HttpStatus status = HttpStatus.BAD_REQUEST;
 //			        String message = "economy 좌석이 남아있지 않아 예약할 수 없습니다.";
@@ -184,7 +196,9 @@ public class UserBookController {
 			    	HttpStatus status = HttpStatus.OK;
 					Map<String, Object> map = new HashMap<>();
 					map.put("status", HttpStatus.BAD_REQUEST);
+					log.info("================================= flight-userBook response:\n" + gson.toJson(map));
 					map.put("msg", "prestige 좌석이 남아있지 않아 예약할 수 없습니다.");
+					
 					return new ResponseEntity<>(map, status);
 //			        HttpStatus status = HttpStatus.BAD_REQUEST;
 //			        String message = "prestige 좌석이 남아있지 않아 예약할 수 없습니다.";
@@ -201,8 +215,8 @@ public class UserBookController {
 			Date createDate = new Date(new java.util.Date().getTime()); // java.util.Date 객체를 java.sql.Date 객체로 변환
 			vo.setCreateDate(createDate);
 			
-			int economyCharge = userBookService.FlightInfo(vo.getFlightId()).getEconomyCharge();
-			int prestigeCharge = userBookService.FlightInfo(vo.getFlightId()).getPrestigeCharge();
+			int economyCharge = userBookService.flightInfo(vo.getFlightId()).getEconomyCharge();
+			int prestigeCharge = userBookService.flightInfo(vo.getFlightId()).getPrestigeCharge();
 //			String seatType = vo.getSeatType();
 //			String personalStr = vo.getPersonal();
 //			int personalInt = Integer.parseInt(personalStr);
@@ -215,24 +229,25 @@ public class UserBookController {
 				
 			
 			
-			System.out.println(userBookService.UserInfo(id));
+			System.out.println(userBookService.userInfo(id));
 			userBookService.insertUserBook(vo);
 			HttpStatus status = HttpStatus.OK;
-			String message = "저장되었습니다.";
+			String message = "항공편 예약이 완료되었습니다.";
 			Map<String, Object> response = new HashMap<>();
 			response.put("message", message);
 			response.put("status", status);
 			response.put("reservationInfo", vo);
-			response.put("userInfo", userBookService.UserInfo(id));
-			response.put("flightInfo", userBookService.FlightInfo(vo.getFlightId()));
+			response.put("userInfo", userBookService.userInfo(id));
+			response.put("flightInfo", userBookService.flightInfo(vo.getFlightId()));
 		
-			
+			log.info("================================= flight-userBook response:\n" + gson.toJson(response));
 			return new ResponseEntity<>(response, status);
 				}
 		HttpStatus status = HttpStatus.OK;
 		Map<String, Object> map = new HashMap<>();
 		map.put("status", HttpStatus.BAD_REQUEST);
 		map.put("msg", "항공편예약에 실패하였습니다.");
+		log.info("================================= flight-userBook response:\n" +gson.toJson(map));
 		return new ResponseEntity<>(map, status);
 //		HttpStatus status = HttpStatus.BAD_REQUEST;
 //		String message = "항공편예약에 실패하였습니다.";
@@ -243,7 +258,14 @@ public class UserBookController {
 	@DeleteMapping(value = "flight/cancellation")
 	public ResponseEntity<?> userBookDelete(@RequestParam String reservationId) throws Exception {
 		int test = userBookService.deleteUserBook(reservationId);
-		return ResponseEntity.ok().body(test);
+		HttpStatus status = HttpStatus.OK;
+		String message = "항공편 예약이 취소되었습니다.";
+		Map<String, Object> response = new HashMap<>();
+		response.put("message", message);
+		response.put("status", status);
+		response.put("data", test);
+		log.info("================================= flight-userBook response:\n" + gson.toJson(response));
+		return ResponseEntity.ok().body(response);
 	}
 	
 

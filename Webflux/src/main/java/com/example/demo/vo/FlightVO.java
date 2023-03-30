@@ -5,9 +5,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @ApiModel(value = "FlightVO : 항공편 모델")
 public class FlightVO {

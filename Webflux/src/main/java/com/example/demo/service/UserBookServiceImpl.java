@@ -59,17 +59,17 @@ public class UserBookServiceImpl implements UserBookService{
 //	}
 
 	@Override
-	public UserInfoVO UserInfo(String userId) throws Exception {
-		return userbookmapper.UserInfo(userId);
+	public UserInfoVO userInfo(String userId) throws Exception {
+		return userbookmapper.userInfo(userId);
 	}
 
 	@Override
-	public FlightVO FlightInfo(String flightId) throws Exception {
-		return userbookmapper.FlightInfo(flightId);
+	public FlightVO flightInfo(String flightId) throws Exception {
+		return userbookmapper.flightInfo(flightId);
 	}
 
 	@Override
-	public List<UserBookVO> ChargeSum(String id) throws Exception {
+	public List<UserBookVO> chargeSum(String id) throws Exception {
 		return userbookmapper.selectUserBook(id);
 	}
 

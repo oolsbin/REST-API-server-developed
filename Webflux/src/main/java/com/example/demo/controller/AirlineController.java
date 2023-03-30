@@ -28,6 +28,8 @@ import org.springframework.web.client.RestTemplate;
 import com.example.demo.service.AirlineService;
 import com.example.demo.vo.AirlineVO;
 import com.example.demo.vo.airlinevo.ListVO;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,13 +41,15 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 public class AirlineController {
+	
+	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	@Autowired
 	private AirlineService airlineService;
 
 	// 공항목록조회(airportId:공항ID, airportNm:공항명)
 	@ApiOperation(value = "API 항공사 목록 조회", notes = "공공데이터 API에 등록된 국내 항공사의 목록을 조회하는 기능")
-	@GetMapping(value = "/airline")
+	@GetMapping(value = "/airline", produces="application/json;charset=UTF-8")
 //		@Operation(summary = "항공사 목록 조회", description = "국내 항공사의 목록을 조회하는 기능")
 	// HttpEntity = HttpHeader와 HttpBody를 포함하는 클래스
 	// HttpEntity를 상속받아 구현한 클래스가 RequestEntity, ResponseEntity이다.
@@ -84,7 +88,7 @@ public class AirlineController {
 			
 			
 //			ObjectMapper objectMapper = new ObjectMapper();
-//			JsonParser parser = objectMapper.getFactory().createParser(response.getBody());
+//			JsonParser parser = objectMapper.getFactory().createParser(response.getBody());s
 //			AirlineVO airline = objectMapper.readValue(parser, AirlineVO.class);
 //			List<AirlineVO> itemsList = responseDto.getItemsList();
 
@@ -93,7 +97,8 @@ public class AirlineController {
 				Map<String, Object> map = new HashMap<>();
 				map.put("response", response.getBody());
 				map.put("status", status);
-				map.put("msg", "항공사 전체 조회");
+				map.put("msg", "전체 항공사를 조회합니다.");
+				log.info("================================= airline response:\n" + gson.toJson(map));
 				return new ResponseEntity<>(map, status);
 //				return ResponseEntity.ok(response.getBody());
 			} else {
@@ -108,7 +113,7 @@ public class AirlineController {
 
 	// db 저장
 	@ApiOperation(value = "항공사 목록 생성", notes = "국내 항공사의 목록을 생성하는 기능")
-	@PostMapping("/airline")
+	@PostMapping(value = "/airline", produces="application/json;charset=UTF-8")
 	public ResponseEntity<?> insertAirline(
 			@ApiParam(value = "생성하고 싶은 항공사 입력", required = true) @RequestBody AirlineVO vo) throws Exception {
 		if (airlineService.insertAirline(vo) != 1) {
@@ -145,7 +150,7 @@ public class AirlineController {
 
 	// db 수정
 	@ApiOperation(value = "항공사 목록 수정", notes = "국내 항공사의 목록을 수정하는 기능")
-	@PutMapping(value = "/airline")
+	@PutMapping(value = "/airline", produces="application/json;charset=UTF-8")
 	public ResponseEntity<?> update(@ApiParam(value = "항공사 수정", required = true) @RequestBody AirlineVO vo)
 			throws Exception {
 		airlineService.updateAirline(vo);
@@ -161,7 +166,7 @@ public class AirlineController {
 
 	// db 삭제
 	@ApiOperation(value = "항공사 목록 삭제", notes = "국내 항공사의 목록을 삭제하는 기능")
-	@DeleteMapping("/airline")
+	@DeleteMapping(value = "/airline", produces="application/json;charset=UTF-8")
 	public ResponseEntity<?> delete(@ApiParam(value = "항공사 삭제", required = true) @RequestBody AirlineVO vo)
 			throws Exception {
 		airlineService.deleteAirline(vo);

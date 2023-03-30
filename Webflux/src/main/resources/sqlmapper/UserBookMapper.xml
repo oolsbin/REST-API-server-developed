@@ -47,7 +47,7 @@
 	</insert>
 	
 	<!-- flight정보조회 -->
-	<select id='FlightInfo' resultType="com.example.demo.vo.FlightVO">
+	<select id='flightInfo' resultType="com.example.demo.vo.FlightVO">
 		SELECT *
 		FROM flight_tb
 		WHERE flight_id=#{flightId}
@@ -55,14 +55,14 @@
 	
 	
 	<!-- user정보조회 -->
-	<select id='UserInfo' resultType="com.example.demo.vo.UserInfoVO">
+	<select id='userInfo' resultType="com.example.demo.vo.UserInfoVO">
 		SELECT name, address, email, phone_number
 		FROM user_tb
 		WHERE user_id=#{id}
 	</select>
 	
 	<!-- 가격조회 -->
-	<select id='ChargeSum' resultType="com.example.demo.vo.UserInfoVO">
+	<select id='chargeSum' resultType="com.example.demo.vo.UserInfoVO">
 		SELECT flight_id, seat_type, personal, economy_charge, prestige_charge
 		FROM seat_tb AS s
 		JOIN flight_tb AS f
@@ -72,6 +72,11 @@
 	
 	<delete id="deleteUserBook">
 		DELETE FROM seat_tb
+		WHERE reservation_id = #{reservationId}
+	</delete>
+	
+	<delete id="reservaionUserBook">
+	   SELECT *
 		WHERE reservation_id = #{reservationId}
 	</delete>
 	

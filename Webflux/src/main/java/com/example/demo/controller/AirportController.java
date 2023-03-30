@@ -28,21 +28,27 @@ import org.springframework.web.client.RestTemplate;
 import com.example.demo.service.AirportService;
 import com.example.demo.vo.AirportVO;
 import com.example.demo.vo.airportvo.ListVO;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "공항정보")
 @CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
 		RequestMethod.DELETE })
 @RestController
+@Slf4j
 public class AirportController {
+	
+	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	@Autowired
 	private AirportService airportService;
 
-	@GetMapping(value = "/airport")
+	@GetMapping(value = "/airport", produces="application/json;charset=UTF-8")
 	@ApiOperation(value = "API 공항 목록 조회", notes = "공공데이터 API에 등록된 국내 공항의 목록을 조회하는 기능")
 	public ResponseEntity<?> airportSelect(
 			@ApiParam(value = "공항아이디", required = true, example = "NAARKSS") @RequestParam(value = "airportId", required = false) String airportId,
@@ -68,7 +74,8 @@ public class AirportController {
 				Map<String, Object> map = new HashMap<>();
 				map.put("response", response.getBody());
 				map.put("status", Status.OK);
-				map.put("msg", "공항 전체 조회");
+				map.put("msg", "전체 공항을 조회합니다.");
+				log.info("================================= airport response:\n" + gson.toJson(map));
 				return new ResponseEntity<>(map, status);
 //				return ResponseEntity.ok(response);
 			} else {
