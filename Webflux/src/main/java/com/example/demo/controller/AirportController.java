@@ -2,6 +2,10 @@ package com.example.demo.controller;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.net.ssl.SSLEngineResult.Status;
 
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +64,13 @@ public class AirportController {
 			final ResponseEntity<?> response = restTemplate.exchange(uri, HttpMethod.GET, entity, ListVO.class);
 
 			if (response.getStatusCodeValue() == 200) {
-				return ResponseEntity.ok(response);
+				HttpStatus status = HttpStatus.OK;
+				Map<String, Object> map = new HashMap<>();
+				map.put("response", response.getBody());
+				map.put("status", Status.OK);
+				map.put("msg", "공항 전체 조회");
+				return new ResponseEntity<>(map, status);
+//				return ResponseEntity.ok(response);
 			} else {
 				throw new Exception();
 			}

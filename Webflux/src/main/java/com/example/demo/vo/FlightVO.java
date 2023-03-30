@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@ApiModel(value = "항공편 모델")
+@ApiModel(value = "FlightVO : 항공편 모델")
 public class FlightVO {
 	@ApiModelProperty(value = "항공편 아이디", required = true)
 	private String flightId;//아이디
@@ -29,6 +29,6 @@ public class FlightVO {
 	private String depAirportNm;//출발공항
 	@ApiModelProperty(value = "도착공항", required = true)
 	private String arrAirportNm;//도착공항
-	@ApiModelProperty(value = "flag", required = true)
+	@ApiModelProperty(value = "http메소드 값", required = true)
 	private String flag;//프론트에서 들어오는 "add, update, delete" 값
 }

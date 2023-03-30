@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@ApiModel(value = "사용자 모델")
+@ApiModel(value = "UserVO : 사용자 모델")
 public class UserVO {
 	@ApiModelProperty(value = "사용자 아이디", required = true)
 	private String id;

@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@ApiModel(value = "항공사 모델")
+@ApiModel(value = "AirlineVO : 항공사 모델")
 public class AirlineVO {
 	@ApiModelProperty(value = "항공사 아이디", required = true)
 	private String airlineId;

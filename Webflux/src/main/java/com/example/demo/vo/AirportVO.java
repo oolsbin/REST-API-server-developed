@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@ApiModel(value = "공항 모델")
+@ApiModel(value = "AirportVO : 공항 모델")
 public class AirportVO {
 	@ApiModelProperty(value = "공항 아이디", required = true)
 	private String airportId;

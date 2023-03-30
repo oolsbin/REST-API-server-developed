@@ -10,7 +10,7 @@ import lombok.Setter;
 public class UserBookVO {
 	private String flightId;//flight id
 	private String seatType;//좌석등급
-    private	int reservation;//예약여부 0 = 예약안됨, 1 = 예약됨
+    private	String reservationId;//예약고유번호
     private String userId;//사용자 아이디
     private String vihicleId;//항공편명
 	private String airlineNm;//항공사명

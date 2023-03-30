@@ -22,6 +22,13 @@
 		 WHERE pw = #{pw}
 	</select>
 	
+	<!-- 사용자정보 조회 -->
+	<select id='userInfo' resultType="com.example.demo.vo.UserInfoVO">
+		SELECT name, address, email, phone_number
+		  FROM user_tb
+		 WHERE user_id = #{id}
+	</select>
+	
 	<!-- 로그인처리 -->
 	<select id='login' resultType='com.example.demo.vo.UserVO'>
 		SELECT * 
@@ -31,8 +38,8 @@
 	
 	<!-- refreshToken 저장 -->
 	<insert id='refreshToken'>
-		INSERT IGNORE INTO refresh_token(user_id, refresh_token, create_date, update_date)
-		VALUES (#{id}, #{refreshToken}, #{createDate}, #{updateDate})
+		INSERT IGNORE INTO refresh_token(refresh_token_id, user_id, refresh_token, create_date, update_date)
+		VALUES (#{refreshTokenId}, #{id}, #{refreshToken}, #{createDate}, #{updateDate})
 	</insert>
 	
 	<!-- refreshToken 맞는지 확인 -->

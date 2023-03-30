@@ -2,6 +2,10 @@ package com.example.demo.controller;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.net.ssl.SSLEngineResult.Status;
 
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +35,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "항공사정보")
-@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
-		RequestMethod.DELETE })
+@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE })
 @RestController
 @Slf4j
 public class AirlineController {
@@ -86,7 +89,13 @@ public class AirlineController {
 //			List<AirlineVO> itemsList = responseDto.getItemsList();
 
 			if (response.getStatusCodeValue() == 200) {
-				return ResponseEntity.ok(response.getBody());
+				HttpStatus status = HttpStatus.OK;
+				Map<String, Object> map = new HashMap<>();
+				map.put("response", response.getBody());
+				map.put("status", status);
+				map.put("msg", "항공사 전체 조회");
+				return new ResponseEntity<>(map, status);
+//				return ResponseEntity.ok(response.getBody());
 			} else {
 				throw new Exception();
 			}
@@ -103,14 +112,22 @@ public class AirlineController {
 	public ResponseEntity<?> insertAirline(
 			@ApiParam(value = "생성하고 싶은 항공사 입력", required = true) @RequestBody AirlineVO vo) throws Exception {
 		if (airlineService.insertAirline(vo) != 1) {
-			HttpStatus status = HttpStatus.BAD_REQUEST;
-			String message = "저장실패";
-			return new ResponseEntity<>(message, status);
+//			HttpStatus status = HttpStatus.BAD_REQUEST;
+//			String message = "저장실패";
+//			return new ResponseEntity<>(message, status);
+			HttpStatus status = HttpStatus.OK;
+			Map<String, Object> map = new HashMap<>();
+			map.put("status", status.is4xxClientError());
+			map.put("msg", "저장실패.");
+			return new ResponseEntity<>(map, status);
 		}
 
 		HttpStatus status = HttpStatus.OK;
-		String message = "저장되었습니다.";
-		return new ResponseEntity<>(message, status);
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", Status.OK);
+		map.put("msg", "저장되었습니다.");
+		return new ResponseEntity<>(map, status);
+//		return new ResponseEntity<>(message, status);
 	}
 
 //	//db 조회
@@ -133,8 +150,13 @@ public class AirlineController {
 			throws Exception {
 		airlineService.updateAirline(vo);
 		HttpStatus status = HttpStatus.OK;
-		String message = "수정되었습니다.";
-		return new ResponseEntity<>(message, status);
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", Status.OK);
+		map.put("msg", "수정되었습니다.");
+		return new ResponseEntity<>(map, status);
+//		HttpStatus status = HttpStatus.OK;
+//		String message = "수정되었습니다.";
+//		return new ResponseEntity<>(message, status);
 	}
 
 	// db 삭제
@@ -144,7 +166,12 @@ public class AirlineController {
 			throws Exception {
 		airlineService.deleteAirline(vo);
 		HttpStatus status = HttpStatus.OK;
-		String message = "삭제되었습니다.";
-		return new ResponseEntity<>(message, status);
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", Status.OK);
+		map.put("msg", "삭제되었습니다.");
+		return new ResponseEntity<>(map, status);
+//		HttpStatus status = HttpStatus.OK;
+//		String message = "삭제되었습니다.";
+//		return new ResponseEntity<>(message, status);
 	}
 }

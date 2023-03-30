@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class TokenVO {
 	private String id;
+	private String refreshTokenId;
 	private String refreshToken;
 	private String accessToken;
 	private Date createDate;

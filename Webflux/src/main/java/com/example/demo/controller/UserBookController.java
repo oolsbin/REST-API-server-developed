@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.SSLEngineResult.Status;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,7 @@ public class UserBookController {
     private JwtUtil jwtUtil;
 
 	@ApiOperation(value = "사용자 항공편 예매 조회", notes = "마이페이지에서 사용자가 예매한 항공편을 조회하는 기능")
-	@GetMapping(value = "flight/user-booking") // 마이페이지 예약목록
+	@GetMapping(value = "flight/user-booking", produces="application/json;charset=UTF-8") // 마이페이지 예약목록
 	public ResponseEntity<?> UserBookMypage(
 			@RequestHeader HttpHeaders headers)
 			throws Exception {
@@ -83,17 +85,24 @@ public class UserBookController {
 			HttpStatus status = HttpStatus.OK;
 			Map<String, Object> response = new HashMap<>();
 			response.put("reservationInfo", list);
+			response.put("status", status);
+			response.put("mag", "항공편 예매 조회");
 			
 			return new ResponseEntity<>(response, status);
 				}
-		HttpStatus status = HttpStatus.BAD_REQUEST;
-		String message = "항공편 예매를 조회할 수 없습니다.";
-		return new ResponseEntity<>(message, status);
+		HttpStatus status = HttpStatus.OK;
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", HttpStatus.BAD_REQUEST);//400
+		map.put("msg", "항공편 예매를 조회할 수 없습니다.");
+		return new ResponseEntity<>(map, status);
+//		HttpStatus status = HttpStatus.BAD_REQUEST;
+//		String message = "항공편 예매를 조회할 수 없습니다.";
+//		return new ResponseEntity<>(message, status);
 	}
 			
 
 	@ApiOperation(value = "남은 좌석 조회", notes = "항공편에 따른 남은 좌석을 조회하는 기능")
-	@GetMapping(value = "flight/extra-seat") // 남은 좌석정보
+	@GetMapping(value = "flight/extra-seat", produces="application/json;charset=UTF-8") // 남은 좌석정보
 	public ResponseEntity<?> UserBookCnt(
 			@ApiParam(value = "항공편아이디", required = true, example = "0FDBXyQ9JZkUZMkCKtSAjtgmZeCaIbOpe4TO")
 			@RequestParam String flightId) throws Exception {
@@ -114,7 +123,7 @@ public class UserBookController {
 	
 
 	@ApiOperation(value = "항공편 예약", notes = "사용자가 항공편을 예약하는 기능")
-	@PostMapping(value = "flight/booking") // 마이페이지 예약목록
+	@PostMapping(value = "flight/booking", produces="application/json;charset=UTF-8") // 마이페이지 예약목록
 	public ResponseEntity<?> UserBookInsert(@RequestHeader HttpHeaders headers,
 			@RequestBody SeatVO vo)
 			throws Exception {
@@ -128,13 +137,22 @@ public class UserBookController {
 			TokenVO token_vo = new TokenVO();
 			token_vo.setAccessToken(accessToken);
 			// accessToken 사용자정보 꺼내기 (id값)
-			String[] splitToken = accessToken.split("\\.");
-			String payload = new String(Base64.getDecoder().decode(splitToken[1]), StandardCharsets.UTF_8);
-			JSONObject jsonObject = new JSONObject(payload);
-			System.out.println(jsonObject);
-			// user_id
-			String id = jsonObject.getString("id");
-			System.out.println(id);
+//			String[] splitToken = accessToken.split("\\.");
+//			String payload = new String(Base64.getDecoder().decode(splitToken[1]), StandardCharsets.UTF_8);
+//			JSONObject jsonObject = new JSONObject(payload);
+//			System.out.println(jsonObject);
+//			// user_id
+//			String id = jsonObject.getString("id");
+//			System.out.println(id);
+			
+			Jws<Claims> claims = jwtUtil.getClaims(accessToken);//코드 복호화+서명검증
+	    	boolean isTokenValid = jwtUtil.validateToken(claims);//토큰 만료시간 검증
+	    	String id = jwtUtil.getKey(claims);//payload의 id를 취득
+	    	
+	    	log.info("token 복호화 : " + claims);
+	    	log.info("토큰만료시간 : " + isTokenValid);
+	    	log.info("payload id 취득 : " + id);
+			
 			// id추출 완료----------------------------------------------------
 
 //			남은좌석이 없을 시 예약할 수 없음			
@@ -152,15 +170,25 @@ public class UserBookController {
 			
 			if(seatType.equals("economy")) {
 			    if(economyExtra == 0) {
-			        HttpStatus status = HttpStatus.BAD_REQUEST;
-			        String message = "economy 좌석이 남아있지 않아 예약할 수 없습니다.";
-			        return new ResponseEntity<>(message, status);
+			    	HttpStatus status = HttpStatus.OK;
+					Map<String, Object> map = new HashMap<>();
+					map.put("status", HttpStatus.BAD_REQUEST);
+					map.put("msg", "economy 좌석이 남아있지 않아 예약할 수 없습니다.");
+					return new ResponseEntity<>(map, status);
+//			        HttpStatus status = HttpStatus.BAD_REQUEST;
+//			        String message = "economy 좌석이 남아있지 않아 예약할 수 없습니다.";
+//			        return new ResponseEntity<>(message, status);
 			    }
 			} else if(seatType.equals("prestige")) {
 			    if(prestigeExtra == 0) {
-			        HttpStatus status = HttpStatus.BAD_REQUEST;
-			        String message = "prestige 좌석이 남아있지 않아 예약할 수 없습니다.";
-			        return new ResponseEntity<>(message, status);
+			    	HttpStatus status = HttpStatus.OK;
+					Map<String, Object> map = new HashMap<>();
+					map.put("status", HttpStatus.BAD_REQUEST);
+					map.put("msg", "prestige 좌석이 남아있지 않아 예약할 수 없습니다.");
+					return new ResponseEntity<>(map, status);
+//			        HttpStatus status = HttpStatus.BAD_REQUEST;
+//			        String message = "prestige 좌석이 남아있지 않아 예약할 수 없습니다.";
+//			        return new ResponseEntity<>(message, status);
 			    }
 			}
 			
@@ -193,17 +221,25 @@ public class UserBookController {
 			String message = "저장되었습니다.";
 			Map<String, Object> response = new HashMap<>();
 			response.put("message", message);
+			response.put("status", status);
 			response.put("reservationInfo", vo);
 			response.put("userInfo", userBookService.UserInfo(id));
 			response.put("flightInfo", userBookService.FlightInfo(vo.getFlightId()));
+		
 			
 			return new ResponseEntity<>(response, status);
 				}
-		HttpStatus status = HttpStatus.BAD_REQUEST;
-		String message = "항공편예약에 실패하였습니다.";
-		return new ResponseEntity<>(message, status);
+		HttpStatus status = HttpStatus.OK;
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", HttpStatus.BAD_REQUEST);
+		map.put("msg", "항공편예약에 실패하였습니다.");
+		return new ResponseEntity<>(map, status);
+//		HttpStatus status = HttpStatus.BAD_REQUEST;
+//		String message = "항공편예약에 실패하였습니다.";
+//		return new ResponseEntity<>(message, status);
 	}
 	
+	//예매취소
 	@DeleteMapping(value = "flight/cancellation")
 	public ResponseEntity<?> userBookDelete(@RequestParam String reservationId) throws Exception {
 		int test = userBookService.deleteUserBook(reservationId);

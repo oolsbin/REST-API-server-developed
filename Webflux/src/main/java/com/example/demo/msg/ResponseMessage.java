@@ -1,4 +1,4 @@
-//package com.example.demo.msg;
+////package com.example.demo.msg;
 //
 //public class ResponseMessage {
 //    public static final String LOGIN_SUCCESS = "로그인 성공";

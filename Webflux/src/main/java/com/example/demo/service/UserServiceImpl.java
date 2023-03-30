@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.vo.TokenVO;
+import com.example.demo.vo.UserInfoVO;
 import com.example.demo.vo.UserVO;
 
 @Service
@@ -47,6 +48,11 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public String userPw(UserVO vo) throws Exception {
 		return usermapper.userPw(vo);
+	}
+	
+	@Override
+	public UserInfoVO userInfo(String id) throws Exception {
+		return usermapper.userInfo(id);
 	}
 	
 	@Override
