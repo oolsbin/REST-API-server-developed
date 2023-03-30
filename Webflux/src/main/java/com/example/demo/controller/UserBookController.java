@@ -180,7 +180,7 @@ public class UserBookController {
 			int prestigeExtra = 4 - prestigeCnt - personalInt;
 			
 			if(seatType.equals("economy")) {
-			    if(economyExtra == 0) {
+			    if(economyExtra == 0 || economyExtra < 0) {
 			    	HttpStatus status = HttpStatus.OK;
 					Map<String, Object> map = new HashMap<>();
 					map.put("status", HttpStatus.BAD_REQUEST);
@@ -192,12 +192,12 @@ public class UserBookController {
 //			        return new ResponseEntity<>(message, status);
 			    }
 			} else if(seatType.equals("prestige")) {
-			    if(prestigeExtra == 0) {
+			    if(prestigeExtra == 0 || prestigeExtra < 0) {
 			    	HttpStatus status = HttpStatus.OK;
 					Map<String, Object> map = new HashMap<>();
 					map.put("status", HttpStatus.BAD_REQUEST);
-					log.info("================================= flight-userBook response:\n" + gson.toJson(map));
 					map.put("msg", "prestige 좌석이 남아있지 않아 예약할 수 없습니다.");
+					log.info("================================= flight-userBook response:\n" + gson.toJson(map));
 					
 					return new ResponseEntity<>(map, status);
 //			        HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -258,6 +258,17 @@ public class UserBookController {
 	@DeleteMapping(value = "flight/cancellation")
 	public ResponseEntity<?> userBookDelete(@RequestParam String reservationId) throws Exception {
 		int test = userBookService.deleteUserBook(reservationId);
+		if(test==0) {
+			HttpStatus status = HttpStatus.OK;
+			String message = "이미 취소된 항공편 입니다.";
+			Map<String, Object> response = new HashMap<>();
+			response.put("message", message);
+			response.put("status", status);
+			response.put("data", test);
+			log.info("================================= flight-userBook response:\n" + gson.toJson(response));
+			return ResponseEntity.ok().body(response);
+		}
+		
 		HttpStatus status = HttpStatus.OK;
 		String message = "항공편 예약이 취소되었습니다.";
 		Map<String, Object> response = new HashMap<>();

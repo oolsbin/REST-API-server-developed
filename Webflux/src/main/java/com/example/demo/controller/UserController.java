@@ -73,12 +73,25 @@ public class UserController {
 		user.setPw(vo.getPw());
 
 		if (userService.login(vo) == null) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);// 400
+			
+			HttpStatus status = HttpStatus.UNAUTHORIZED;
+			Map<String, Object> map = new HashMap<>();
+			map.put("status", HttpStatus.UNAUTHORIZED);
+			map.put("msg", "아이디가 존재하지 않습니다.");
+			log.info("================================= register response:\n" + gson.toJson(map));
+			return new ResponseEntity<>(map, status);
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);// 400
 		}
 //		System.out.println(userService.login(vo).getPw());
 //		System.out.println(userService.login(vo).getId());
 		if (!passwordEncoder.matches(vo.getPw(), userService.login(vo).getPw())) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);// 400
+			HttpStatus status = HttpStatus.UNAUTHORIZED;
+			Map<String, Object> map = new HashMap<>();
+			map.put("status", HttpStatus.UNAUTHORIZED);
+			map.put("msg", "패스워드가 일치하지 않습니다.");
+			log.info("================================= register response:\n" + gson.toJson(map));
+			return new ResponseEntity<>(map, status);
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);// 400
 		}
 
 		HashMap<String, String> map = new HashMap<String, String>() {
@@ -127,9 +140,9 @@ public class UserController {
 		// id 유효성 검사
 		String id = userService.userId(vo); // 아이디 검색 결과
 		if (!(id == null)) {// id가 있으면
-			HttpStatus status = HttpStatus.UNAUTHORIZED;
+			HttpStatus status = HttpStatus.BAD_REQUEST;
 			Map<String, Object> map = new HashMap<>();
-			map.put("status", HttpStatus.UNAUTHORIZED);
+			map.put("status", HttpStatus.BAD_REQUEST);
 			map.put("msg", "이미 존재하는 아이디 입니다.");
 			map.put("id", id);
 			log.info("================================= register response:\n" + gson.toJson(map));
@@ -269,7 +282,7 @@ public class UserController {
 			HttpStatus status = HttpStatus.OK;
 			Map<String, Object> map = new HashMap<>();
 			map.put("userInfo", vo_id);
-			map.put("msg", id + "님의 정보를 조회합니다.");
+			map.put("msg", vo_id.getName() + "님의 정보를 조회합니다.");
 			map.put("status", status);
 			log.info("================================= userInfo response:\n" + gson.toJson(map));
 			return ResponseEntity.ok(map);
