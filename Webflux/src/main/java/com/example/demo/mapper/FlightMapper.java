@@ -14,6 +14,8 @@ public interface FlightMapper {
 	List<FlightVO> find(Map<String, Object> vo) throws Exception;
 	List<FlightVO> findAll(Map<String, Object> vo) throws Exception;
 	List<FlightVO> findAirline(Map<String, Object> vo) throws Exception;
+	List<FlightVO> response(Map<String, Object> vo) throws Exception;
+	List<FlightVO> responseAirline(Map<String, Object> vo) throws Exception;
 	int insertFlight(FlightVO vo) throws Exception;//flight 저장
 	int updateFlight(FlightVO vo) throws Exception;//flight 수정
 	int deleteFlight(FlightVO vo) throws Exception;//flight 삭제

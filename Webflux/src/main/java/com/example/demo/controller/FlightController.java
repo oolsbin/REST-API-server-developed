@@ -20,9 +20,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.mapper.FlightMapper;
 import com.example.demo.service.FlightService;
+import com.example.demo.token.JwtUtil;
 import com.example.demo.vo.FlightVO;
 import com.example.demo.vo.flightvo.ItemVO;
 import com.google.gson.Gson;
@@ -38,6 +43,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -56,6 +63,9 @@ public class FlightController {
 
 	@Autowired
 	private FlightService flightService;
+	
+	@Autowired
+    private JwtUtil jwtUtil;
 	
 	Gson gson = new Gson();
 	private Gson pretty_gson = new GsonBuilder().setPrettyPrinting().create();
@@ -355,14 +365,200 @@ public class FlightController {
 			}
 		}
 		
-		@ApiOperation(value = "항공운항정보 조회/등록/수정/삭제", notes = "flag를 통해 항공운항정보를 조회, 등록, 수정, 삭제하는 기능")
-		@PostMapping(value = "/flight", produces="application/json;charset=UTF-8")
-		public ResponseEntity<?> flightInsert(@RequestBody List<FlightVO> vo) throws Exception {
+		@ApiOperation(value = "항공운항정보 수정", notes = "flag를 통해 항공운항정보를 수정하는 기능")
+		@PutMapping(value = "/flight", produces="application/json;charset=UTF-8")
+		public ResponseEntity<?> flightUpdate(
+				@RequestBody List<FlightVO> vo,
+				@RequestHeader HttpHeaders headers) throws Exception {
+			
+		
+			String authToken = headers.getFirst("Authorization");
+			if (authToken != null & authToken.startsWith("Bearer ")) {
+				String accessToken = null;
+				accessToken = authToken.substring(7);
+				
+				Jws<Claims> claims = jwtUtil.getClaims(accessToken);//코드 복호화+서명검증
+		    	boolean isTokenValid = jwtUtil.validateToken(claims);//토큰 만료시간 검증
+		    	String id = jwtUtil.getKey(claims);//payload의 id를 취득
+		    	
+		    	log.info("token 복호화 : " + claims);
+		    	log.info("토큰만료시간 : " + isTokenValid);
+		    	log.info("payload id 취득 : " + id);
+		    	
 			int test = flightService.insertFlight(vo);
 			System.out.println("flight테스트" + test);
-			return ResponseEntity.ok().body(test);
+
+			
+			
+			List<FlightVO> result = new ArrayList<>();
+//			List<FlightVO> result_airline = new ArrayList<>();
+
+			for (FlightVO flight : vo) {
+			    Map<String, Object> map = new HashMap<>();
+			    map.put("depAirportNm", flight.getDepAirportNm());
+			    map.put("arrAirportNm", flight.getArrAirportNm());
+
+//			    if (flight.getAirlineNm() != null) {
+//			        map.put("airlineNm", flight.getAirlineNm());
+//			        List<FlightVO> searchResult = flightService.responseAirline(map);
+//			        result_airline.addAll(searchResult);
+//			        return ResponseEntity.ok().body(result_airline);
+//			    } else {
+			        List<FlightVO> searchResult = flightService.response(map);
+			        result.addAll(searchResult);
+			        
+			        HttpStatus status = HttpStatus.OK;
+					String message = "항공편이 수정되었습니다.";
+					Map<String, Object> result_map = new HashMap<>();
+					result_map.put("status", status);
+					result_map.put("msg", message);
+					result_map.put("data", result);
+					result_map.put("pageNo", 1);
+					result_map.put("numOfRows", 10);
+					
+					log.info("================================= flight-update response:\n" + pretty_gson.toJson(result_map));
+			        
+			        return ResponseEntity.ok().body(result_map);
+//			    }
+			}
+
+			
+//			pretty_gson.toJson(vo);
+//			int result = 0;
+//			for(FlightVO vo : voList) {
+//				if("add".equals(vo.getFlag())) {
+//					result += flightmapper.insertFlight(vo);
+//				}else if("update".equals(vo.getFlag())) {
+//					result += flightmapper.updateFlight(vo);
+//				}else if("delete".equals(vo.getFlag())) {
+//					result += flightmapper.deleteFlight(vo);
+//				}
+//			}
+//			return ResponseEntity.ok().body(result_airline);
+			}
+			return null;
+			
 		}
 		
+		
+		@ApiOperation(value = "항공운항정보 생성", notes = "flag를 통해 항공운항정보를 생성하는 기능")
+		@PostMapping(value = "/flight", produces="application/json;charset=UTF-8")
+		public ResponseEntity<?> flightUpdate(
+				@RequestBody List<FlightVO> vo
+//				,@RequestHeader HttpHeaders headers
+				) throws Exception {
+
+			
+			
+			
+		
+//			String authToken = headers.getFirst("Authorization");
+//			if (authToken != null & authToken.startsWith("Bearer ")) {
+//				String accessToken = null;
+//				accessToken = authToken.substring(7);
+//				
+//				Jws<Claims> claims = jwtUtil.getClaims(accessToken);//코드 복호화+서명검증
+//		    	boolean isTokenValid = jwtUtil.validateToken(claims);//토큰 만료시간 검증
+//		    	String id = jwtUtil.getKey(claims);//payload의 id를 취득
+//		    	
+//		    	log.info("token 복호화 : " + claims);
+//		    	log.info("토큰만료시간 : " + isTokenValid);
+//		    	log.info("payload id 취득 : " + id);
+
+		   
+		    	
+			int test = flightService.insertFlight(vo);
+			System.out.println("flight테스트" + test);
+//			pretty_gson.toJson(vo);
+//			int result = 0;
+//			for(FlightVO vo : voList) {
+//				if("add".equals(vo.getFlag())) {
+//					result += flightmapper.insertFlight(vo);
+//				}else if("update".equals(vo.getFlag())) {
+//					result += flightmapper.updateFlight(vo);
+//				}else if("delete".equals(vo.getFlag())) {
+//					result += flightmapper.deleteFlight(vo);
+//				}
+//			}
+			
+//			List<FlightVO> data = flightService.insertData(vo);
+			
+			HttpStatus status = HttpStatus.OK;
+			String message = "항공편이 생성되었습니다.";
+//			List<FlightVO> result = createFlightData(vo);
+			Map<String, Object> result_map = new HashMap<>();
+			result_map.put("status", status);
+			result_map.put("msg", message);
+			result_map.put("data", vo); // 생성된 데이터를 Map에 추가
+//			result_map.put("data", result);
+			
+			log.info("================================= flight-insert response:\n" + pretty_gson.toJson(result_map));
+	        
+	        return ResponseEntity.ok().body(result_map);
+//			return ResponseEntity.ok().body(test);
+//			}
+//			return null;
+			
+		}
+		
+//		private List<FlightVO> createFlightData(List<FlightVO> vo) {
+//		    List<FlightVO> flights = new ArrayList<>();
+//
+//		    for (FlightVO flightVO : vo) {
+//		        // FlightVO 정보를 이용해 새로운 Flight 객체 생성
+//		    	FlightVO flight = new FlightVO();
+//		        flight.setFlightId(flightVO.getFlightId());
+//		        flight.setVihicleId(flightVO.getVihicleId());
+//		        flight.setAirlineNm(flightVO.getAirlineNm());
+//		        flight.setDepPlandTime(flightVO.getDepPlandTime());
+//		        flight.setArrPlandTime(flightVO.getArrPlandTime());
+//		        flight.setFlightId(flightVO.getFlightId());
+//		        flight.setFlightId(flightVO.getFlightId());
+//		        // ... 추가적인 정보 설정
+//
+//		        flights.add(flight);
+//		    }
+//
+//		    return flights;
+//		}
+		
+		@ApiOperation(value = "항공운항정보 삭제", notes = "flag를 통해 항공운항정보를 삭제하는 기능")
+		@DeleteMapping(value = "/flight", produces="application/json;charset=UTF-8")
+		public ResponseEntity<?> flightDelete(
+				@RequestBody List<FlightVO> vo
+				) throws Exception {
+			
+//			// 삭제된 항공 운항 정보를 저장할 리스트 선언
+//		    List<FlightVO> deletedFlights = new ArrayList<>();
+//			
+//		    for (FlightVO flightVO : vo) {
+//		        // FlightVO 정보를 이용해 삭제 대상 항공 운항 정보를 조회
+//		        FlightVO flight = flightService.getFlightByFlightNumber(flightVO.getFlightNumber());
+//		        if (flight == null) {
+//		            // 삭제 대상 항공 운항 정보가 없으면 다음으로 넘어감
+//		            continue;
+//		        }
+
+			int test = flightService.insertFlight(vo);
+			
+//	        // 삭제된 항공 운항 정보 리스트에 추가
+//	        deletedFlights.add(flight);
+			
+			System.out.println("flight테스트" + test);
+			HttpStatus status = HttpStatus.OK;
+			String message = "선택한 항공편이 삭제되었습니다.";
+			Map<String, Object> result_map = new HashMap<>();
+			result_map.put("status", status);
+			result_map.put("msg", message);
+//			result_map.put("data", result);
+//			result_map.put("pageNo", 1);
+//			result_map.put("numOfRows", 10);
+			
+			log.info("================================= flight-update response:\n" + pretty_gson.toJson(result_map));
+	        
+	        return ResponseEntity.ok().body(result_map);
+
+		}
 
    
 }

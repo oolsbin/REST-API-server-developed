@@ -94,13 +94,10 @@ public class UserController {
 //			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);// 400
 		}
 
-		HashMap<String, String> map = new HashMap<String, String>() {
-			{
-				put("access", accessService.login(vo.getId(), vo.getPw()));
-				put("refresh", refreshService.login(vo.getId(), vo.getPw()));
-				
-			}
-		};
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		map.put("access", accessService.login(vo.getId(), vo.getPw()));
+		map.put("refresh", refreshService.login(vo.getId(), vo.getPw()));
 		
 		Map<String, Object> response = new HashMap<>();
 		response.put("token", map);
@@ -122,6 +119,8 @@ public class UserController {
 		token_vo.setRefreshTokenId(uuid);
 		
 		userService.refreshToken(token_vo);
+		
+//		gson.toJsonTree(response)
 		
 		log.info("================================= login response:\n" + gson.toJson(response));
 

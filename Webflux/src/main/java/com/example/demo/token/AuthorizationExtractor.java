@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 
-//refresh토큰 가져오는 로직
+//토큰 가져오는 로직
 @Component
 public class AuthorizationExtractor {
     public static final String AUTHORIZATION = "Authorization";

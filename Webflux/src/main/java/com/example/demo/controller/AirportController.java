@@ -94,12 +94,19 @@ public class AirportController {
 	public ResponseEntity<?> insertairport(@RequestBody AirportVO vo) throws Exception {
 		if (airportService.insertAirport(vo) != 1) {
 			HttpStatus status = HttpStatus.BAD_REQUEST;
-			String message = "저장실패";
-			return new ResponseEntity<>(message, status);
+			Map<String, Object> map = new HashMap<>();
+			map.put("status", status);
+			map.put("msg", "저장실패.");
+			log.info("================================= airport response:\n" + gson.toJson(map));
+			return new ResponseEntity<>(map, status);
 		}
 
 		HttpStatus status = HttpStatus.OK;
 		String message = "저장되었습니다.";
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", status);
+		map.put("msg", message);
+		log.info("================================= airport response:\n" + gson.toJson(map));
 		return new ResponseEntity<>(message, status);
 	}
 
@@ -120,6 +127,10 @@ public class AirportController {
 		airportService.updateAirport(vo);
 		HttpStatus status = HttpStatus.OK;
 		String message = "수정되었습니다.";
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", status);
+		map.put("msg", message);
+		log.info("================================= airport response:\n" + gson.toJson(map));
 		return new ResponseEntity<>(message, status);
 	}
 
@@ -129,6 +140,10 @@ public class AirportController {
 		airportService.deleteAirport(vo);
 		HttpStatus status = HttpStatus.OK;
 		String message = "삭제되었습니다.";
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", status);
+		map.put("msg", message);
+		log.info("================================= airport response:\n" + gson.toJson(map));
 		return new ResponseEntity<>(message, status);
 	}
 

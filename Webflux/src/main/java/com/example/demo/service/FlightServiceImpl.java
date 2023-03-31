@@ -51,6 +51,16 @@ public class FlightServiceImpl implements FlightService{
 	}
 	
 	@Override
+	public List<FlightVO> response(Map<String, Object> vo) throws Exception {
+		return flightmapper.response(vo);
+	}
+	
+	@Override
+	public List<FlightVO> responseAirline(Map<String, Object> vo) throws Exception {
+		return flightmapper.responseAirline(vo);
+	}
+	
+	@Override
 	public List<FlightVO> findAll(Map<String, Object> vo) throws Exception {
 		return flightmapper.find(vo);
 	}

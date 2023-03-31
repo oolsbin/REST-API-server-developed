@@ -89,17 +89,17 @@ public class UserBookController {
 			HttpStatus status = HttpStatus.OK;
 			Map<String, Object> response = new HashMap<>();
 			if(list.isEmpty()) {
-				response.put("reservationInfo", "예매한 항공편이 없습니다.");
+				response.put("reservationInfo", list);
 			}else {
 				response.put("reservationInfo", list);
 			}
 			
 			response.put("status", status);
-			response.put("mag", "사용자가 예매한 항공편을 조회합니다.");
+			response.put("msg", "사용자가 예매한 항공편을 조회합니다.");
 			log.info("================================= flight-mypage response:\n" + gson.toJson(response));
 			return new ResponseEntity<>(response, status);
 				}
-		HttpStatus status = HttpStatus.OK;
+		HttpStatus status = HttpStatus.BAD_REQUEST;
 		Map<String, Object> map = new HashMap<>();
 		map.put("status", HttpStatus.BAD_REQUEST);//400
 		map.put("msg", "항공편 예매를 조회할 수 없습니다.");

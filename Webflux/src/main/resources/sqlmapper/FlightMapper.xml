@@ -4,14 +4,15 @@
 
 	<!-- 생성 -->
 	<insert id="insertFlight">
-	INSERT INTO flight_tb (flight_id, vihicle_id, airline_nm, dep_pland_time,arr_pland_time, economy_charge, prestige_charge, dep_airport_nm, arr_airport_nm)
-	SELECT #{flightId}, #{vihicleId}, #{airlineNm}, #{depPlandTime}, #{arrPlandTime}, IFNULL(#{economyCharge}, 0), IFNULL(#{prestigeCharge}, 0), #{depAirportNm},#{arrAirportNm}
-	FROM dual
-		WHERE NOT EXISTS (
-			SELECT 1
-		FROM flight_tb
-	WHERE flight_id = #{flightId}
-	)
+	INSERT INTO flight_tb (flight_id, vihicle_id, airline_nm, dep_pland_time, arr_pland_time, economy_charge, prestige_charge, dep_airport_nm, arr_airport_nm)
+	VALUES (#{flightId}, #{vihicleId}, #{airlineNm}, #{depPlandTime}, #{arrPlandTime}, IFNULL(#{economyCharge}, 0), IFNULL(#{prestigeCharge}, 0), #{depAirportNm},#{arrAirportNm})
+<!-- 	SELECT #{flightId}, #{vihicleId}, #{airlineNm}, #{depPlandTime}, #{arrPlandTime}, IFNULL(#{economyCharge}, 0), IFNULL(#{prestigeCharge}, 0), #{depAirportNm},#{arrAirportNm} -->
+<!-- 	FROM dual -->
+<!-- 		WHERE NOT EXISTS ( -->
+<!-- 			SELECT 1 -->
+<!-- 		FROM flight_tb -->
+<!-- 	WHERE flight_id = #{flightId} -->
+<!-- 	) -->
 	</insert>
 	
 	<!-- 항공운항정보 조회 -->
@@ -40,13 +41,13 @@
 		UPDATE flight_tb
 		   SET vihicle_id=#{vihicleId}, airline_nm=#{airlineNm}, dep_pland_time=#{depPlandTime}, arr_pland_time=#{arrPlandTime},
 			   economy_charge=#{economyCharge}, prestige_charge=#{prestigeCharge}, dep_airport_nm=#{depAirportNm}, arr_airport_nm=#{arrAirportNm}
-		 WHERE id = #{id}
+		 WHERE flight_id = #{flightId}
 	</update>
 	
 	<!-- 삭제 -->
 	<delete id="deleteFlight">
 		DELETE FROM flight_tb
-		WHERE id = #{id}
+		WHERE flight_id = #{flightId}
 	</delete>
 
 	<!-- client에서 조회한 데이터를 조회 페이징처리 -->
@@ -78,6 +79,36 @@
 		</where>
 		ORDER BY dep_pland_time ASC
 		LIMIT #{pageNo}, #{numOfRows}
+	</select>
+	
+	<!-- client에서 조회한 데이터를 조회 -->
+	<select id="response" resultType="com.example.demo.vo.FlightVO">
+		SELECT * FROM flight_tb
+<!-- 		 WHERE dep_airport_nm = #{depAirportNm}, arr_airport_nm -->
+		<where>
+			<if test="depAirportNm != null and arrAirportNm != null">
+				AND (dep_airport_nm LIKE CONCAT('%', #{depAirportNm}, '%') 
+					 AND arr_airport_nm LIKE CONCAT('%', #{arrAirportNm}, '%')
+					 )
+			</if>
+		</where>
+		ORDER BY dep_pland_time ASC
+		LIMIT 1, 10
+	</select>
+	
+	<!-- client에서 조회한 데이터를 조회-->
+	<select id="responseAirline" resultType="com.example.demo.vo.FlightVO">
+		SELECT * FROM flight_tb
+		<where>
+			<if test="depAirportNm != null and arrAirportNm != null and airlineNm != null">
+				AND (dep_airport_nm LIKE CONCAT('%', #{depAirportNm}, '%') 
+					 AND arr_airport_nm LIKE CONCAT('%', #{arrAirportNm}, '%')
+					 AND airline_nm LIKE CONCAT('%', #{airlineNm}, '%')
+					 )
+			</if>
+		</where>
+		ORDER BY dep_pland_time ASC
+		LIMIT 1, 10
 	</select>
 	
 	<!-- client에서 조회한 데이터 + airline 조회 -->

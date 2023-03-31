@@ -124,6 +124,7 @@ public class AirlineController {
 			Map<String, Object> map = new HashMap<>();
 			map.put("status", status.is4xxClientError());
 			map.put("msg", "저장실패.");
+			log.info("================================= airline response:\n" + gson.toJson(map));
 			return new ResponseEntity<>(map, status);
 		}
 
@@ -131,6 +132,7 @@ public class AirlineController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("status", Status.OK);
 		map.put("msg", "저장되었습니다.");
+		log.info("================================= airline response:\n" + gson.toJson(map));
 		return new ResponseEntity<>(map, status);
 //		return new ResponseEntity<>(message, status);
 	}
@@ -158,6 +160,7 @@ public class AirlineController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("status", Status.OK);
 		map.put("msg", "수정되었습니다.");
+		log.info("================================= airline response:\n" + gson.toJson(map));
 		return new ResponseEntity<>(map, status);
 //		HttpStatus status = HttpStatus.OK;
 //		String message = "수정되었습니다.";
@@ -174,6 +177,7 @@ public class AirlineController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("status", Status.OK);
 		map.put("msg", "삭제되었습니다.");
+		log.info("================================= airline response:\n" + gson.toJson(map));
 		return new ResponseEntity<>(map, status);
 //		HttpStatus status = HttpStatus.OK;
 //		String message = "삭제되었습니다.";
